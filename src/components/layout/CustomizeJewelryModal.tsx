@@ -106,12 +106,14 @@ const CustomizeJewelryModal: React.FC<CustomizeJewelryModalProps> = ({
     <div className="fixed inset-0 z-[99999] flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-sm">
       <div className="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-3xl overflow-hidden max-h-[95vh] sm:max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="relative bg-gradient-to-r from-[#9a8457] to-[#b8a069] text-white p-4 sm:p-6">
+        <div className="relative bg-gradient-to-r from-[#9a8457] to-[#b8a069] text-white p-3 sm:p-6 text-xs sm:text-base">
+
+        
           <button
             onClick={onClose}
             className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 hover:bg-white/20 rounded-full transition-colors"
           >
-            <X className="w-5 h-5" />
+           <X className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
           <div className="flex items-center space-x-3 mb-4">
@@ -152,7 +154,7 @@ const CustomizeJewelryModal: React.FC<CustomizeJewelryModalProps> = ({
         </div>
 
         {/* Content */}
-        <div className="p-4 sm:p-6 flex-1 overflow-y-auto">
+      <div className="p-3 sm:p-6 flex-1 overflow-y-auto text-xs sm:text-base leading-relaxed">
           {/* Step 1 */}
           {currentStep === 1 && !showThankYou && (
             <div>
