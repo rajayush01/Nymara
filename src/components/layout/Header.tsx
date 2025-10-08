@@ -215,7 +215,7 @@ const Header = () => {
           }`}
         > */}
           {/* Top Row - Logo and Actions */}
-          <div className="mx-auto px-4 lg:px-6">
+          <div className="mx-auto px-4 lg:px-6 py-3">
             <div className="flex justify-between items-center">
               {/* Left Side - Virtual Appointment */}
               <div className="hidden lg:flex items-center">
@@ -239,7 +239,7 @@ const Header = () => {
                   <img
                     src={logomain}
                     alt="Nymara Jewels"
-                    className={`transition-all duration-300 h-32 py-3 -mt-8 -mb-12 md:pl-12`}
+                    className={`transition-all duration-300 h-32 -mt-8 -mb-10 md:-mb-7 md:pl-12`}
                   />
                 </button>
               </div>
