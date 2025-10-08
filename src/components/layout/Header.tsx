@@ -239,7 +239,7 @@ const Header = () => {
                   <img
                     src={logomain}
                     alt="Nymara Jewels"
-                    className={`transition-all duration-300 h-32 -mt-8 -mb-12 md:pl-12`}
+                    className={`transition-all duration-300 h-32 py-3 -mt-8 -mb-12 md:pl-12`}
                   />
                 </button>
               </div>
