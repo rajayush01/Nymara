@@ -206,7 +206,7 @@ const Header = () => {
         {/* Main Header Container */}
         <div
           className={`bg-white/95 vrai-header-scrolled transition-all duration-300 border-b border-gray-200/60 ${
-            scrolled ? "py-3" : "py-4"
+            scrolled ? "py-3" : ""
           }`}
         >
           {/* <div
@@ -239,7 +239,7 @@ const Header = () => {
                   <img
                     src={logomain}
                     alt="Nymara Jewels"
-                    className={`transition-all duration-300 h-32 -mt-8 -mb-10 md:-mb-7 md:pl-12`}
+                    className={`transition-all duration-300 h-32 py-2 -mt-8 -mb-10 md:-mb-7 md:pl-12`}
                   />
                 </button>
               </div>
