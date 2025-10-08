@@ -167,7 +167,7 @@ const HeroSection = () => {
             <div className="text-sm font-medium text-[#9a8457] tracking-wider uppercase">
               Made to Order • Lab-Grown Diamonds
             </div>
-            <h2 className="text-4xl md:text-5xl font-light text-gray-900 leading-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-light text-gray-900 leading-tight">
               <span className="cinzel">Where Love Meets</span>
               <span className="cinzel block text-[#AC9362] font-normal">
                 Conscious Luxury
