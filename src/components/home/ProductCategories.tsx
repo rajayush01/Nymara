@@ -1,15 +1,10 @@
 import React, { useState } from "react";
-import {
-  ArrowRight,
-  Sparkles,
-  Crown,
-  Shield,
-  Award,
-  Zap,
-} from "lucide-react";
+import { ArrowRight, Sparkles, Crown, Shield, Award, Zap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const ProductCategories = () => {
-const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
+  const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const categories = [
     {
@@ -62,8 +57,9 @@ const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
     },
   ];
 
-  const handleSeeMore = (categoryId:string) => {
-    console.log(`Navigate to category: ${categoryId}`);
+  const handleSeeMore = (categoryId: string) => {
+    window.scrollTo(0, 0);
+    navigate(`/products/${categoryId}`);
   };
 
   return (
@@ -77,7 +73,7 @@ const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
 
       {/* Main Container */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-20">
-        {/* Refined Header Section */}
+        {/* Header Section */}
         <div className="text-center mb-24 max-w-4xl mx-auto">
           <div className="inline-flex items-center space-x-2 bg-white/80 backdrop-blur-sm border border-gray-200/50 text-gray-700 px-6 py-3 rounded-full text-sm font-medium mb-8 shadow-sm hover:shadow-md transition-shadow duration-300">
             <Sparkles className="w-4 h-4 text-[#9a8457]" />
@@ -98,7 +94,7 @@ const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
           </p>
         </div>
 
-        {/* Elegant Categories Grid */}
+        {/* Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 mb-20">
           {categories.map((category, index) => (
             <div
@@ -111,7 +107,7 @@ const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
                 animation: "fadeInUp 0.8s ease-out forwards",
               }}
             >
-              {/* Image Container with Refined Overlay */}
+              {/* Image */}
               <div className="relative h-80 overflow-hidden">
                 <img
                   src={category.image}
@@ -119,7 +115,6 @@ const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
 
-                {/* Elegant Gradient Overlay */}
                 <div
                   className={`absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-500 ${
                     hoveredCategory === category.id
@@ -128,10 +123,16 @@ const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
                   }`}
                 ></div>
 
-                {/* Subtle Shimmer Effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
 
-                {/* Bottom Content Overlay */}
+                {/* <div className="absolute top-4 left-4">
+                  <div className="bg-white/90 backdrop-blur-sm px-3 py-2 rounded-full">
+                    <span className="text-xs font-semibold text-gray-800">
+                      {category.count}
+                    </span>
+                  </div>
+                </div> */}
+
                 <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                   <h3 className="text-xl font-semibold mb-1 tracking-wide">
                     {category.title}
@@ -142,16 +143,15 @@ const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
                 </div>
               </div>
 
-              {/* Content Section */}
-              <div className="p-6 flex flex-col flex-grow">
-                <p className="text-gray-600 text-sm leading-relaxed mb-6 font-light flex-grow">
+              {/* ✅ Content Section with flex alignment */}
+              <div className="flex flex-col justify-between flex-1 p-6">
+                <p className="text-gray-600 text-sm leading-relaxed mb-6 font-light flex-1">
                   {category.description}
                 </p>
 
-                {/* Elegant CTA Button */}
                 <button
                   onClick={() => handleSeeMore(category.id)}
-                  className="group/btn relative overflow-hidden px-2 py-3 rounded-xl border border-black text-black font-light text-sm tracking-[0.2em] transition-all duration-300 hover:bg-black hover:text-white uppercase flex items-center gap-2 w-full justify-center mt-auto"
+                  className="group/btn relative overflow-hidden px-2 py-3 rounded-xl border border-black text-black font-light text-sm tracking-[0.2em] transition-all duration-300 hover:bg-black hover:text-white uppercase flex items-center gap-2 w-full justify-center"
                 >
                   <span className="relative z-20 transition-colors duration-300">
                     Explore Collection
@@ -164,7 +164,7 @@ const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
           ))}
         </div>
 
-        {/* Refined Men's Collection Section */}
+        {/* Men's Collection */}
         <div className="relative mb-20">
           <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 rounded-3xl overflow-hidden shadow-2xl border border-gray-200/50">
             {/* Background Pattern */}
@@ -237,9 +237,7 @@ const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
           </div>
         </div>
 
-        {/* Refined Trust Indicators */}
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
-      <div className="text-center">
+        <div className="text-center">
   <div className="inline-flex flex-col md:flex-row md:items-center md:justify-center gap-8 md:gap-12 bg-white/70 backdrop-blur-sm rounded-3xl p-8 md:p-10 shadow-lg border border-white/50 max-w-5xl mx-auto">
     {[
       {
@@ -274,6 +272,7 @@ const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
     ))}
   </div>
 </div>
+
       </div>
 
       <style>{`
