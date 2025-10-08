@@ -1,14 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-// NOTE: Ensure the path to your image is correct based on your project structure
 import ringImage from "@/assets/home-img.png"; 
 
 const HeroSection = () => {
-  // State is used to track the animation phase, though it's not strictly necessary 
-  // for the animation logic itself (only for potential conditional rendering outside of the timeline).
+
   const [animationPhase, setAnimationPhase] = useState("title"); 
   
-  // Refs for DOM elements to be animated by GSAP
   const titleRef = useRef(null);
   const subtitleRef = useRef(null);
   const ringRef = useRef(null);
