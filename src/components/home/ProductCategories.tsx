@@ -239,7 +239,7 @@ const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
 
         {/* Refined Trust Indicators */}
         <div className="text-center">
-          <div className="inline-flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 bg-white/70 backdrop-blur-sm rounded-3xl p-8 md:p-10 shadow-lg border border-white/50 max-w-5xl mx-auto">
+          <div className="inline-flex flex-col md:flex-row md:items-center md:justify-center gap-8 md:gap-12 bg-white/70 backdrop-blur-sm rounded-3xl p-8 md:p-10 shadow-lg border border-white/50 max-w-5xl mx-auto">
             {[
               {
                 icon: <Shield className="w-5 h-5" />,
