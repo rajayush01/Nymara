@@ -1,5 +1,15 @@
-import React, { useState } from "react";
-import { X, Calendar, Clock, Video, User, Mail, Phone, MessageSquare } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import {
+  X,
+  Calendar,
+  Clock,
+  Video,
+  User,
+  Mail,
+  Phone,
+  MessageSquare,
+} from "lucide-react";
+import axios from "axios";
 
 interface VirtualAppointmentModalProps {
   isOpen: boolean;
@@ -22,8 +32,27 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
 
   const [currentStep, setCurrentStep] = useState(1);
 
+  // Auto-scroll to input when keyboard opens on mobile
+  useEffect(() => {
+    const handleFocus = (event: Event) => {
+      const target = event.target as HTMLElement;
+      setTimeout(() => {
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 200);
+    };
+
+    const inputs = document.querySelectorAll("input, textarea, select");
+    inputs.forEach((el) => el.addEventListener("focus", handleFocus));
+
+    return () => {
+      inputs.forEach((el) => el.removeEventListener("focus", handleFocus));
+    };
+  }, []);
+
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -32,65 +61,75 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log("Appointment request:", formData);
-    
-    // Show success step
-    setCurrentStep(3);
-    
-    // Reset form after 3 seconds and close modal
-    setTimeout(() => {
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        preferredDate: "",
-        preferredTime: "",
-        appointmentType: "consultation",
-        message: "",
+    console.log("Submitting form:", formData);
+
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const response = await fetch(`${API_URL}/api/appointments/book`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
-      setCurrentStep(1);
-      onClose();
-    }, 3000);
-  };
 
-  const nextStep = () => {
-    if (currentStep < 2) {
-      setCurrentStep(currentStep + 1);
+      const result = await response.json();
+      if (result.success) {
+        setCurrentStep(3);
+        setTimeout(() => {
+          setFormData({
+            name: "",
+            email: "",
+            phone: "",
+            preferredDate: "",
+            preferredTime: "",
+            appointmentType: "consultation",
+            message: "",
+          });
+          setCurrentStep(1);
+          onClose();
+        }, 3000);
+      } else {
+        alert(result.message || "Failed to book appointment. Please try again.");
+      }
+    } catch (error) {
+      console.error("❌ Fetch error:", error);
+      alert("Something went wrong. Please try again later.");
     }
   };
 
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
+  const nextStep = () => currentStep < 2 && setCurrentStep(currentStep + 1);
+  const prevStep = () => currentStep > 1 && setCurrentStep(currentStep - 1);
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center px-2 sm:px-4">
       {/* Overlay */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       ></div>
 
-      {/* Modal */}
-      <div className="relative bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-hidden">
+      {/* Modal Container */}
+      <div
+        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-auto flex flex-col"
+        style={{
+          height: "90vh",
+          maxHeight: "700px",
+        }}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-[#9a8457]/10 rounded-lg">
               <Video className="w-5 h-5 text-[#9a8457]" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
                 Book Virtual Appointment
               </h2>
-              <p className="text-sm text-gray-500">
+              <p className="text-xs sm:text-sm text-gray-500">
                 Schedule a personalized consultation with our jewelry experts
               </p>
             </div>
@@ -103,16 +142,16 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
           </button>
         </div>
 
-        {/* Progress Indicator */}
-        <div className="px-6 py-4 bg-gray-50">
-          <div className="flex items-center space-x-4">
+        {/* Progress Bar */}
+        <div className="px-4 sm:px-6 py-3 bg-gray-50 border-b border-gray-200">
+          <div className="flex items-center space-x-4 text-xs sm:text-sm">
             <div
               className={`flex items-center space-x-2 ${
                 currentStep >= 1 ? "text-[#9a8457]" : "text-gray-400"
               }`}
             >
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium ${
                   currentStep >= 1
                     ? "bg-[#9a8457] text-white"
                     : "bg-gray-200 text-gray-400"
@@ -120,7 +159,7 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
               >
                 1
               </div>
-              <span className="text-sm font-medium">Contact Info</span>
+              <span>Contact Info</span>
             </div>
             <div className="flex-1 h-0.5 bg-gray-300">
               <div
@@ -135,7 +174,7 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
               }`}
             >
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium ${
                   currentStep >= 2
                     ? "bg-[#9a8457] text-white"
                     : "bg-gray-200 text-gray-400"
@@ -143,17 +182,17 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
               >
                 2
               </div>
-              <span className="text-sm font-medium">Schedule</span>
+              <span>Schedule</span>
             </div>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-96">
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
           <form onSubmit={handleSubmit}>
-            {/* Step 1: Contact Information */}
+            {/* Step 1 */}
             {currentStep === 1 && (
-              <div className="space-y-4">
+              <div className="space-y-4 pb-24 sm:pb-0">
                 <div>
                   <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-2">
                     <User className="w-4 h-4" />
@@ -165,7 +204,7 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
                     value={formData.name}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457] outline-none transition-all"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9a8457] outline-none text-sm sm:text-base"
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -181,7 +220,7 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457] outline-none transition-all"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9a8457] outline-none text-sm sm:text-base"
                     placeholder="Enter your email address"
                   />
                 </div>
@@ -196,7 +235,7 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457] outline-none transition-all"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9a8457] outline-none text-sm sm:text-base"
                     placeholder="Enter your phone number"
                   />
                 </div>
@@ -211,16 +250,16 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
                     value={formData.message}
                     onChange={handleInputChange}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457] outline-none transition-all resize-none"
-                    placeholder="Tell us about your jewelry needs or questions..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9a8457] outline-none text-sm sm:text-base resize-none"
+                    placeholder="Tell us about your jewelry needs..."
                   />
                 </div>
               </div>
             )}
 
-            {/* Step 2: Schedule Appointment */}
+            {/* Step 2 */}
             {currentStep === 2 && (
-              <div className="space-y-4">
+              <div className="space-y-4 pb-24 sm:pb-0">
                 <div>
                   <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-2">
                     <Video className="w-4 h-4" />
@@ -231,10 +270,12 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
                     value={formData.appointmentType}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457] outline-none transition-all"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9a8457] outline-none text-sm sm:text-base"
                   >
                     <option value="consultation">General Consultation</option>
-                    <option value="engagement">Engagement Ring Consultation</option>
+                    <option value="engagement">
+                      Engagement Ring Consultation
+                    </option>
                     <option value="custom">Custom Design Session</option>
                     <option value="education">Diamond Education</option>
                     <option value="appraisal">Jewelry Appraisal</option>
@@ -242,7 +283,7 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
                   </select>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-2">
                       <Calendar className="w-4 h-4" />
@@ -254,8 +295,8 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
                       value={formData.preferredDate}
                       onChange={handleInputChange}
                       required
-                      min={new Date().toISOString().split('T')[0]}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457] outline-none transition-all"
+                      min={new Date().toISOString().split("T")[0]}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9a8457] outline-none text-sm sm:text-base"
                     />
                   </div>
 
@@ -269,34 +310,33 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
                       value={formData.preferredTime}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457] outline-none transition-all"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9a8457] outline-none text-sm sm:text-base"
                     >
                       <option value="">Select a time</option>
-                      <option value="09:00">9:00 AM</option>
-                      <option value="10:00">10:00 AM</option>
-                      <option value="11:00">11:00 AM</option>
-                      <option value="12:00">12:00 PM</option>
-                      <option value="13:00">1:00 PM</option>
-                      <option value="14:00">2:00 PM</option>
-                      <option value="15:00">3:00 PM</option>
-                      <option value="16:00">4:00 PM</option>
-                      <option value="17:00">5:00 PM</option>
+                      {["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"].map(
+                        (time) => (
+                          <option key={time} value={time}>
+                            {parseInt(time) % 12 || 12}:00{" "}
+                            {parseInt(time) >= 12 ? "PM" : "AM"}
+                          </option>
+                        )
+                      )}
                     </select>
                   </div>
                 </div>
 
-                <div className="bg-[#9a8457]/5 border border-[#9a8457]/20 rounded-lg p-4">
+                <div className="bg-[#9a8457]/5 border border-[#9a8457]/20 rounded-lg p-3 sm:p-4">
                   <div className="flex items-start space-x-3">
                     <div className="p-1 bg-[#9a8457]/10 rounded">
                       <Video className="w-4 h-4 text-[#9a8457]" />
                     </div>
-                    <div className="flex-1">
-                      <h4 className="text-sm font-medium text-[#9a8457] mb-1">
+                    <div className="flex-1 text-sm text-gray-700">
+                      <h4 className="font-medium text-[#9a8457] mb-1">
                         Virtual Appointment Details
                       </h4>
-                      <p className="text-sm text-gray-700">
-                        You'll receive a Microsoft Teams meeting link via email 24 hours before your appointment. 
-                        Our expert will guide you through our jewelry collection and answer all your questions.
+                      <p>
+                        You’ll receive a Teams meeting link via email 24 hours
+                        before your appointment.
                       </p>
                     </div>
                   </div>
@@ -304,10 +344,10 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
               </div>
             )}
 
-            {/* Step 3: Success Message */}
+            {/* Step 3 */}
             {currentStep === 3 && (
               <div className="text-center py-8">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg
                     className="w-8 h-8 text-green-600"
                     fill="none"
@@ -322,58 +362,41 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
                     />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
                   Appointment Request Submitted!
                 </h3>
-                <p className="text-gray-600 mb-4">
-                  Thank you for booking a virtual appointment with us. We'll contact you within 24 hours to confirm your appointment details.
+                <p className="text-gray-600 text-sm sm:text-base mb-4">
+                  Thank you for booking a virtual appointment. We’ll contact you
+                  soon to confirm the details.
                 </p>
-                <div className="bg-gray-50 rounded-lg p-4 text-left">
-                  <h4 className="font-medium text-gray-900 mb-2">Next Steps:</h4>
-                  <ul className="text-sm text-gray-600 space-y-1">
-                    <li>• You'll receive a confirmation email shortly</li>
-                    <li>• We'll send you the Teams meeting link 24 hours before</li>
-                    <li>• Our jewelry expert will contact you if we need to reschedule</li>
-                  </ul>
-                </div>
               </div>
             )}
           </form>
         </div>
 
-        {/* Footer */}
+        {/* Sticky Footer */}
         {currentStep < 3 && (
-          <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
+          <div className="sticky bottom-0 left-0 right-0 flex items-center justify-between p-4 sm:p-6 border-t border-gray-200 bg-white z-20">
             <button
               type="button"
               onClick={currentStep === 1 ? onClose : prevStep}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors"
+              className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium text-sm sm:text-base"
             >
               {currentStep === 1 ? "Cancel" : "Back"}
             </button>
-            
-            <div className="flex items-center space-x-3">
-              {currentStep === 1 && (
-                <button
-                  type="button"
-                  onClick={nextStep}
-                  disabled={!formData.name || !formData.email}
-                  className="px-6 py-2 bg-[#9a8457] text-white rounded-lg font-medium hover:bg-[#8a7547] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-                >
-                  Next Step
-                </button>
-              )}
-              
-              {currentStep === 2 && (
-                <button
-                  type="submit"
-                  disabled={!formData.preferredDate || !formData.preferredTime}
-                  className="px-6 py-2 bg-[#9a8457] text-white rounded-lg font-medium hover:bg-[#8a7547] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-                >
-                  Book Appointment
-                </button>
-              )}
-            </div>
+
+            <button
+              type={currentStep === 2 ? "submit" : "button"}
+              onClick={currentStep === 1 ? nextStep : undefined}
+              disabled={
+                (currentStep === 1 && (!formData.name || !formData.email)) ||
+                (currentStep === 2 &&
+                  (!formData.preferredDate || !formData.preferredTime))
+              }
+              className="px-5 sm:px-6 py-2 bg-[#9a8457] text-white rounded-lg font-medium hover:bg-[#8a7547] disabled:bg-gray-300 disabled:cursor-not-allowed text-sm sm:text-base"
+            >
+              {currentStep === 1 ? "Next Step" : "Book Appointment"}
+            </button>
           </div>
         )}
       </div>
