@@ -1,103 +1,116 @@
 import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import ringImage from "@/assets/home-img.png";
+// NOTE: Ensure the path to your image is correct based on your project structure
+import ringImage from "@/assets/home-img.png"; 
 
 const HeroSection = () => {
-  const [animationPhase, setAnimationPhase] = useState("title");
-  const titleRef = useRef<HTMLHeadingElement | null>(null);
-  const subtitleRef = useRef<HTMLParagraphElement | null>(null);
-  const ringRef = useRef<HTMLDivElement | null>(null);
-  const contentRef = useRef<HTMLDivElement | null>(null);
+  // State is used to track the animation phase, though it's not strictly necessary 
+  // for the animation logic itself (only for potential conditional rendering outside of the timeline).
+  const [animationPhase, setAnimationPhase] = useState("title"); 
+  
+  // Refs for DOM elements to be animated by GSAP
+  const titleRef = useRef(null);
+  const subtitleRef = useRef(null);
+  const ringRef = useRef(null);
+  const contentRef = useRef(null);
 
   useEffect(() => {
-    const isMobile = window.innerWidth < 640;
-
+    // 1. Initial GSAP Setup (Setting the starting styles)
+    // This prevents a flash of unstyled content and sets the animation start points.
     gsap.set(titleRef.current, { scale: 0.5, opacity: 0 });
     gsap.set(subtitleRef.current, { scale: 0.5, opacity: 0 });
-    gsap.set(ringRef.current, { y: "80vh", scale: 0.3, opacity: 0 });
-    gsap.set(contentRef.current, { opacity: 0, y: 40 });
+    // Starts the ring far down the screen
+    gsap.set(ringRef.current, { y: "100vh", scale: 0.3, opacity: 0 });
+    gsap.set(contentRef.current, { opacity: 0, y: 50 });
 
+    // 2. Main Animation Timeline
     const tl = gsap.timeline();
 
+    // --- Phase 1: Title and Subtitle Introduction (Scale-up) ---
     tl.to(titleRef.current, {
-      duration: 1.2,
-      scale: 1.1,
+      duration: 1.5,
+      scale: 1.2,
       opacity: 1,
       ease: "power3.out",
     })
-      .to(titleRef.current, { duration: 0.3, scale: 1, ease: "power2.out" }, "-=0.4")
-      .to(subtitleRef.current, {
-        duration: 1.1,
-        scale: 1.05,
-        opacity: 1,
-        ease: "power3.out",
-      }, "-=0.8")
-      .to(subtitleRef.current, { duration: 0.3, scale: 1, ease: "power2.out" }, "-=0.4")
+      .to(titleRef.current, { duration: 0.4, scale: 1, ease: "power2.out" }, "-=0.4")
+      .to(subtitleRef.current, { duration: 1.3, scale: 1.1, opacity: 1, ease: "power3.out" }, "-=1.0")
+      .to(subtitleRef.current, { duration: 0.4, scale: 1, ease: "power2.out" }, "-=0.4")
+
+    // --- Phase 2: Title and Subtitle Exit (Scale-out and Fade) ---
       .to(
         titleRef.current,
         {
-          duration: 1.5,
+          duration: 1.8,
           opacity: 0.15,
-          scale: isMobile ? 1.8 : 2.3,
-          y: isMobile ? -10 : -30,
+          scale: 2.5,
+          y: -30,
           ease: "power2.inOut",
         },
-        "+=0.8"
+        "+=1.2" // Wait 1.2s after the previous step
       )
       .to(
         subtitleRef.current,
         {
-          duration: 1.5,
+          duration: 1.8,
           opacity: 0.15,
-          scale: isMobile ? 1.8 : 2.3,
-          y: isMobile ? 10 : 30,
+          scale: 2.5,
+          y: 30,
           ease: "power2.inOut",
-          onComplete: () => setAnimationPhase("image"),
+          onComplete: () => setAnimationPhase("image"), // Update state
         },
-        "-=1.5"
+        // Starts at the same time as the title exit
+        "-=1.8" 
       )
+    // --- Phase 3: Ring Introduction (Move up and scale) ---
       .to(
         ringRef.current,
         {
-          duration: 2,
-          y: 0,
+          duration: 2.5,
+          y: 0, // Moves the ring to its final vertical position
           opacity: 1,
-          scale: isMobile ? 0.9 : 0.8,
+          scale: 0.8,
           ease: "power3.out",
         },
-        "-=0.3"
+        // Starts slightly before the title/subtitle exit ends
+        "-=0.3" 
       )
       .to(ringRef.current, {
-        duration: 1,
-        scale: isMobile ? 1 : 1.05,
+        duration: 1.5,
+        scale: 1, // Final, subtle scale-up
         ease: "power2.out",
-        onComplete: () => setAnimationPhase("content"),
+        onComplete: () => setAnimationPhase("content"), // Update state
       })
+    // --- Phase 4: Content Introduction (Fade up from below) ---
       .to(
         contentRef.current,
         {
-          duration: 1.1,
+          duration: 1.3,
           opacity: 1,
           y: 0,
           ease: "power3.out",
-          onComplete: () => setAnimationPhase("complete"),
+          onComplete: () => setAnimationPhase("complete"), // Update state
         },
-        "-=0.6"
+        // Starts before the ring's final scale is complete
+        "-=0.7" 
       );
 
+    // 3. Floating Animation Timeline (runs in parallel after the main TL)
     const floatTl = gsap.timeline({ repeat: -1, yoyo: true, paused: true });
     floatTl.to(ringRef.current, {
       duration: 4,
-      y: -6,
-      rotation: 2,
-      scale: 1.01,
+      y: -8, // Subtle vertical float
+      rotation: 3, // Subtle rotation
+      scale: 1.01, // Subtle scale change
       ease: "sine.inOut",
     });
 
+    // 4. Start the floating animation once the main timeline is complete
     tl.call(() => {
       floatTl.play();
     });
 
+    // 5. Cleanup function
     return () => {
       tl.kill();
       floatTl.kill();
@@ -105,24 +118,34 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-[100vh] overflow-hidden flex flex-col justify-center items-center px-3 sm:px-6">
-      {/* Fonts */}
+    <div className="relative w-full h-screen overflow-hidden flex flex-col justify-center items-center px-4 md:px-8 bg-white">
+      {/* NOTE: Embedding @import style like this is generally discouraged in React/Next.js 
+        and should ideally be handled by a global stylesheet or a tool like 'next/font'.
+        However, for a quick functional example, this works. 
+      */}
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap');
-          @import url('https://fonts.googleapis.com/css2?family=Alta:wght@400;700&display=swap');
+          @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;700&display=swap');
+          
+          /* Using a common font that resembles 'Alta' for demonstration */
           .cinzel { font-family: 'Cinzel', serif; }
-          .alta { font-family: 'Alta', serif; }
+          .alta { font-family: 'Cormorant Garamond', serif; } 
+          
+          /* Fix for a common GSAP issue with Tailwind: preventing a flicker on 'scale' transitions */
+          .ring-container { transform-style: preserve-3d; }
         `}
       </style>
 
-      {/* Title & Subtitle */}
-      <div className="absolute inset-0 flex items-center justify-center pt-12 sm:pt-16 md:pt-24 z-5">
-        <div className="text-center">
+      {/* --- Title Animation Layer (Highest Z-index during its run) --- */}
+      <div className="absolute inset-0 flex items-center justify-center z-5 pt-10 md:pt-16">
+        <div className="text-center px-3 md:px-6">
+          {/* Main Title */}
           <h1
             ref={titleRef}
-            className="alta text-[36px] sm:text-[72px] md:text-[110px] font-light tracking-wide select-none text-[#9a8457]"
+            className="alta text-4xl sm:text-7xl md:text-[110px] font-light tracking-wide select-none pointer-events-none text-[#9a8457] leading-none"
             style={{
+              // Custom glow/blur effect
               textShadow: "0 0 40px rgba(255,255,255,0.8)",
               filter: "blur(0.5px)",
               transformOrigin: "center center",
@@ -131,10 +154,12 @@ const HeroSection = () => {
           >
             NYMARA
           </h1>
+          {/* Subtitle */}
           <p
             ref={subtitleRef}
-            className="alta text-lg sm:text-2xl md:text-3xl font-light text-[#9a8457] tracking-widest uppercase select-none"
+            className="alta text-2xl sm:text-2xl md:text-3xl font-light text-[#9a8457] tracking-widest uppercase mt-2 md:mt-4 select-none pointer-events-none"
             style={{
+              // Custom glow/blur effect
               textShadow: "0 0 30px rgba(255,255,255,0.8)",
               filter: "blur(0.3px)",
               transformOrigin: "center center",
@@ -146,33 +171,37 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Ring Image */}
+      {/* --- Ring/Image Animation Layer --- */}
       <div className="absolute inset-0 flex items-center justify-center z-10">
-        <div ref={ringRef}>
+        <div ref={ringRef} className="ring-container">
           <img
             src={ringImage}
             alt="Nymara Ring"
-            className="w-48 h-48 sm:w-72 sm:h-72 md:w-96 md:h-96 object-contain drop-shadow-2xl"
-            style={{
-              filter: "drop-shadow(0 25px 25px rgba(0, 0, 0, 0.15))",
-            }}
+            className="w-60 h-60 sm:w-72 sm:h-72 md:w-96 md:h-96 object-contain"
+            // style={{
+            //   // A drop shadow for a floating effect
+            //   filter: "drop-shadow(0 25px 25px rgba(0, 0, 0, 0.15))",
+            // }}
           />
         </div>
       </div>
 
-      {/* Content Below */}
-      <div
-        className="absolute left-0 right-0 z-20 px-4 sm:px-6"
-        style={{ top: "72%" }}
-      >
-        <div ref={contentRef} className="max-w-3xl mx-auto text-center">
-          <div className="space-y-4 sm:space-y-6">
-            <div className="text-[10px] sm:text-xs md:text-sm font-medium text-[#9a8457] tracking-wider uppercase">
+      {/* --- Content Below Ring Layer (Appears last) --- */}
+      {/* Positioned using 'top: 76%' to place it lower on the screen */}
+      <div className="absolute left-0 right-0 z-20" style={{ top: "76%" }}>
+        <div
+          ref={contentRef}
+          className="max-w-4xl mx-auto px-6 text-center"
+        >
+          <div className="space-y-6">
+            {/* Tagline */}
+            <div className="text-xs sm:text-sm font-medium text-[#9a8457] tracking-wider uppercase">
               Made to Order • Lab-Grown Diamonds
             </div>
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-light text-gray-900 leading-tight">
+            {/* Main Content Headline */}
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-light text-gray-900 leading-tight">
               <span className="cinzel">Where Love Meets</span>
-              <span className="cinzel block text-[#AC9362] font-normal mt-2 sm:mt-3">
+              <span className="cinzel block text-[#AC9362] font-normal mt-3 sm:mt-4">
                 Conscious Luxury
               </span>
             </h2>
@@ -180,8 +209,8 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-white/40 via-transparent to-white/10 pointer-events-none" />
+      {/* --- Visual Enhancement: Gradient Overlay --- */}
+      <div className="absolute inset-0 bg-gradient-to-t from-white/25 via-transparent to-white/10 pointer-events-none" />
     </div>
   );
 };
