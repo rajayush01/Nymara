@@ -240,38 +240,40 @@ const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
         {/* Refined Trust Indicators */}
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
       <div className="text-center">
-        <div className="inline-flex flex-col gap-6 bg-white/70 backdrop-blur-sm rounded-3xl p-8 md:p-10 shadow-lg border border-white/50 max-w-md mx-auto">
-          {[
-            {
-              icon: <Shield className="w-6 h-6" />,
-              text: "100% Conflict-Free Diamonds",
-              color: "from-emerald-400 to-teal-500",
-            },
-            {
-              icon: <Award className="w-6 h-6" />,
-              text: "IGI/GIA Certified",
-              color: "from-blue-400 to-indigo-500",
-            },
-            {
-              icon: <Zap className="w-6 h-6" />,
-              text: "Lifetime Buy-Back Guarantee",
-              color: "from-purple-400 to-pink-500",
-            },
-          ].map((item, index) => (
-            <div key={index} className="flex items-center gap-4 group">
-              <div
-                className={`flex-shrink-0 w-14 h-14 flex items-center justify-center bg-gradient-to-r ${item.color} rounded-2xl text-white shadow-md group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}
-              >
-                {item.icon}
-              </div>
-              <span className="text-gray-800 font-medium text-base text-left group-hover:text-gray-600 transition-colors duration-300">
-                {item.text}
-              </span>
-            </div>
-          ))}
+  <div className="inline-flex flex-col md:flex-row md:items-center md:justify-center gap-8 md:gap-12 bg-white/70 backdrop-blur-sm rounded-3xl p-8 md:p-10 shadow-lg border border-white/50 max-w-5xl mx-auto">
+    {[
+      {
+        icon: <Shield className="w-6 h-6" />,
+        text: "100% Conflict-Free Diamonds",
+        color: "from-emerald-400 to-teal-500",
+      },
+      {
+        icon: <Award className="w-6 h-6" />,
+        text: "IGI/GIA Certified",
+        color: "from-blue-400 to-indigo-500",
+      },
+      {
+        icon: <Zap className="w-6 h-6" />,
+        text: "Lifetime Buy-Back Guarantee",
+        color: "from-purple-400 to-pink-500",
+      },
+    ].map((item, index) => (
+      <div
+        key={index}
+        className="flex flex-col items-center justify-center text-center space-y-3 group"
+      >
+        <div
+          className={`p-4 bg-gradient-to-r ${item.color} rounded-2xl text-white shadow-md group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}
+        >
+          {item.icon}
         </div>
+        <span className="text-gray-800 font-medium text-base group-hover:text-gray-600 transition-colors duration-300 max-w-[180px]">
+          {item.text}
+        </span>
       </div>
-    </div>
+    ))}
+  </div>
+</div>
       </div>
 
       <style>{`
