@@ -115,7 +115,7 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden flex flex-col justify-center items-center px-4 md:px-8 bg-white">
+    <div className="relative w-full h-screen overflow-hidden flex flex-col justify-center items-center px-4 md:px-8 bg-white -mt-20 sm:mt-0">
       {/* NOTE: Embedding @import style like this is generally discouraged in React/Next.js 
         and should ideally be handled by a global stylesheet or a tool like 'next/font'.
         However, for a quick functional example, this works. 
