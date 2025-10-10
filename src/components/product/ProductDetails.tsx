@@ -24,7 +24,7 @@ import {
   Share2,
   Check,
 } from "lucide-react";
-import { useProducts, useCart, useWishlist } from "@/contexts/AppContext";
+import { useProducts, useCart, useWishlist, Product } from "@/contexts/AppContext";
 import RelatedProducts from "@/components/product/RelatedProducts";
 import { useTracking } from "@/contexts/TrackingContext";
 
@@ -1029,3 +1029,4 @@ const calculatePrice = (): { amount: number; symbol: string } => {
 };
 
 export default ProductDetail;
+
