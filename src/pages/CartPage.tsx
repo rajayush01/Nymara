@@ -359,7 +359,7 @@ const origAmount = item.originalPrice ?? item.prices?.[currency]?.amount ?? item
     if (currentStep === 'confirmation') {
       return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-          <div className="max-w-md w-full">
+          <div className="max-w-md w-full mt-20">
             <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 text-center">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Check className="w-8 h-8 text-green-600" />
@@ -639,5 +639,6 @@ const origAmount = item.originalPrice ?? item.prices?.[currency]?.amount ?? item
       </div>
     );
   };
+
 
   export default CartPage;
