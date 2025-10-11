@@ -7,7 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 export interface Product {
   _id: string;               // from MongoDB
         // fallback for local/demo products
-
+sku?: string; 
   name: string;
   description?: string;
 
@@ -25,12 +25,12 @@ export interface Product {
   // ✅ Product details
   type?: string;              // Ring, Chain, Bracelet etc.
   subCategory?: string[];
-  category?: string[];
+  category?: string | string[]; 
 
   metalType?: string;
   stoneType?: string;
   style?: string;
-  size?: string[];
+  size?: string | string[]; 
   color?: string;
 
   weight?: number;
@@ -44,12 +44,17 @@ export interface Product {
   inStock?: boolean;          // legacy field (maps to stock > 0)
 
   // ✅ Images
-  coverImage?: string;
+ coverImage?: string;
   images?: string[];
+  videoUrl?: string;
 
   // ✅ Rating
   rating?: number;
   reviews?: number;
+
+  variantLinks?: {               // ✅ Added variant links for metal types
+    [metalType: string]: string; // metal type -> product ID
+  };
 
   // ✅ Misc
   tags?: string[];
