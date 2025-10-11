@@ -161,17 +161,16 @@ useEffect(() => {
 
 
   {/* Metal Variants */}
-{product.variantLinks && (
+{product.variantLinks && Object.keys(product.variantLinks).length > 0 && (
   <div>
     <label className="block text-sm font-medium text-gray-900 mb-3">
-      Metal
+      Metal: {product.metalType || "Select"}
     </label>
-    <div className="flex flex-wrap gap-3">
+    <div className="grid grid-cols-2 gap-3">
       {Object.entries(product.variantLinks).map(([metal, variantId]) => {
         const isActive = product.metalType?.toLowerCase().includes(metal.toLowerCase());
-
-        // Decide color dynamically
-        let color = "#FFD700"; // fallback gray
+        
+        let color = "#d1d5db";
         if (metal.toLowerCase().includes("yellow")) color = "#FFD700";
         else if (metal.toLowerCase().includes("white")) color = "#E5E4E2";
         else if (metal.toLowerCase().includes("rose")) color = "#B76E79";
@@ -185,15 +184,20 @@ useEffect(() => {
               e.preventDefault();
               window.open(`/product/${variantId}`, "_blank");
             }}
-            title={metal}
-            className={`w-10 h-10 rounded-full border-2 transition-all ${
-              isActive ? "ring-2 ring-offset-2 ring-[#9a8457]" : ""
+            className={`p-3 rounded-lg border-2 font-medium transition-all text-left ${
+              isActive
+                ? "border-[#9a8457] bg-[#9a8457]/5 text-[#9a8457]"
+                : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
             }`}
-            style={{
-              backgroundColor: color, // apply swatch color
-              borderColor: isActive ? "#9a8457" : "#d1d5db",
-            }}
-          />
+          >
+            <div className="flex justify-between items-center">
+              <span className="text-sm">{metal}</span>
+              <div
+                className="w-6 h-6 rounded-full border"
+                style={{ backgroundColor: color }}
+              />
+            </div>
+          </button>
         );
       })}
     </div>
@@ -330,21 +334,29 @@ const calculatePrice = (): { amount: number; symbol: string } => {
   };
 
   const itemDetails = [
-  { label: "SKU", value: product.sku || `JW${product._id.toString().slice(-5).toUpperCase()}` },
-  { label: "Category", value: Array.isArray(product.category) ? product.category.join(", ") : (product.category || "Jewelry") },
+  { 
+    label: "SKU", 
+    value: product.sku || `JW${product._id.toString().slice(-5).toUpperCase()}` 
+  },
+  { 
+    label: "Category", 
+    value: Array.isArray(product.category) 
+      ? product.category.join(", ") 
+      : (product.category || "Jewelry") 
+  },
   { label: "Style", value: product.style || "—" },
   { label: "Metal Type", value: product.metalType || "—" },
   { label: "Stone Type", value: product.stoneType || "—" },
   { label: "Color", value: product.color || "—" },
   {
     label: "Rating",
-    value: product.reviews > 0 
-      ? `${product.rating}/5 (${product.reviews} reviews)` 
+    value: (product.reviews ?? 0) > 0  // ✅ Safe null check
+      ? `${product.rating ?? 0}/5 (${product.reviews} reviews)` 
       : "No reviews yet",
   },
   {
     label: "Availability",
-    value: product.stock > 0 ? "In Stock" : "Out of Stock",
+    value: (product.stock ?? 0) > 0 ? "In Stock" : "Out of Stock",  // ✅ Safe null check
   },
 ];
 
@@ -384,13 +396,16 @@ const calculatePrice = (): { amount: number; symbol: string } => {
             <>
               <span>/</span>
               <button
-                onClick={() =>
-                  navigate(`/products/${product.category?.toLowerCase()}`)
-                }
-                className="hover:text-gray-900 transition-colors"
-              >
-                {product.category}
-              </button>
+  onClick={() => {
+    const categoryStr = Array.isArray(product.category) 
+      ? product.category[0] 
+      : product.category;
+    navigate(`/products/${categoryStr?.toLowerCase() || ''}`);
+  }}
+  className="hover:text-gray-900 transition-colors"
+>
+  {Array.isArray(product.category) ? product.category[0] : product.category}
+</button>
             </>
           )}
           <span>/</span>
@@ -437,11 +452,11 @@ const calculatePrice = (): { amount: number; symbol: string } => {
                     Best Seller
                   </span>
                 )}
-                {product.discount > 0 && (
-                  <span className="px-3 py-1 bg-red-500 text-white text-xs font-medium rounded-full">
-                    -{product.discount}% OFF
-                  </span>
-                )}
+                {(product.discount ?? 0) > 0 && (
+  <span className="px-3 py-1 bg-red-500 text-white text-xs font-medium rounded-full">
+    -{product.discount}% OFF
+  </span>
+)}
               </div>
             </div>
 
@@ -481,7 +496,6 @@ const calculatePrice = (): { amount: number; symbol: string } => {
   <Eye className="w-4 h-4" />
   <span>360° View</span>
 </button>
-
               <button
                 onClick={() => setShowShareModal(true)}
                 className="w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2"
@@ -532,17 +546,17 @@ const calculatePrice = (): { amount: number; symbol: string } => {
               {/* Rating */}
               <div className="flex items-center space-x-2 mb-4">
                 <div className="flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-4 h-4 ${
-                        i < Math.floor(product.rating)
-                          ? "text-yellow-400 fill-current"
-                          : "text-gray-300"
-                      }`}
-                    />
-                  ))}
-                </div>
+  {[...Array(5)].map((_, i) => (
+    <Star
+      key={i}
+      className={`w-4 h-4 ${
+        i < Math.floor(product.rating ?? 0)  // ✅ Safe null check
+          ? "text-yellow-400 fill-current"
+          : "text-gray-300"
+      }`}
+    />
+  ))}
+</div>
                 <span className="text-sm text-gray-600">
                   {product.rating} ({product.reviews} Reviews)
                 </span>
@@ -880,18 +894,15 @@ const calculatePrice = (): { amount: number; symbol: string } => {
         )}
 
         {/* 🔹 Video Modal (360° View) */}
-{showVideoModal && (
+{showVideoModal && product.videoUrl && (
   <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
     <div className="relative bg-black rounded-xl max-w-4xl w-full shadow-2xl">
-      {/* Close button */}
       <button
         onClick={() => setShowVideoModal(false)}
         className="absolute top-3 right-3 text-white hover:text-gray-300 text-2xl"
       >
         ×
       </button>
-
-      {/* Video player */}
       <video
         src={product.videoUrl}
         controls
@@ -900,13 +911,6 @@ const calculatePrice = (): { amount: number; symbol: string } => {
         playsInline
         className="w-full h-[70vh] object-contain rounded-lg"
       />
-
-      {/* Fallback */}
-      {!product.videoUrl && (
-        <div className="p-6 text-center text-gray-200">
-          <p>No video available for this product.</p>
-        </div>
-      )}
     </div>
   </div>
 )}
@@ -1029,4 +1033,3 @@ const calculatePrice = (): { amount: number; symbol: string } => {
 };
 
 export default ProductDetail;
-
