@@ -146,6 +146,7 @@ const ProductCategoryPage: React.FC = () => {
       "Green",
       "Blue",
     ],
+    gender: ["Men", "Women", "Unisex"], // ✅ Added missing gender field
     category: getCategories(),
     sortBy: [
       { value: "best-seller", label: "Best Seller" },

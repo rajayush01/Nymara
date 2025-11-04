@@ -182,6 +182,7 @@ const initialState: AppState = {
     color: [],
     category: [],
     subCategory: [],
+    gender: [],              // ✅ Added missing gender field
     priceRange: undefined,
     sortBy: 'best-seller',
     page: 1,                 // ✅ default to first page
@@ -310,6 +311,7 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
           color: [],
           category: [],
            subCategory: [],
+          gender: [],           // ✅ Added missing gender field
           sortBy: 'best-seller',
            priceRange: undefined,  // reset to no price range
       page: 1,                // reset back to first page
