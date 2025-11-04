@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, TargetAndTransition, VariantLabels, Variants } from 'framer-motion';
+import p1 from '@/assets/ring1.jpg';
+import p2 from '@/assets/ring2.jpg';
+import p3 from '@/assets/ring3.jpg';
+import p5 from '@/assets/ring4.jpg';
+import p4 from '@/assets/home1.png';
 
 interface Product {
 	_id: string;
@@ -47,7 +52,7 @@ const HARDCODED_PRODUCTS: Product[] = [
     originalPrice: 52999,
     onSale: true,
     isOutOfStock: false,
-    coverImage: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800&h=1000&fit=crop',
+    coverImage: p1,
     category: 'Rings',
     rating: 4.8,
     url: '/products',
@@ -61,7 +66,7 @@ const HARDCODED_PRODUCTS: Product[] = [
     originalPrice: 15999,
     onSale: true,
     isOutOfStock: false,
-    coverImage: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=800&h=1000&fit=crop',
+    coverImage: p2,
     category: 'Bracelets',
     rating: 4.7,
     url: '/products',
@@ -74,7 +79,7 @@ const HARDCODED_PRODUCTS: Product[] = [
     price: 8999,
     originalPrice: 11999,
     isOutOfStock: false,
-    coverImage: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&h=1000&fit=crop',
+    coverImage: p3,
     category: 'Chains',
     rating: 4.5,
     url: '/products',
@@ -88,7 +93,7 @@ const HARDCODED_PRODUCTS: Product[] = [
     originalPrice: 42999,
     onSale: true,
     isOutOfStock: false,
-    coverImage: 'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=800&h=1000&fit=crop',
+    coverImage: p4,
     category: 'Rings',
     rating: 4.9,
     url: '/products',
@@ -101,7 +106,7 @@ const HARDCODED_PRODUCTS: Product[] = [
     price: 6999,
     originalPrice: 9499,
     isOutOfStock: false,
-    coverImage: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800&h=1000&fit=crop',
+    coverImage: p5,
     category: 'Bracelets',
     rating: 4.6,
     url: '/products',
