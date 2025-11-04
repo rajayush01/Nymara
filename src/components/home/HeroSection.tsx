@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import ringImage from "@/assets/home1.png"; 
+import ringImage from "@/assets/home2.png"; 
 
 const HeroSection = () => {
 
