@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { motion, TargetAndTransition, VariantLabels, Variants } from 'framer-motion';
-import p1 from '@/assets/ring1.jpg';
-import p2 from '@/assets/ring2.jpg';
-import p3 from '@/assets/ring3.jpg';
-import p5 from '@/assets/ring4.jpg';
-import p4 from '@/assets/home1.png';
 
 interface Product {
 	_id: string;
@@ -18,7 +13,6 @@ interface Product {
 	isOutOfStock?: boolean;
 	coverImage: string;
 	images?: string[];
-
 	category: string;
 	rating?: number;
 	url?: string;
@@ -53,7 +47,7 @@ const HARDCODED_PRODUCTS: Product[] = [
     originalPrice: 52999,
     onSale: true,
     isOutOfStock: false,
-    coverImage: p1,
+    coverImage: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800&h=1000&fit=crop',
     category: 'Rings',
     rating: 4.8,
     url: '/products',
@@ -67,7 +61,7 @@ const HARDCODED_PRODUCTS: Product[] = [
     originalPrice: 15999,
     onSale: true,
     isOutOfStock: false,
-    coverImage: p2,
+    coverImage: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=800&h=1000&fit=crop',
     category: 'Bracelets',
     rating: 4.7,
     url: '/products',
@@ -80,7 +74,7 @@ const HARDCODED_PRODUCTS: Product[] = [
     price: 8999,
     originalPrice: 11999,
     isOutOfStock: false,
-    coverImage: p3,
+    coverImage: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&h=1000&fit=crop',
     category: 'Chains',
     rating: 4.5,
     url: '/products',
@@ -94,7 +88,7 @@ const HARDCODED_PRODUCTS: Product[] = [
     originalPrice: 42999,
     onSale: true,
     isOutOfStock: false,
-    coverImage: p4,
+    coverImage: 'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=800&h=1000&fit=crop',
     category: 'Rings',
     rating: 4.9,
     url: '/products',
@@ -107,7 +101,7 @@ const HARDCODED_PRODUCTS: Product[] = [
     price: 6999,
     originalPrice: 9499,
     isOutOfStock: false,
-    coverImage: p5,
+    coverImage: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800&h=1000&fit=crop',
     category: 'Bracelets',
     rating: 4.6,
     url: '/products',
@@ -229,7 +223,7 @@ const cardVariants: Variants = {
 	still: { x: 0, transition: { duration: 0 } },
 };
 
-export const ImageFanDynamic = () => {
+export default function ImageFanDynamic() {
 	const [products] = useState<Product[]>(HARDCODED_PRODUCTS);
 	const [index, setIndex] = useState(0);
 	const [paused, setPaused] = useState(false);
@@ -328,7 +322,7 @@ export const ImageFanDynamic = () => {
 		}, 800);
 
 		return () => clearTimeout(centerTimer);
-	}, []); // Remove dependency on products
+	}, []);
 
 	// Carousel rotation effect
 	useEffect(() => {
@@ -370,7 +364,7 @@ export const ImageFanDynamic = () => {
 
 	return (
 		<div
-			className="relative flex flex-col items-center justify-center"
+			className="relative flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100"
 			style={{
 				zIndex: 1,
 				width: containerStyle.width,
@@ -430,7 +424,7 @@ export const ImageFanDynamic = () => {
 					return (
 						<motion.div
 							key={`${product._id}-${i}`}
-							className={`absolute rounded-2xl shadow-2xl overflow-hidden bg-white cursor-pointer border border-gray-200 ${
+							className={`absolute rounded-xl overflow-hidden bg-white cursor-pointer group ${
 								showWhiteBg ? '' : ''
 							}`}
 							style={{
@@ -439,6 +433,9 @@ export const ImageFanDynamic = () => {
 								width: currentSlotConfig.width,
 								height: currentSlotConfig.height,
 								marginTop: currentSlotConfig.marginTop,
+								boxShadow: isCenterCard 
+									? '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)'
+									: '0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05)',
 							}}
 							variants={cardVariants}
 							initial="hidden"
@@ -450,11 +447,11 @@ export const ImageFanDynamic = () => {
 						>
 							{/* Product Card Layout */}
 							<div className="flex flex-col h-full">
-								{/* Image Section - 65% of height */}
-								<div className="relative h-[65%] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+								{/* Image Section - 70% of height */}
+								<div className="relative h-[70%] overflow-hidden bg-gradient-to-br from-slate-100 via-white to-slate-50">
 									<img
 										src={product.coverImage}
-										className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+										className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
 										alt={product.name}
 										loading="lazy"
 										style={{
@@ -463,47 +460,38 @@ export const ImageFanDynamic = () => {
 												: 'auto',
 										}}
 									/>
+									{/* Gradient Overlay */}
+									<div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+									
+									{/* Category Badge */}
+									<div className="absolute top-3 right-3">
+										<span className={`inline-block backdrop-blur-md bg-white/90 text-slate-700 px-3 py-1.5 rounded-full font-semibold shadow-lg border border-white/20 ${isMobile ? 'text-[10px]' : 'text-xs'}`}>
+											{product.category}
+										</span>
+									</div>
 								</div>
 
-								{/* Content Section - 35% of height */}
-								<div className="px-3 py-2 md:p-3 h-[35%] flex flex-col justify-between bg-white">
+								{/* Content Section - 25% of height */}
+								<div className={`flex flex-col justify-between bg-white ${isMobile ? 'px-3 py-2' : 'px-4 py-3'} h-[25%]`}>
 									{/* Product Name */}
 									<h3
-										className={`font-bold text-gray-900 leading-tight md:text-base mb-1 md:-mb-4 line-clamp-2 ${isMobile ? 'text-xs mb-1' : 'text-sm'}`}
+										className={`font-bold text-slate-900 leading-tight tracking-tight line-clamp-2 ${isMobile ? 'text-xs' : 'text-sm'}`}
 									>
 										{product.name}
 									</h3>
 
-									{/* Price Section */}
-									{/* <div className="flex items-center gap-2 mb-2">
-										<span className={`font-bold text-gray-900 ${isMobile ? 'text-lg' : 'text-xl'}`}>
-											₹{product.originalPrice}
-										</span>
-										 {product.onSale && product.originalPrice && (
-											<span
-												className={`line-through text-gray-500 ${isMobile ? 'text-xs' : 'text-sm'}`}
-											>
-												₹{product.originalPrice}
-											</span>
-										)}
-									</div> */}
-
-									{/* Description */}
-									{/* <p
-										className={`text-gray-600 leading-relaxed mb-2 md:-mb-2 md:text-base line-clamp-2 ${isMobile ? 'text-xs' : 'text-sm'}`}
-									>
-										{truncateWords(product.description, isMobile ? 8 : 10)}
-									</p> */}
-
 									{/* Bottom Row */}
-									<div className="flex justify-between items-center -mb-2 md:mb-2">
-										<span
-											className={`inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded-md font-medium ${isMobile ? 'text-xs' : 'text-xs'}`}
-										>
-											{product.category}
-										</span>
-										<span className={`text-gray-400 ${isMobile ? 'text-xs' : 'text-xs'}`}>
-											{isMobile ? 'Tap to view' : 'Click to view'}
+									<div className="flex justify-between items-center">
+										<div className="flex items-center gap-1.5">
+											<svg className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'} text-amber-400 fill-current`} viewBox="0 0 20 20">
+												<path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+											</svg>
+											<span className={`font-semibold text-slate-700 ${isMobile ? 'text-xs' : 'text-sm'}`}>
+												{product.rating}
+											</span>
+										</div>
+										<span className={`text-slate-400 font-medium group-hover:text-blue-600 transition-colors duration-300 ${isMobile ? 'text-[10px]' : 'text-xs'}`}>
+											{isMobile ? 'Tap →' : 'View Details →'}
 										</span>
 									</div>
 								</div>
@@ -514,4 +502,4 @@ export const ImageFanDynamic = () => {
 			</motion.div>
 		</div>
 	);
-};
+}
