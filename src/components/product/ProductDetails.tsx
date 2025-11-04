@@ -32,6 +32,7 @@ import {
 } from "@/contexts/AppContext";
 import RelatedProducts from "@/components/product/RelatedProducts";
 import { useTracking } from "@/contexts/TrackingContext";
+import guide from "@/assets/ring_size_guide.png";
 
 // import ProductReviews from '@/components/product/ProductReviews';
 import axios from "axios";
@@ -119,6 +120,9 @@ const ProductDetail = () => {
   const [isZoomed, setIsZoomed] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [showDropHintModal, setShowDropHintModal] = useState(false);
+  const [hintSize, setHintSize] = useState("");
+  const [hintMessage, setHintMessage] = useState("");
 
   const handleToggleEngravingForm = () => {
     setShowEngravingForm((prev) => !prev);
@@ -246,9 +250,9 @@ const ProductDetail = () => {
   const features = [
     {
       icon: MessageCircle,
-      title: "Drop a Hint",
-      description: "Share with someone special",
-      action: () => setShowShareModal(true),
+      title: "Query/Doubt?",
+      description: "Have a query/doubt?",
+      action: () => setShowDropHintModal(true),
     },
     {
       icon: Video,
@@ -308,7 +312,7 @@ const ProductDetail = () => {
 
     addToCart(product, quantity, {
       selectedMetal,
-      selectedSize, // always the customer’s chosen size
+      selectedSize, // always the customer's chosen size
       engraving: engravingText,
     });
 
@@ -1072,76 +1076,79 @@ const ProductDetail = () => {
 
         {/* Size Guide Modal */}
         {showSizeGuide && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-            <div className="bg-white rounded-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">Ring Size Guide</h3>
-                <button
-                  onClick={() => setShowSizeGuide(false)}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  ×
-                </button>
-              </div>
-              <div className="space-y-4">
-                <p className="text-sm text-gray-600">
-                  Find your perfect ring size using one of these methods:
-                </p>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h4 className="font-medium mb-2">
-                    Size Chart (Inner Circumference):
-                  </h4>
-                  <div className="text-sm space-y-1">
-                    <div className="flex justify-between">
-                      <span>Size 4:</span>
-                      <span>46.8mm</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Size 5:</span>
-                      <span>49.3mm</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Size 6:</span>
-                      <span>51.9mm</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Size 7:</span>
-                      <span>54.4mm</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Size 8:</span>
-                      <span>57.0mm</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Size 9:</span>
-                      <span>59.5mm</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Size 10:</span>
-                      <span>62.1mm</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="text-sm text-gray-600">
-                  <p className="font-medium mb-2">Measuring Tips:</p>
-                  <ul className="space-y-1">
-                    <li>• Measure your finger at the end of the day</li>
-                    <li>• Consider the width of the band</li>
-                    <li>• Account for seasonal finger size changes</li>
-                    <li>• When in doubt, size up rather than down</li>
-                  </ul>
-                </div>
-                <button
-                  onClick={() => setShowSizeGuide(false)}
-                  className="w-full bg-[#9a8457] text-white py-2 rounded-lg hover:bg-[#8a7547] transition-colors"
-                >
-                  Got it
-                </button>
-              </div>
+  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+    <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+      {/* Header */}
+      <div className="flex justify-between items-center px-6 py-5 border-b border-gray-200">
+        <h3 className="text-2xl font-semibold text-gray-900">Ring Size Guide</h3>
+        <button
+          onClick={() => setShowSizeGuide(false)}
+          className="text-gray-400 hover:text-gray-600 text-3xl leading-none transition-colors"
+        >
+          ×
+        </button>
+      </div>
+      
+      {/* Scrollable Content */}
+      <div className="overflow-y-auto px-6 py-6">
+        <div className="space-y-6">
+          <p className="text-gray-700">
+            Find your perfect ring size using one of these methods:
+          </p>
+          
+          {/* Size Chart Section */}
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-4">
+              Size Chart (Inner Circumference):
+            </h4>
+            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <img 
+                src={guide} 
+                alt="Ring Size Conversion Chart" 
+                className="w-full h-auto"
+              />
             </div>
           </div>
-        )}
-
+          
+          {/* Measuring Tips Section */}
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-3">
+              Measuring Tips:
+            </h4>
+            <ul className="space-y-2 text-gray-700">
+              <li className="flex items-start">
+                <span className="mr-2">•</span>
+                <span>Measure your finger at the end of the day</span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-2">•</span>
+                <span>Consider the width of the band</span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-2">•</span>
+                <span>Account for seasonal finger size changes</span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-2">•</span>
+                <span>When in doubt, size up rather than down</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      {/* Footer Button */}
+      <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+        <button
+          onClick={() => setShowSizeGuide(false)}
+          className="w-full bg-[#9a8457] text-white py-3 rounded-lg hover:bg-[#8a7547] transition-colors font-medium text-base"
+        >
+          Got it
+        </button>
+      </div>
+    </div>
+  </div>
+)}
         {/* Share Modal */}
         {showShareModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
@@ -1175,6 +1182,124 @@ const ProductDetail = () => {
                     className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors"
                   >
                     Copy Link
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Drop a Hint Modal */}
+        {showDropHintModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+            <div className="bg-white rounded-xl max-w-md w-full p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">Query/Doubt</h3>
+                <button
+                  onClick={() => {
+                    setShowDropHintModal(false);
+                    setHintSize("");
+                    setHintMessage("");
+                  }}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="space-y-4">
+                <p className="text-sm text-gray-600">
+                  Tell us the query about the size or any other concern you have regarding this product. We will get back to you as soon as possible.
+                </p>
+                
+                {/* Product Preview */}
+                <div className="bg-gray-50 p-3 rounded-lg flex items-center space-x-3">
+                  <img 
+                    src={product.coverImage} 
+                    alt={product.name}
+                    className="w-16 h-16 object-cover rounded"
+                  />
+                  <div className="flex-1">
+                    <div className="font-medium text-sm text-gray-900">{product.name}</div>
+                    <div className="text-sm text-gray-600">
+                      {selectedCountry.flag} {symbol}{amount.toLocaleString()}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Size Input */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                    Preferred Size
+                  </label>
+                  <input
+                    type="text"
+                    value={hintSize}
+                    onChange={(e) => setHintSize(e.target.value)}
+                    placeholder="Enter size (e.g., 11, 12, or custom size)"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457]"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Not sure about size? Leave it blank or add a note below.
+                  </p>
+                </div>
+
+                {/* Message Input */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                    Additional Notes
+                  </label>
+                  <textarea
+                    value={hintMessage}
+                    onChange={(e) => setHintMessage(e.target.value)}
+                    placeholder="Add any special requests, concerns, or preferences..."
+                    rows={4}
+                    maxLength={300}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457] resize-none"
+                  />
+                  <div className="text-xs text-gray-500 mt-1 text-right">
+                    {hintMessage.length}/300 characters
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => {
+                      const hintText = `I'd love to receive this: ${product.name}\n${window.location.href}${hintSize ? `\nPreferred Size: ${hintSize}` : ""}${hintMessage ? `\nNotes: ${hintMessage}` : ""}`;
+                      
+                      if (navigator.share) {
+                        navigator.share({
+                          title: `Hint: ${product.name}`,
+                          text: hintText,
+                        }).catch(() => {
+                          navigator.clipboard.writeText(hintText);
+                          alert("Hint copied to clipboard!");
+                        });
+                      } else {
+                        navigator.clipboard.writeText(hintText);
+                        alert("Hint copied to clipboard! Share it with someone special.");
+                      }
+                      
+                      setShowDropHintModal(false);
+                      setHintSize("");
+                      setHintMessage("");
+                    }}
+                    className="flex-1 bg-[#9a8457] text-white py-3 px-4 rounded-lg hover:bg-[#8a7547] transition-colors font-medium"
+                  >
+                    Share Hint
+                  </button>
+                  <button
+                    onClick={() => {
+                      const hintText = `Product: ${product.name}\nLink: ${window.location.href}${hintSize ? `\nSize: ${hintSize}` : ""}${hintMessage ? `\nNotes: ${hintMessage}` : ""}`;
+                      navigator.clipboard.writeText(hintText);
+                      alert("Hint details copied to clipboard!");
+                      setShowDropHintModal(false);
+                      setHintSize("");
+                      setHintMessage("");
+                    }}
+                    className="flex-1 bg-gray-600 text-white py-3 px-4 rounded-lg hover:bg-gray-700 transition-colors font-medium"
+                  >
+                    Copy Details
                   </button>
                 </div>
               </div>
