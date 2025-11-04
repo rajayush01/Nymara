@@ -1,17 +1,17 @@
 import React, { createContext, useContext, useState } from "react";
 
 const countries = [
+  { code: "IN", name: "India", flag: "🇮🇳", currency: "INR" },
   { code: "US", name: "United States", flag: "🇺🇸", currency: "USD" },
   { code: "GB", name: "United Kingdom", flag: "🇬🇧", currency: "GBP" },
   { code: "CA", name: "Canada", flag: "🇨🇦", currency: "CAD" },
+  { code: "EU", name: "European Union", flag: "🇪🇺", currency: "EUR" },
+  { code: "AE", name: "United Arab Emirates", flag: "🇦🇪", currency: "AED" },
   { code: "AU", name: "Australia", flag: "🇦🇺", currency: "AUD" },
-  { code: "DE", name: "Germany", flag: "🇩🇪", currency: "EUR" },
-  { code: "FR", name: "France", flag: "🇫🇷", currency: "EUR" },
-  { code: "ES", name: "Spain", flag: "🇪🇸", currency: "EUR" },
-  { code: "IT", name: "Italy", flag: "🇮🇹", currency: "EUR" },
+  { code: "SG", name: "Singapore", flag: "🇸🇬", currency: "SGD" },
   { code: "JP", name: "Japan", flag: "🇯🇵", currency: "JPY" },
-  { code: "IN", name: "India", flag: "🇮🇳", currency: "INR" }
 ];
+
 
 type Country = typeof countries[number];
 

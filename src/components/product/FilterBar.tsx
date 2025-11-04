@@ -25,7 +25,6 @@ const FilterBar: React.FC<FilterBarProps> = ({
   activeFilters,
   setActiveFilters,
   filterOptions,
-  productCount
 }) => {
   const activeFilterCount: number = Object.values(activeFilters).reduce(
   (count: number, filterArray: any) => {

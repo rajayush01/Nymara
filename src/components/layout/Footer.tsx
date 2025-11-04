@@ -1,16 +1,17 @@
 import { Phone, Mail, Clock, Shield, Award, Heart } from 'lucide-react';
+import logo from '../../assets/logo_main1.png';
 
 export default function Footer() {
   return (
     <footer className="bg-gradient-to-b from-gray-900 to-black text-gray-300">
       {/* Main Footer Content */}
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="max-w-7xl mx-auto py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           
           {/* Company Information */}
-          <div className="lg:col-span-1 space-y-4">
-            <h3 className="text-xl font-bold text-white mb-4">
-              Nymara Jewels
+          <div className="lg:col-span-1 space-y-4 -ml-10">
+            <h3 className="text-xl font-bold mb-4">
+              <img src={logo} alt="" className='w-20 bg-white'/>
             </h3>
             <p className="text-gray-400 text-sm leading-relaxed">
               Redefining luxury with lab-grown diamonds and ethical gemstones. 
@@ -27,7 +28,7 @@ export default function Footer() {
           </div>
 
           {/* About Section */}
-          <div className="space-y-4">
+          <div className="space-y-4 ml-4">
             <h4 className="text-lg font-semibold text-white mb-4">About</h4>
             <div className="space-y-2 ">
               <a href="#our-story" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">

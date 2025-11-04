@@ -489,11 +489,11 @@ export const ImageFanDynamic = () => {
 									</div> */}
 
 									{/* Description */}
-									<p
+									{/* <p
 										className={`text-gray-600 leading-relaxed mb-2 md:-mb-2 md:text-base line-clamp-2 ${isMobile ? 'text-xs' : 'text-sm'}`}
 									>
 										{truncateWords(product.description, isMobile ? 8 : 10)}
-									</p>
+									</p> */}
 
 									{/* Bottom Row */}
 									<div className="flex justify-between items-center -mb-2 md:mb-2">

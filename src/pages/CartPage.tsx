@@ -231,6 +231,17 @@
               </div>
             );
           })()}
+
+          {/* 💰 Making Charges Display */}
+{item.makingChargesByCountry?.[selectedCountry.currency] && (
+  <div className="text-xs sm:text-sm text-gray-600 mt-1">
+    <span className="font-medium">Making Charges:</span>{" "}
+    {selectedCountry.flag}{" "}
+    {item.makingChargesByCountry[selectedCountry.currency].symbol}
+    {item.makingChargesByCountry[selectedCountry.currency].amount.toLocaleString()}
+  </div>
+)}
+
         </div>
         <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto space-x-4 sm:space-x-3">
           <div className="flex items-center space-x-3">
@@ -278,10 +289,15 @@
           symbol: priceObj?.symbol ?? "₹",
         };
       };
-      const subtotal = cart.reduce((sum, item) => {
-        const { amount } = getCurrencyData(item);
-        return sum + amount * item.quantity;
-      }, 0);
+     const subtotal = cart.reduce((sum, item) => {
+  const { amount } = getCurrencyData(item);
+  const makingCharge =
+    item.makingChargesByCountry?.[selectedCountry.currency]?.amount ||
+    item.makingCharges ||
+    0;
+  return sum + (amount + makingCharge) * item.quantity;
+}, 0);
+
       const originalSubtotal = cart.reduce((sum, item) => {
         const currency = selectedCountry.currency;
 const origAmount = item.originalPrice ?? item.prices?.[currency]?.amount ?? item.price ?? 0;

@@ -63,6 +63,9 @@ const CraftMyVision = () => {
           
           {/* LEFT - Image with footer title */}
           <div className="flex flex-col justify-center items-center order-2 lg:order-1 text-center">
+            <h2 className="text-xl md:text-2xl text-gray-800 font-semibold cinzel tracking-wide mt-6">
+              Craft My Vision
+            </h2>
             <img
               src={ring}
               alt="Craft My Vision"
@@ -72,9 +75,6 @@ const CraftMyVision = () => {
                 backgroundColor: "transparent",
               }}
             />
-            <h2 className="text-xl md:text-2xl text-gray-800 font-semibold cinzel tracking-wide mt-6">
-              Craft My Vision
-            </h2>
           </div>
 
           {/* RIGHT - Steps + Button */}

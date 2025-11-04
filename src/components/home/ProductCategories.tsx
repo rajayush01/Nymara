@@ -238,7 +238,7 @@ const ProductCategories = () => {
         </div>
 
         <div className="text-center">
-  <div className="inline-flex flex-col md:flex-row md:items-center md:justify-center gap-8 md:gap-12 bg-white/70 backdrop-blur-sm rounded-3xl p-8 md:p-10 shadow-lg border border-white/50 max-w-5xl mx-auto">
+  <div className="inline-flex flex-col md:flex-row md:items-start md:justify-center gap-8 md:gap-12 bg-white/70 backdrop-blur-sm rounded-3xl p-8 md:p-10 shadow-lg border border-white/50 max-w-5xl mx-auto">
     {[
       {
         icon: <Shield className="w-6 h-6" />,
@@ -258,21 +258,20 @@ const ProductCategories = () => {
     ].map((item, index) => (
       <div
         key={index}
-        className="flex flex-col items-center justify-center text-center space-y-3 group"
+        className="flex flex-col items-center text-center space-y-3 group w-48"
       >
         <div
-          className={`p-4 bg-gradient-to-r ${item.color} rounded-2xl text-white shadow-md group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}
+          className={`p-4 bg-gradient-to-r ${item.color} rounded-2xl text-white shadow-md group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 flex items-center justify-center`}
         >
           {item.icon}
         </div>
-        <span className="text-gray-800 font-medium text-base group-hover:text-gray-600 transition-colors duration-300 max-w-[180px]">
+        <span className="text-gray-800 font-medium text-base group-hover:text-gray-600 transition-colors duration-300">
           {item.text}
         </span>
       </div>
     ))}
   </div>
 </div>
-
       </div>
 
       <style>{`

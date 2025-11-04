@@ -24,7 +24,12 @@ import {
   Share2,
   Check,
 } from "lucide-react";
-import { useProducts, useCart, useWishlist, Product } from "@/contexts/AppContext";
+import {
+  useProducts,
+  useCart,
+  useWishlist,
+  Product,
+} from "@/contexts/AppContext";
 import RelatedProducts from "@/components/product/RelatedProducts";
 import { useTracking } from "@/contexts/TrackingContext";
 
@@ -57,14 +62,11 @@ const isLightHex = (hex: string) => {
   return lum > 200; // threshold: >200 => light background
 };
 
-
-
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const productId = parseInt(id || "0");
   const { selectedCountry } = useCurrency();
-
 
   const { getProductById, products } = useProducts();
   const { addToCart } = useCart();
@@ -73,37 +75,38 @@ const ProductDetail = () => {
 
   const [showVideoModal, setShowVideoModal] = useState(false);
 
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
- const [product, setProduct] = useState<Product | null>(null);
-const [loading, setLoading] = useState(true);
-const [error, setError] = useState("");
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        console.log(
+          "🔄 Fetching product with currency:",
+          selectedCountry.currency
+        );
 
-useEffect(() => {
-  const fetchProduct = async () => {
-    try {
-      setLoading(true);
-      console.log("🔄 Fetching product with currency:", selectedCountry.currency);
+        const res = await axios.get(
+          `${VITE_API_URL}/api/user/ornaments/${id}?currency=${selectedCountry.currency}`
+        );
 
-      const res = await axios.get(
-        `${VITE_API_URL}/api/user/ornaments/${id}?currency=${selectedCountry.currency}`
-      );
+        console.log("📦 API Response:", res.data);
 
-      console.log("📦 API Response:", res.data);
-
-      if (res.data?.ornament) {
-        setProduct(res.data.ornament);
+        if (res.data?.ornament) {
+          setProduct(res.data.ornament);
+        }
+      } catch (err: any) {
+        console.error("❌ Fetch error:", err);
+        setError(err.response?.data?.message || "Failed to load product");
+      } finally {
+        setLoading(false);
       }
-    } catch (err: any) {
-      console.error("❌ Fetch error:", err);
-      setError(err.response?.data?.message || "Failed to load product");
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  if (id) fetchProduct();
-}, [id, selectedCountry.currency]);
-
+    if (id) fetchProduct();
+  }, [id, selectedCountry.currency]);
 
   const [selectedMetal, setSelectedMetal] = useState("18K");
   const [showSizeGuide, setShowSizeGuide] = useState(false);
@@ -117,16 +120,24 @@ useEffect(() => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
 
+  const handleToggleEngravingForm = () => {
+    setShowEngravingForm((prev) => !prev);
+  };
+
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [productId]);
 
   useEffect(() => {
-  if (product && typeof product.size === "string" && STANDARD_SIZES.includes(product.size)) {
-    setSelectedSize(product.size);
-  }
-}, [product]);
+    if (
+      product &&
+      typeof product.size === "string" &&
+      STANDARD_SIZES.includes(product.size)
+    ) {
+      setSelectedSize(product.size);
+    }
+  }, [product]);
 
   if (!product) {
     return (
@@ -154,73 +165,83 @@ useEffect(() => {
   }
 
   // Generate multiple images for the product (in real app, this would come from product data)
-  const productImages = [
-  product.coverImage,
-  ...(product.images || []),
-].filter(Boolean); // remove undefined/null
+  const productImages = [product.coverImage, ...(product.images || [])].filter(
+    Boolean
+  ); // remove undefined/null
 
+  {
+    /* Metal Variants */
+  }
+  {
+    product.variantLinks && Object.keys(product.variantLinks).length > 0 && (
+      <div>
+        <label className="block text-sm font-medium text-gray-900 mb-3">
+          Metal: {product.metalType || "Select"}
+        </label>
+        <div className="grid grid-cols-2 gap-3">
+          {Object.entries(product.variantLinks).map(([metal, variantId]) => {
+            const isActive = product.metalType
+              ?.toLowerCase()
+              .includes(metal.toLowerCase());
 
-  {/* Metal Variants */}
-{product.variantLinks && Object.keys(product.variantLinks).length > 0 && (
-  <div>
-    <label className="block text-sm font-medium text-gray-900 mb-3">
-      Metal: {product.metalType || "Select"}
-    </label>
-    <div className="grid grid-cols-2 gap-3">
-      {Object.entries(product.variantLinks).map(([metal, variantId]) => {
-        const isActive = product.metalType?.toLowerCase().includes(metal.toLowerCase());
-        
-        let color = "#d1d5db";
-        if (metal.toLowerCase().includes("yellow")) color = "#FFD700";
-        else if (metal.toLowerCase().includes("white")) color = "#E5E4E2";
-        else if (metal.toLowerCase().includes("rose")) color = "#B76E79";
-        else if (metal.toLowerCase().includes("silver")) color = "#C0C0C0";
-        else if (metal.toLowerCase().includes("platinum")) color = "#E5E4E2";
+            let color = "#d1d5db";
+            if (metal.toLowerCase().includes("yellow")) color = "#FFD700";
+            else if (metal.toLowerCase().includes("white")) color = "#E5E4E2";
+            else if (metal.toLowerCase().includes("rose")) color = "#B76E79";
+            else if (metal.toLowerCase().includes("silver")) color = "#C0C0C0";
+            else if (metal.toLowerCase().includes("platinum"))
+              color = "#E5E4E2";
 
-        return (
-          <button
-            key={metal}
-            onClick={(e) => {
-              e.preventDefault();
-              window.open(`/product/${variantId}`, "_blank");
-            }}
-            className={`p-3 rounded-lg border-2 font-medium transition-all text-left ${
-              isActive
-                ? "border-[#9a8457] bg-[#9a8457]/5 text-[#9a8457]"
-                : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
-            }`}
-          >
-            <div className="flex justify-between items-center">
-              <span className="text-sm">{metal}</span>
-              <div
-                className="w-6 h-6 rounded-full border"
-                style={{ backgroundColor: color }}
-              />
-            </div>
-          </button>
-        );
-      })}
-    </div>
-  </div>
-)}
-
-
+            return (
+              <button
+                key={metal}
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.open(`/product/${variantId}`, "_blank");
+                }}
+                className={`p-3 rounded-lg border-2 font-medium transition-all text-left ${
+                  isActive
+                    ? "border-[#9a8457] bg-[#9a8457]/5 text-[#9a8457]"
+                    : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
+                }`}
+              >
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">{metal}</span>
+                  <div
+                    className="w-6 h-6 rounded-full border"
+                    style={{ backgroundColor: color }}
+                  />
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 
   // Standard customer-selectable sizes
-// Standard customer-selectable sizes
-const STANDARD_SIZES = [
-  "4","4.5","5","5.5","6","6.5","7","7.5","8","8.5","9","9.5","10"
-];
+  // Standard customer-selectable sizes
+  const STANDARD_SIZES = [
+    "4",
+    "4.5",
+    "5",
+    "5.5",
+    "6",
+    "6.5",
+    "7",
+    "7.5",
+    "8",
+    "8.5",
+    "9",
+    "9.5",
+    "10",
+  ];
 
+  // When product loads, preselect its size if valid
 
-
-// When product loads, preselect its size if valid
-
-
-// Always use standard sizes for customers
-const sizeOptions = STANDARD_SIZES;
-
-
+  // Always use standard sizes for customers
+  const sizeOptions = STANDARD_SIZES;
 
   const features = [
     {
@@ -261,52 +282,49 @@ const sizeOptions = STANDARD_SIZES;
     },
   ];
 
- type PriceResult = { amount: number; symbol: string };
+  type PriceResult = { amount: number; symbol: string };
 
-const calculatePrice = (): { amount: number; symbol: string } => {
-  const currency = selectedCountry.currency;
+  const calculatePrice = (): { amount: number; symbol: string } => {
+    const currency = selectedCountry.currency;
 
-  console.log("💱 calculatePrice called with currency:", currency);
+    console.log("💱 calculatePrice called with currency:", currency);
 
-  if (product?.prices && product.prices[currency]) {
-    const { amount, symbol } = product.prices[currency];
-    console.log("✅ Found predefined price:", amount, symbol);
-    return { amount, symbol };
-  }
+    if (product?.prices && product.prices[currency]) {
+      const { amount, symbol } = product.prices[currency];
+      console.log("✅ Found predefined price:", amount, symbol);
+      return { amount, symbol };
+    }
 
-  console.log("⚠️ Falling back to INR price:", product?.price);
-  return { amount: product?.price || 0, symbol: "₹" };
-};
-
+    console.log("⚠️ Falling back to INR price:", product?.price);
+    return { amount: product?.price || 0, symbol: "₹" };
+  };
 
   const handleAddToCart = () => {
-  // Require customer to pick a size
-  if (!selectedSize) {
-    alert("Please select a size before adding to cart.");
-    return;
-  }
+    // Require customer to pick a size
+    if (!selectedSize) {
+      alert("Please select a size before adding to cart.");
+      return;
+    }
 
-  addToCart(product, quantity, {
-    selectedMetal,
-    selectedSize,  // always the customer’s chosen size
-    engraving: engravingText,
-  });
+    addToCart(product, quantity, {
+      selectedMetal,
+      selectedSize, // always the customer’s chosen size
+      engraving: engravingText,
+    });
 
-  logAddToCart(product._id, {
-    name: product.name,
-    category: product.category,
-    price: product.price,
-    selectedMetal,
-    selectedSize,
-    quantity,
-    page: window.location.pathname,
-  });
+    logAddToCart(product._id, {
+      name: product.name,
+      category: product.category,
+      price: product.price,
+      selectedMetal,
+      selectedSize,
+      quantity,
+      page: window.location.pathname,
+    });
 
-
-  setAddedToCart(true);
-  setTimeout(() => setAddedToCart(false), 3000);
-};
-
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 3000);
+  };
 
   const handleWishlistToggle = () => {
     if (isInWishlist(product._id)) {
@@ -334,31 +352,33 @@ const calculatePrice = (): { amount: number; symbol: string } => {
   };
 
   const itemDetails = [
-  { 
-    label: "SKU", 
-    value: product.sku || `JW${product._id.toString().slice(-5).toUpperCase()}` 
-  },
-  { 
-    label: "Category", 
-    value: Array.isArray(product.category) 
-      ? product.category.join(", ") 
-      : (product.category || "Jewelry") 
-  },
-  { label: "Style", value: product.style || "—" },
-  { label: "Metal Type", value: product.metalType || "—" },
-  { label: "Stone Type", value: product.stoneType || "—" },
-  { label: "Color", value: product.color || "—" },
-  {
-    label: "Rating",
-    value: (product.reviews ?? 0) > 0  // ✅ Safe null check
-      ? `${product.rating ?? 0}/5 (${product.reviews} reviews)` 
-      : "No reviews yet",
-  },
-  {
-    label: "Availability",
-    value: (product.stock ?? 0) > 0 ? "In Stock" : "Out of Stock",  // ✅ Safe null check
-  },
-];
+    {
+      label: "SKU",
+      value:
+        product.sku || `JW${product._id.toString().slice(-5).toUpperCase()}`,
+    },
+    {
+      label: "Category",
+      value: Array.isArray(product.category)
+        ? product.category.join(", ")
+        : product.category || "Jewelry",
+    },
+    { label: "Style", value: product.style || "—" },
+    { label: "Metal Type", value: product.metalType || "—" },
+    { label: "Stone Type", value: product.stoneType || "—" },
+    { label: "Color", value: product.color || "—" },
+    {
+      label: "Rating",
+      value:
+        (product.reviews ?? 0) > 0 // ✅ Safe null check
+          ? `${product.rating ?? 0}/5 (${product.reviews} reviews)`
+          : "No reviews yet",
+    },
+    {
+      label: "Availability",
+      value: (product.stock ?? 0) > 0 ? "In Stock" : "Out of Stock", // ✅ Safe null check
+    },
+  ];
 
   // Get related products
   const relatedProducts = products
@@ -372,7 +392,11 @@ const calculatePrice = (): { amount: number; symbol: string } => {
     .slice(0, 4);
 
   const { amount, symbol } = calculatePrice();
-  console.log("🖼 Rendering product price:", { amount, symbol, currency: selectedCountry.currency });
+  console.log("🖼 Rendering product price:", {
+    amount,
+    symbol,
+    currency: selectedCountry.currency,
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -396,16 +420,18 @@ const calculatePrice = (): { amount: number; symbol: string } => {
             <>
               <span>/</span>
               <button
-  onClick={() => {
-    const categoryStr = Array.isArray(product.category) 
-      ? product.category[0] 
-      : product.category;
-    navigate(`/products/${categoryStr?.toLowerCase() || ''}`);
-  }}
-  className="hover:text-gray-900 transition-colors"
->
-  {Array.isArray(product.category) ? product.category[0] : product.category}
-</button>
+                onClick={() => {
+                  const categoryStr = Array.isArray(product.category)
+                    ? product.category[0]
+                    : product.category;
+                  navigate(`/products/${categoryStr?.toLowerCase() || ""}`);
+                }}
+                className="hover:text-gray-900 transition-colors"
+              >
+                {Array.isArray(product.category)
+                  ? product.category[0]
+                  : product.category}
+              </button>
             </>
           )}
           <span>/</span>
@@ -453,10 +479,10 @@ const calculatePrice = (): { amount: number; symbol: string } => {
                   </span>
                 )}
                 {(product.discount ?? 0) > 0 && (
-  <span className="px-3 py-1 bg-red-500 text-white text-xs font-medium rounded-full">
-    -{product.discount}% OFF
-  </span>
-)}
+                  <span className="px-3 py-1 bg-red-500 text-white text-xs font-medium rounded-full">
+                    -{product.discount}% OFF
+                  </span>
+                )}
               </div>
             </div>
 
@@ -484,18 +510,18 @@ const calculatePrice = (): { amount: number; symbol: string } => {
             {/* Action buttons */}
             <div className="grid grid-cols-2 gap-4">
               <button
-  onClick={() => {
-    if (product.videoUrl) {
-      setShowVideoModal(true);
-    } else {
-      alert("No 360° view available for this product.");
-    }
-  }}
-  className="w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2"
->
-  <Eye className="w-4 h-4" />
-  <span>360° View</span>
-</button>
+                onClick={() => {
+                  if (product.videoUrl) {
+                    setShowVideoModal(true);
+                  } else {
+                    alert("No 360° view available for this product.");
+                  }
+                }}
+                className="w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2"
+              >
+                <Eye className="w-4 h-4" />
+                <span>360° View</span>
+              </button>
               <button
                 onClick={() => setShowShareModal(true)}
                 className="w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2"
@@ -517,46 +543,66 @@ const calculatePrice = (): { amount: number; symbol: string } => {
                 SKU: {product.sku}
               </div>
 
-             {/* Price */}
+              {/* Price */}
 
-             <div className="flex items-center space-x-4 mb-4">
-  <div className="flex items-center space-x-3">
-    {/* Display current price */}
-    <span className="text-3xl font-bold text-gray-900">
-      {selectedCountry.flag} {symbol}{amount.toLocaleString()}
-    </span>
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="flex items-center space-x-3">
+                  {/* Display current price */}
+                  <span className="text-3xl font-bold text-gray-900">
+                    {selectedCountry.flag} {symbol}{amount.toLocaleString()}
+                  </span>
 
-    {/* Show original price + discount ONLY for INR */}
-    {selectedCountry.currency === "INR" &&
-      (product.originalPrice ?? 0) > (product.price ?? 0) && (
-        <span className="text-xl text-gray-500 line-through">
-          {selectedCountry.flag} ₹{(product.originalPrice ?? 0).toLocaleString()}
-        </span>
-      )}
+                  {/* Show original price + discount ONLY for INR */}
+                  {selectedCountry.currency === "INR" &&
+                    (product.originalPrice ?? 0) > (product.price ?? 0) && (
+                      <span className="text-xl text-gray-500 line-through">
+                        {selectedCountry.flag} ₹
+                        {(product.originalPrice ?? 0).toLocaleString()}
+                      </span>
+                    )}
 
-    {selectedCountry.currency === "INR" &&
-      (product.discount ?? 0) > 0 && (
-        <span className="text-lg font-medium text-green-600">
-          Save {product.discount ?? 0}%
-        </span>
-      )}
-  </div>
-</div>
+                  {/* 💰 Making Charges by Country */}
+                  {product.makingChargesByCountry &&
+                    product.makingChargesByCountry[
+                      selectedCountry.currency
+                    ] && (
+                      <div className="text-sm text-gray-700">
+                        <span className="font-medium">Making Charges:</span>{" "}
+                        {selectedCountry.flag}{" "}
+                        {
+                          product.makingChargesByCountry[
+                            selectedCountry.currency
+                          ].symbol
+                        }
+                        {product.makingChargesByCountry[
+                          selectedCountry.currency
+                        ].amount.toLocaleString()}
+                      </div>
+                    )}
+
+                  {selectedCountry.currency === "INR" &&
+                    (product.discount ?? 0) > 0 && (
+                      <span className="text-lg font-medium text-green-600">
+                        Save {product.discount ?? 0}%
+                      </span>
+                    )}
+                </div>
+              </div>
 
               {/* Rating */}
               <div className="flex items-center space-x-2 mb-4">
                 <div className="flex items-center">
-  {[...Array(5)].map((_, i) => (
-    <Star
-      key={i}
-      className={`w-4 h-4 ${
-        i < Math.floor(product.rating ?? 0)  // ✅ Safe null check
-          ? "text-yellow-400 fill-current"
-          : "text-gray-300"
-      }`}
-    />
-  ))}
-</div>
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`w-4 h-4 ${
+                        i < Math.floor(product.rating ?? 0) // ✅ Safe null check
+                          ? "text-yellow-400 fill-current"
+                          : "text-gray-300"
+                      }`}
+                    />
+                  ))}
+                </div>
                 <span className="text-sm text-gray-600">
                   {product.rating} ({product.reviews} Reviews)
                 </span>
@@ -592,38 +638,39 @@ const calculatePrice = (): { amount: number; symbol: string } => {
               </p>
             </div>
 
-            {/* Metal Selection */}
             {/* Metal Variants */}
-{product.variantLinks && (
-  <div>
-    <label className="block text-sm font-medium text-gray-900 mb-3">
-      Metal: {product.metalType || "Select"}
-    </label>
-    <div className="grid grid-cols-2 gap-3">
-      {Object.entries(product.variantLinks).map(([metal, variantId]) => (
-        <button
-          key={metal}
-          onClick={(e) => {
-            e.preventDefault();
-            // ✅ Open the variant in a new tab
-            window.open(`/product/${variantId}`, "_blank");
-          }}
-          className={`p-3 rounded-lg border-2 font-medium transition-all text-left ${
-            product.metalType?.toLowerCase().includes(metal.toLowerCase())
-              ? "border-[#9a8457] bg-[#9a8457]/5 text-[#9a8457]"
-              : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
-          }`}
-        >
-          <div className="flex justify-between items-center">
-            <span className="text-sm">{metal}</span>
-          </div>
-        </button>
-      ))}
-    </div>
-  </div>
-)}
-
-         
+            {product.variantLinks && (
+              <div>
+                <label className="block text-sm font-medium text-gray-900 mb-3">
+                  Metal: {product.metalType || "Select"}
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  {Object.entries(product.variantLinks).map(
+                    ([metal, variantId]) => (
+                      <button
+                        key={metal}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          // ✅ Open the variant in a new tab
+                          window.open(`/product/${variantId}`, "_blank");
+                        }}
+                        className={`p-3 rounded-lg border-2 font-medium transition-all text-left ${
+                          product.metalType
+                            ?.toLowerCase()
+                            .includes(metal.toLowerCase())
+                            ? "border-[#9a8457] bg-[#9a8457]/5 text-[#9a8457]"
+                            : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
+                        }`}
+                      >
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm">{metal}</span>
+                        </div>
+                      </button>
+                    )
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Size Selection */}
             {sizeOptions.length > 1 && (
@@ -640,7 +687,7 @@ const calculatePrice = (): { amount: number; symbol: string } => {
                     <span>Size Guide</span>
                   </button>
                 </div>
-                <div className="grid grid-cols-5 gap-2">
+                <div className="grid grid-cols-5 gap-2 mb-3">
                   {sizeOptions.map((size) => (
                     <button
                       key={size}
@@ -655,30 +702,43 @@ const calculatePrice = (): { amount: number; symbol: string } => {
                     </button>
                   ))}
                 </div>
+                <div>
+                  <label className="text-xs text-gray-600 mb-1 block">
+                    Or enter custom size:
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedSize}
+                    onChange={(e) => setSelectedSize(e.target.value)}
+                    placeholder="Enter size"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-transparent"
+                  />
+                </div>
               </div>
             )}
 
             {/* Add Engraving */}
             <div>
               <button
-                onClick={() => setShowEngravingForm(!showEngravingForm)}
+                onClick={handleToggleEngravingForm}
                 className="flex items-center space-x-2 text-[#9a8457] hover:text-[#8a7547] transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add Personal Engraving</span>
               </button>
+
               {showEngravingForm && (
                 <div className="mt-3 p-4 bg-gray-50 rounded-lg">
                   <input
                     type="text"
                     value={engravingText}
                     onChange={(e) => setEngravingText(e.target.value)}
-                    placeholder="Enter engraving text (max 20 characters)"
-                    maxLength={20}
+                    placeholder="Enter engraving text (max 10 characters)"
+                    maxLength={10}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457]"
                   />
                   <div className="text-xs text-gray-500 mt-1">
-                    {engravingText.length}/20 characters • Font: Script
+                    {engravingText.length}/10 characters
                   </div>
                 </div>
               )}
@@ -734,8 +794,7 @@ const calculatePrice = (): { amount: number; symbol: string } => {
                 <button
                   onClick={handleAddToCart}
                   disabled={
-                    !product.stock ||
-                    (!selectedSize && sizeOptions.length > 1)
+                    !product.stock || (!selectedSize && sizeOptions.length > 1)
                   }
                   className="flex-1 bg-[#9a8457] text-white py-4 px-6 rounded-lg font-medium hover:bg-[#8a7547] disabled:bg-gray-400 disabled:cursor-not-allowed transition-all flex items-center justify-center space-x-2 relative overflow-hidden"
                 >
@@ -804,81 +863,177 @@ const calculatePrice = (): { amount: number; symbol: string } => {
             </button>
 
             {expandedDetails && (
-              <div className="px-8 pb-8 bg-gradient-to-b from-white to-gray-50">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b-2 border-[#9a8457]">
+              <div className="px-6 md:px-8 py-8 bg-gradient-to-b from-gray-50 to-white">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-7xl mx-auto">
+                  {/* ✅ SPECIFICATIONS */}
+                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-6 pb-3 border-b-2 border-gray-900">
                       SPECIFICATIONS
                     </h3>
-                    <div className="space-y-3">
+                    <div className="space-y-1">
                       {itemDetails.map((detail, index) => (
                         <div
                           key={index}
-                          className="flex justify-between py-2 border-b border-gray-100 hover:bg-gray-50 px-2 rounded transition-colors"
+                          className="flex justify-between py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50 px-2 -mx-2 rounded transition-colors"
                         >
-                          <span className="text-gray-600">{detail.label}</span>
-                          <span className="font-medium text-[#9a8457]">
+                          <span className="text-gray-600 text-sm font-medium">
+                            {detail.label}
+                          </span>
+                          <span className="font-semibold text-gray-900 text-sm">
                             {detail.value}
                           </span>
                         </div>
                       ))}
                     </div>
+
+                    {/* FIX: Show DIAMOND DETAILS if available */}
+                    {product.diamondDetails && (
+                      <div className="mt-6 pt-6 border-t border-gray-200">
+                        <h4 className="text-lg font-bold text-gray-900 mb-4">
+                          DIAMOND DETAILS
+                        </h4>
+                        <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-lg border border-gray-200">
+                          {Object.entries(product.diamondDetails).map(
+                            ([key, value]) => (
+                              <div
+                                key={key}
+                                className="flex justify-between py-2 border-b border-gray-200 last:border-0"
+                              >
+                                <span className="text-gray-600 text-sm font-medium capitalize">
+                                  {key.replace(/([A-Z])/g, " $1")}
+                                </span>
+                                <span className="font-semibold text-gray-900 text-sm">
+                                  {String(value)}
+                                </span>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ✅ Optional: Include side diamond details if present */}
+                    {product.sideDiamondDetails && (
+                      <div className="mt-6 pt-6 border-t border-gray-200">
+                        <h4 className="text-lg font-bold text-gray-900 mb-4">
+                          SIDE DIAMOND DETAILS
+                        </h4>
+                        <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-lg border border-gray-200">
+                          {Object.entries(product.sideDiamondDetails).map(
+                            ([key, value]) => (
+                              <div
+                                key={key}
+                                className="flex justify-between py-2 border-b border-gray-200 last:border-0"
+                              >
+                                <span className="text-gray-600 text-sm font-medium capitalize">
+                                  {key.replace(/([A-Z])/g, " $1")}
+                                </span>
+                                <span className="font-semibold text-gray-900 text-sm">
+                                  {String(value)}
+                                </span>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
+                  {/* ✅ CARE INSTRUCTIONS + WARRANTY */}
                   <div className="space-y-6">
-                    <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b-2 border-[#9a8457]">
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                      <h3 className="text-xl font-bold text-gray-900 mb-6 pb-3 border-b-2 border-gray-900">
                         CARE INSTRUCTIONS
                       </h3>
-                      <div className="space-y-2 text-sm text-gray-700">
-                        <p className="flex items-start">
-                          <span className="text-[#9a8457] font-bold mr-2">•</span>
-                          <span>Store in provided jewelry box or soft pouch</span>
-                        </p>
-                        <p className="flex items-start">
-                          <span className="text-[#9a8457] font-bold mr-2">•</span>
-                          <span>Clean with soft, lint-free cloth after each wear</span>
-                        </p>
-                        <p className="flex items-start">
-                          <span className="text-[#9a8457] font-bold mr-2">•</span>
-                          <span>Avoid contact with perfumes, lotions, and chemicals</span>
-                        </p>
-                        <p className="flex items-start">
-                          <span className="text-[#9a8457] font-bold mr-2">•</span>
-                          <span>Remove before swimming, exercising, or sleeping</span>
-                        </p>
-                        <p className="flex items-start">
-                          <span className="text-[#9a8457] font-bold mr-2">•</span>
-                          <span>Have professionally cleaned and inspected annually</span>
-                        </p>
-                        <p className="flex items-start">
-                          <span className="text-[#9a8457] font-bold mr-2">•</span>
-                          <span>Keep away from extreme temperatures</span>
-                        </p>
+                      <div className="space-y-3">
+                        <div className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                          <span className="text-gray-900 font-bold mt-0.5">
+                            •
+                          </span>
+                          <p className="text-sm text-gray-700 leading-relaxed">
+                            Store in provided jewelry box or soft pouch
+                          </p>
+                        </div>
+                        <div className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                          <span className="text-gray-900 font-bold mt-0.5">
+                            •
+                          </span>
+                          <p className="text-sm text-gray-700 leading-relaxed">
+                            Clean with soft, lint-free cloth after each wear
+                          </p>
+                        </div>
+                        <div className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                          <span className="text-gray-900 font-bold mt-0.5">
+                            •
+                          </span>
+                          <p className="text-sm text-gray-700 leading-relaxed">
+                            Avoid contact with perfumes, lotions, and chemicals
+                          </p>
+                        </div>
+                        <div className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                          <span className="text-gray-900 font-bold mt-0.5">
+                            •
+                          </span>
+                          <p className="text-sm text-gray-700 leading-relaxed">
+                            Remove before swimming, exercising, or sleeping
+                          </p>
+                        </div>
+                        <div className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                          <span className="text-gray-900 font-bold mt-0.5">
+                            •
+                          </span>
+                          <p className="text-sm text-gray-700 leading-relaxed">
+                            Have professionally cleaned and inspected annually
+                          </p>
+                        </div>
+                        <div className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                          <span className="text-gray-900 font-bold mt-0.5">
+                            •
+                          </span>
+                          <p className="text-sm text-gray-700 leading-relaxed">
+                            Keep away from extreme temperatures
+                          </p>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-[#9a8457] to-[#b39968] p-6 rounded-lg shadow-md text-white">
-                      <h3 className="text-lg font-semibold mb-4 pb-3 border-b-2 border-white/30">
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                      <h3 className="text-xl font-bold text-gray-900 mb-6 pb-3 border-b-2 border-gray-900">
                         WARRANTY & RETURNS
                       </h3>
-                      <div className="space-y-2 text-sm">
-                        <p className="flex items-start">
-                          <span className="font-bold mr-2">•</span>
-                          <span>Lifetime warranty against manufacturing defects</span>
-                        </p>
-                        <p className="flex items-start">
-                          <span className="font-bold mr-2">•</span>
-                          <span>30-day return policy for full refund</span>
-                        </p>
-                        <p className="flex items-start">
-                          <span className="font-bold mr-2">•</span>
-                          <span>Free resizing within 60 days of purchase</span>
-                        </p>
-                        <p className="flex items-start">
-                          <span className="font-bold mr-2">•</span>
-                          <span>Complimentary professional cleaning service</span>
-                        </p>
+                      <div className="space-y-3">
+                        <div className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                          <span className="text-gray-900 font-bold mt-0.5">
+                            •
+                          </span>
+                          <p className="text-sm text-gray-700 leading-relaxed">
+                            Lifetime warranty against manufacturing defects
+                          </p>
+                        </div>
+                        <div className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                          <span className="text-gray-900 font-bold mt-0.5">
+                            •
+                          </span>
+                          <p className="text-sm text-gray-700 leading-relaxed">
+                            30-day return policy for full refund
+                          </p>
+                        </div>
+                        <div className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                          <span className="text-gray-900 font-bold mt-0.5">
+                            •
+                          </span>
+                          <p className="text-sm text-gray-700 leading-relaxed">
+                            Free resizing within 60 days of purchase
+                          </p>
+                        </div>
+                        <div className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                          <span className="text-gray-900 font-bold mt-0.5">
+                            •
+                          </span>
+                          <p className="text-sm text-gray-700 leading-relaxed">
+                            Complimentary professional cleaning service
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -894,27 +1049,26 @@ const calculatePrice = (): { amount: number; symbol: string } => {
         )}
 
         {/* 🔹 Video Modal (360° View) */}
-{showVideoModal && product.videoUrl && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
-    <div className="relative bg-black rounded-xl max-w-4xl w-full shadow-2xl">
-      <button
-        onClick={() => setShowVideoModal(false)}
-        className="absolute top-3 right-3 text-white hover:text-gray-300 text-2xl"
-      >
-        ×
-      </button>
-      <video
-        src={product.videoUrl}
-        controls
-        autoPlay
-        loop
-        playsInline
-        className="w-full h-[70vh] object-contain rounded-lg"
-      />
-    </div>
-  </div>
-)}
-
+        {showVideoModal && product.videoUrl && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80">
+            <div className="relative bg-black rounded-xl max-w-4xl w-full shadow-2xl">
+              <button
+                onClick={() => setShowVideoModal(false)}
+                className="absolute top-3 right-3 text-white hover:text-gray-300 text-2xl"
+              >
+                ×
+              </button>
+              <video
+                src={product.videoUrl}
+                controls
+                autoPlay
+                loop
+                playsInline
+                className="w-full h-[70vh] object-contain rounded-lg"
+              />
+            </div>
+          </div>
+        )}
 
         {/* Size Guide Modal */}
         {showSizeGuide && (

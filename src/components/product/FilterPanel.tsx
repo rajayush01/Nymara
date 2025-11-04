@@ -7,6 +7,7 @@ interface ActiveFilters {
   stoneType: string[];
   style: string[];
   size: string[];
+    gender: string[]; 
   color: string[];
   category: string[];
   sortBy: string;
@@ -17,6 +18,7 @@ interface FilterOptions {
   stoneType: string[];
   style: string[];
   size: string[];
+    gender: string[]; 
   color: string[];
   category: string[];
   sortBy: Array<{
@@ -39,16 +41,17 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   filterOptions
 }) => {
   const clearAllFilters = () => {
-    setActiveFilters({
-      metalType: [],
-      stoneType: [],
-      style: [],
-      size: [],
-      color: [],
-      category: [],
-      sortBy: "best-seller"
-    });
-  };
+  setActiveFilters({
+    metalType: [],
+    stoneType: [],
+    style: [],
+    size: [],
+    color: [],
+    category: [],
+    gender: [],  
+    sortBy: "best-seller"
+  });
+};
 
   const toggleFilter = (category: keyof ActiveFilters, value: string) => {
     if (category === 'sortBy') return;
@@ -201,6 +204,39 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
               >
                 {size}
               </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h4 className="font-medium text-slate-800 mb-3">Gender</h4>
+          <div className="space-y-2">
+            {filterOptions.gender.map((genderOption) => (
+              <label
+                key={genderOption}
+                className="flex items-center cursor-pointer group"
+              >
+                <input
+                  type="checkbox"
+                  className="sr-only"
+                  checked={activeFilters.gender.includes(genderOption)}
+                  onChange={() => toggleFilter("gender", genderOption)}
+                />
+                <div
+                  className={`w-4 h-4 bg-white border-2 rounded mr-3 transition-colors relative ${
+                    activeFilters.gender.includes(genderOption)
+                      ? "border-[#9a8457]"
+                      : "border-slate-300 group-hover:border-[#9a8457]"
+                  }`}
+                >
+                  {activeFilters.gender.includes(genderOption) && (
+                    <div className="absolute inset-0.5 bg-[#9a8457] rounded-sm"></div>
+                  )}
+                </div>
+                <span className="text-sm text-slate-700 group-hover:text-[#9a8457] transition-colors">
+                  {genderOption}
+                </span>
+              </label>
             ))}
           </div>
         </div>

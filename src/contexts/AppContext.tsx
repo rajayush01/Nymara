@@ -22,6 +22,15 @@ sku?: string;
     };
   };
 
+  makingCharges?: number;
+  makingChargesByCountry?: {
+    [key: string]: {
+      amount: number;
+      currency: string;
+      symbol: string;
+    };
+  };
+
   // ✅ Product details
   type?: string;              // Ring, Chain, Bracelet etc.
   subCategory?: string[];
@@ -52,6 +61,9 @@ sku?: string;
   rating?: number;
   reviews?: number;
 
+   diamondDetails?: Record<string, string | number>;
+  sideDiamondDetails?: Record<string, string | number>;
+
   variantLinks?: {               // ✅ Added variant links for metal types
     [metalType: string]: string; // metal type -> product ID
   };
@@ -67,6 +79,15 @@ export interface CartItem extends Product {
   selectedSize?: string;
   selectedMetal?: string;
   engraving?: string;
+
+  makingCharges?: number;
+  makingChargesByCountry?: {
+    [key: string]: {
+      amount: number;
+      currency: string;
+      symbol: string;
+    };
+  };
 }
 
 export interface WishlistItem extends Product {
@@ -102,6 +123,7 @@ export interface AppState {
     color: string[];
     category: string[];
      subCategory: string[];
+          gender: string[]; 
     sortBy: string;
     priceRange?: [number, number];
     page: number;       // ✅ added
