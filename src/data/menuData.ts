@@ -187,7 +187,7 @@ export const menuItems: MenuSection = {
     },
     {
       name: "Franchise",
-      action: { type: "navigate", target: "/franchise" },
+      action: { type: "navigate", target: "/franchise-opportunity" },
     },
     {
       name: "Contact Us",
