@@ -350,7 +350,7 @@ function App() {
             },
             {
               enableHighAccuracy: true,
-              timeout: 10000,
+              timeout: 30000,
               maximumAge: 0
             }
           );
@@ -428,5 +428,6 @@ function App() {
     </AppProvider>
   );
 }
+
 
 export default App;
