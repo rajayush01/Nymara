@@ -289,19 +289,23 @@ const ProductDetail = () => {
   type PriceResult = { amount: number; symbol: string };
 
   const calculatePrice = (): { amount: number; symbol: string } => {
-    const currency = selectedCountry.currency;
+  const currency = selectedCountry.currency;
 
-    console.log("💱 calculatePrice called with currency:", currency);
+  if (product?.prices && product.prices[currency]) {
+    const { amount, symbol } = product.prices[currency];
+    return {
+      amount,
+      symbol: symbol || (currency === "INR" ? "₹" : "$"), // fallback
+    };
+  }
 
-    if (product?.prices && product.prices[currency]) {
-      const { amount, symbol } = product.prices[currency];
-      console.log("✅ Found predefined price:", amount, symbol);
-      return { amount, symbol };
-    }
-
-    console.log("⚠️ Falling back to INR price:", product?.price);
-    return { amount: product?.price || 0, symbol: "₹" };
+  // Fallback to INR if no price found
+  return {
+    amount: product?.price || 0,
+    symbol: currency === "INR" ? "₹" : "$",
   };
+};
+
 
   const handleAddToCart = () => {
     // Require customer to pick a size
@@ -553,36 +557,30 @@ const ProductDetail = () => {
                 <div className="flex items-center space-x-3">
                   {/* Display current price */}
                   <span className="text-3xl font-bold text-gray-900">
-                    {selectedCountry.flag} {symbol}{amount.toLocaleString()}
+                    {symbol}{amount.toLocaleString()}
+
                   </span>
 
                   {/* Show original price + discount ONLY for INR */}
                   {selectedCountry.currency === "INR" &&
-                    (product.originalPrice ?? 0) > (product.price ?? 0) && (
-                      <span className="text-xl text-gray-500 line-through">
-                        {selectedCountry.flag} ₹
-                        {(product.originalPrice ?? 0).toLocaleString()}
-                      </span>
-                    )}
+  (product.originalPrice ?? 0) > (product.price ?? 0) && (
+    <span className="text-xl text-gray-500 line-through">
+      ₹{(product.originalPrice ?? 0).toLocaleString()}
+    </span>
+  )}
 
                   {/* 💰 Making Charges by Country */}
                   {product.makingChargesByCountry &&
-                    product.makingChargesByCountry[
-                      selectedCountry.currency
-                    ] && (
-                      <div className="text-sm text-gray-700">
-                        <span className="font-medium">Making Charges:</span>{" "}
-                        {selectedCountry.flag}{" "}
-                        {
-                          product.makingChargesByCountry[
-                            selectedCountry.currency
-                          ].symbol
-                        }
-                        {product.makingChargesByCountry[
-                          selectedCountry.currency
-                        ].amount.toLocaleString()}
-                      </div>
-                    )}
+    product.makingChargesByCountry[selectedCountry.currency] && (
+      <div className="mt-2 text-sm text-gray-700">
+        <span className="font-medium">Making Charges:</span>{" "}
+        {
+          product.makingChargesByCountry[selectedCountry.currency].symbol ||
+          (selectedCountry.currency === "INR" ? "₹" : "$")
+        }
+        {product.makingChargesByCountry[selectedCountry.currency].amount.toLocaleString()}
+      </div>
+    )}
 
                   {selectedCountry.currency === "INR" &&
                     (product.discount ?? 0) > 0 && (
@@ -1221,7 +1219,8 @@ const ProductDetail = () => {
                   <div className="flex-1">
                     <div className="font-medium text-sm text-gray-900">{product.name}</div>
                     <div className="text-sm text-gray-600">
-                      {selectedCountry.flag} {symbol}{amount.toLocaleString()}
+                    {symbol}{amount.toLocaleString()}
+
                     </div>
                   </div>
                 </div>
@@ -1263,44 +1262,51 @@ const ProductDetail = () => {
 
                 {/* Action Buttons */}
                 <div className="flex space-x-3">
-                  <button
-                    onClick={() => {
-                      const hintText = `I'd love to receive this: ${product.name}\n${window.location.href}${hintSize ? `\nPreferred Size: ${hintSize}` : ""}${hintMessage ? `\nNotes: ${hintMessage}` : ""}`;
-                      
-                      if (navigator.share) {
-                        navigator.share({
-                          title: `Hint: ${product.name}`,
-                          text: hintText,
-                        }).catch(() => {
-                          navigator.clipboard.writeText(hintText);
-                          alert("Hint copied to clipboard!");
-                        });
-                      } else {
-                        navigator.clipboard.writeText(hintText);
-                        alert("Hint copied to clipboard! Share it with someone special.");
-                      }
-                      
-                      setShowDropHintModal(false);
-                      setHintSize("");
-                      setHintMessage("");
-                    }}
-                    className="flex-1 bg-[#9a8457] text-white py-3 px-4 rounded-lg hover:bg-[#8a7547] transition-colors font-medium"
-                  >
-                    Share Hint
-                  </button>
-                  <button
-                    onClick={() => {
-                      const hintText = `Product: ${product.name}\nLink: ${window.location.href}${hintSize ? `\nSize: ${hintSize}` : ""}${hintMessage ? `\nNotes: ${hintMessage}` : ""}`;
-                      navigator.clipboard.writeText(hintText);
-                      alert("Hint details copied to clipboard!");
-                      setShowDropHintModal(false);
-                      setHintSize("");
-                      setHintMessage("");
-                    }}
-                    className="flex-1 bg-gray-600 text-white py-3 px-4 rounded-lg hover:bg-gray-700 transition-colors font-medium"
-                  >
-                    Copy Details
-                  </button>
+                 {/* Action Buttons */}
+<div className="flex space-x-3">
+  <button
+    onClick={async () => {
+      try {
+        // Send query email via backend API
+        await axios.post(`${VITE_API_URL}/api/contact/query`, {
+          name: "", // optional — can later pull from logged-in user
+          email: "support@nymara.com", // or replace with user's email if logged in
+          size: hintSize,
+          message: hintMessage,
+          productId: product._id,
+          productName: product.name,
+          productUrl: window.location.href,
+        });
+
+        alert("✅ Your query has been sent successfully! We’ll get back to you soon.");
+        setShowDropHintModal(false);
+        setHintSize("");
+        setHintMessage("");
+      } catch (err) {
+        console.error("❌ Error sending query:", err);
+        alert("Failed to send query. Please try again later.");
+      }
+    }}
+    className="flex-1 bg-[#9a8457] text-white py-3 px-4 rounded-lg hover:bg-[#8a7547] transition-colors font-medium"
+  >
+    Send Query
+  </button>
+
+  <button
+    onClick={() => {
+      const hintText = `Product: ${product.name}\nLink: ${window.location.href}${hintSize ? `\nSize: ${hintSize}` : ""}${hintMessage ? `\nNotes: ${hintMessage}` : ""}`;
+      navigator.clipboard.writeText(hintText);
+      alert("Hint details copied to clipboard!");
+      setShowDropHintModal(false);
+      setHintSize("");
+      setHintMessage("");
+    }}
+    className="flex-1 bg-gray-600 text-white py-3 px-4 rounded-lg hover:bg-gray-700 transition-colors font-medium"
+  >
+    Copy Details
+  </button>
+</div>
+
                 </div>
               </div>
             </div>

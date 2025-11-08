@@ -160,12 +160,12 @@ const { amount, symbol } = getDisplayPrice();
         <div className="mt-auto">
           <div className="flex items-center space-x-2">
   <span className="text-xl font-semibold text-slate-800">
-    {selectedCountry.flag} {symbol}{amount.toLocaleString()}
+    {symbol}{amount.toLocaleString()}
   </span>
 
   {(product.originalPrice ?? 0) > (product.price ?? 0) && (
   <span className="text-sm text-slate-500 line-through">
-    {selectedCountry.flag} {symbol}
+   {symbol}
     {(product.originalPrice ?? product.price).toLocaleString()}
   </span>
 )}
