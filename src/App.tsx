@@ -115,7 +115,9 @@ const ChatbotButton = () => {
           console.error("❌ Failed to send welcome mail:", err);
         }
       } else {
-        console.log("💬 User not logged in OR not first message → using demo bot");
+        console.log(
+          "💬 User not logged in OR not first message → using demo bot"
+        );
 
         // fallback demo bot response
         setTimeout(() => {
@@ -312,12 +314,12 @@ function App() {
           navigator.geolocation.getCurrentPosition(
             async (position) => {
               const { latitude, longitude } = position.coords;
-              
+
               console.log("📍 Geolocation Data:", {
                 latitude,
                 longitude,
                 accuracy: position.coords.accuracy,
-                timestamp: new Date(position.timestamp).toISOString()
+                timestamp: new Date(position.timestamp).toISOString(),
               });
 
               // Optional: Reverse geocode to get address details
@@ -326,13 +328,16 @@ function App() {
                   `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
                 );
                 const data = await response.json();
-                
+
                 console.log("🌍 Location Details:", {
-                  city: data.address?.city || data.address?.town || data.address?.village,
+                  city:
+                    data.address?.city ||
+                    data.address?.town ||
+                    data.address?.village,
                   state: data.address?.state,
                   country: data.address?.country,
                   countryCode: data.address?.country_code,
-                  fullAddress: data.display_name
+                  fullAddress: data.display_name,
                 });
               } catch (geoError) {
                 console.log("ℹ️ Could not fetch location details:", geoError);
@@ -342,16 +347,20 @@ function App() {
               console.warn("⚠️ Geolocation Error:", {
                 code: error.code,
                 message: error.message,
-                details: 
-                  error.code === 1 ? "Permission denied by user" :
-                  error.code === 2 ? "Position unavailable" :
-                  error.code === 3 ? "Timeout" : "Unknown error"
+                details:
+                  error.code === 1
+                    ? "Permission denied by user"
+                    : error.code === 2
+                      ? "Position unavailable"
+                      : error.code === 3
+                        ? "Timeout"
+                        : "Unknown error",
               });
             },
             {
               enableHighAccuracy: true,
               timeout: 30000,
-              maximumAge: 0
+              maximumAge: 0,
             }
           );
         } catch (error) {
@@ -378,7 +387,10 @@ function App() {
           }
         >
           <Routes>
-            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+            <Route
+              path="/reset-password/:token"
+              element={<ResetPasswordPage />}
+            />
             <Route
               path="/"
               element={
@@ -417,7 +429,10 @@ function App() {
               <Route path="/ring-size" element={<RingSizeGuide />} />
               <Route path="/corporate-gifting" element={<CorporateGifting />} />
               <Route path="/contact-us" element={<ContactUs />} />
-              <Route path="/franchise-opportunity" element={<FranchiseOpportunity />} />
+              <Route
+                path="/franchise-opportunity"
+                element={<FranchiseOpportunity />}
+              />
             </Route>
           </Routes>
 
@@ -428,6 +443,5 @@ function App() {
     </AppProvider>
   );
 }
-
 
 export default App;

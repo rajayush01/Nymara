@@ -115,7 +115,7 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden flex flex-col justify-center items-center px-4 md:px-8 bg-white -mt-20 sm:mt-0">
+    <div className="relative w-full h-screen overflow-hidden flex flex-col justify-center items-center px-4 md:px-8 bg-white -mt-40 sm:mt-0">
       {/* NOTE: Embedding @import style like this is generally discouraged in React/Next.js 
         and should ideally be handled by a global stylesheet or a tool like 'next/font'.
         However, for a quick functional example, this works. 
@@ -174,7 +174,7 @@ const HeroSection = () => {
           <img
             src={ringImage}
             alt="Nymara Ring"
-            className="w-60 h-60 sm:w-72 sm:h-72 md:w-[600px] md:h-[600px] object-contain mt-40"
+            className="w-60 h-60 sm:w-72 sm:h-72 md:w-[600px] md:h-[600px] object-contain mt-16 md:mt-40"
             // style={{
             //   // A drop shadow for a floating effect
             //   filter: "drop-shadow(0 25px 25px rgba(0, 0, 0, 0.15))",

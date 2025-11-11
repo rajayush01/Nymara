@@ -330,7 +330,7 @@ const EducationPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50">
       <section
-        className="relative py-24 overflow-hidden mt-20 bg-cover bg-center"
+        className="relative py-24 overflow-hidden mt-0 md:mt-20 bg-cover bg-center"
         style={{ backgroundImage: `url(${video})` }}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-[#9a8457] opacity-80"></div>

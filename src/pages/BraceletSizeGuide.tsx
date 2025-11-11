@@ -32,7 +32,7 @@ export default function BraceletSizeGuide() {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12 mt-40">
+        <div className="text-center mb-12 md:mt-40">
           <h1 className="text-4xl font-serif text-gray-900 mb-4">Bracelet Size Guide</h1>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
             To find your perfect fit, measure your wrist just below the wrist bone. If you prefer a relaxed fit, consider sizing up slightly.

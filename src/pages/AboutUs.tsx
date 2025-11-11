@@ -9,7 +9,7 @@ import {
   Diamond,
   Sparkles,
 } from "lucide-react";
-import video from "../assets/bracelets-video.gif";
+import video from "../assets/vid.mp4";
 
 const AboutUs = () => {
   const [activeSection, setActiveSection] = useState("story");
@@ -102,9 +102,17 @@ const AboutUs = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50">
       {/* Hero Section */}
       <section
-        className="relative py-24 overflow-hidden bg-cover bg-center mt-10"
-        style={{ backgroundImage: `url(${video})` }}
+        className="relative py-24 overflow-hidden bg-cover bg-center mt-0 md:mt-10"
       >
+        <video
+    className="absolute inset-0 w-full h-full object-cover"
+    src={video} // your imported MP4 file
+    autoPlay
+    loop
+    muted
+    playsInline
+  />
+   <div className="absolute inset-0 bg-black/40"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-gray-900/10 to-[#9a8457] opacity-80"></div>
         <div className="absolute inset-0 bg-black/40"></div>
 

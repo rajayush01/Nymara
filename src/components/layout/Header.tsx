@@ -223,18 +223,13 @@ const Header = () => {
 
   return (
     <>
-      <header className="fixed w-full z-50 vrai-header">
+      <header className="lg:fixed w-full z-50 vrai-header">
         {/* Main Header Container */}
         <div
           className={`bg-white/95 vrai-header-scrolled transition-all duration-300 border-b border-gray-200/60 ${
             scrolled ? "py-3" : "py-4"
           }`}
         >
-          {/* <div
-          className={`bg-[#434D59] vrai-header-scrolled transition-all duration-300 border-b border-gray-200/60 ${
-            scrolled ? "py-3" : "py-4"
-          }`}
-        > */}
           {/* Top Row - Logo and Actions */}
           <div className="mx-auto px-4 lg:px-6">
             <div className="flex justify-between items-center">
@@ -309,7 +304,7 @@ const Header = () => {
                 <div className="vrai-dropdown-menu">
                   {menuItems.rings.map((item, index) => (
                     <button
-                      key={index} // Better key using action instead of index
+                      key={index}
                       onClick={() =>
                         handleNavigation("rings", item.action as Action)
                       }
@@ -381,7 +376,7 @@ const Header = () => {
                 <div className="vrai-dropdown-menu">
                   {menuItems.bracelets.map((item, index) => (
                     <button
-                      key={  index}
+                      key={index}
                       onClick={() =>
                         handleNavigation("bracelets", item.action as Action)
                       }
@@ -533,7 +528,6 @@ const Header = () => {
               </div>
 
               {/* Loose Diamonds */}
-              {/* Loose Diamonds */}
               <div className="vrai-dropdown-container">
                 <button className="flex items-center space-x-1 vrai-nav-link py-3">
                   <span className="text-sm">Loose Diamonds</span>
@@ -547,7 +541,6 @@ const Header = () => {
                         if (
                           item.name.toLowerCase().includes("custom request")
                         ) {
-                          // ✅ Open the modal instead of navigating
                           setIsCustomizeModalOpen(true);
                           setIsMenuOpen(false);
                         } else {

@@ -109,6 +109,10 @@ export const menuItems: MenuSection = {
   ],
   mens: [
     {
+      name: "All Mens",
+      action: { type: "navigate", target: "/mens" },
+    },
+    {
       name: "Men's Rings",
       action: { type: "navigate", target: "/mens/rings" },
     },

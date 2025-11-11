@@ -67,7 +67,7 @@ const [selectedLength, setSelectedLength] = useState<string | null>(null);
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12 mt-40">
+        <div className="text-center mb-12 md:mt-40">
           <h1 className="text-4xl font-serif text-gray-900 mb-4">Necklace Size Guide</h1>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
             The length of your necklace determines how it sits, how it frames your neckline, and how it complements your overall look. 
