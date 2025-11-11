@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { motion, useInView, AnimatePresence, Variants} from "framer-motion";
 import HeroSection from "@/components/home/HeroSection";
 import ProductCategories from "@/components/home/ProductCategories";
 // import EducationHubHome from "@/components/home/EducationHubHome";
@@ -22,7 +22,7 @@ const container = {
   },
 } as const;
 
-const sectionVariants = {
+const sectionVariants: Variants= {
   hidden: {
     opacity: 0,
     y: 40,
@@ -58,7 +58,7 @@ const fadeIn = {
   },
 } as const;
 
-const popupVariants = {
+const popupVariants:Variants = {
   hidden: { opacity: 0, scale: 0.8 },
   show: { 
     opacity: 1, 
