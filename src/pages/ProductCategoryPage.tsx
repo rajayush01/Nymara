@@ -7,12 +7,16 @@ import ProductGrid from "@/components/product/ProductGrid";
 import ProductHeroSection from "@/components/product/ProductHeroSection";
 import ProductStyles from "@/components/product/ProductStyles";
 import { useProducts } from "@/contexts/AppContext";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+const PRODUCTS_PER_PAGE = 12;
 
 const ProductCategoryPage: React.FC = () => {
   const { category } = useParams();
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [isLoaded, setIsLoaded] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const {
     filteredProducts,
@@ -23,12 +27,6 @@ const ProductCategoryPage: React.FC = () => {
     resetFilters,
     getCategories,
   } = useProducts();
-
-  // Infinite scroll states
-  const [visibleProducts, setVisibleProducts] = useState<any[]>([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(false);
 
   // Set filters by category
   useEffect(() => {
@@ -45,40 +43,52 @@ const ProductCategoryPage: React.FC = () => {
     setIsLoaded(true);
   }, []);
 
-  // Load initial visible products when filters change
+  // Reset to page 1 when filters change
   useEffect(() => {
-    setVisibleProducts(filteredProducts.slice(0, 9)); // first 9
-    setPage(1);
-    setHasMore(filteredProducts.length > 9);
-  }, [filteredProducts]);
+    setCurrentPage(1);
+  }, [filteredProducts.length, searchQuery, filters]);
 
-  // Function to load more on scroll
-  const loadMoreProducts = () => {
-    setLoading(true);
-    setTimeout(() => {
-      const nextPage = page + 1;
-      const newProducts = filteredProducts.slice(0, nextPage * 9);
-      setVisibleProducts(newProducts);
-      setPage(nextPage);
-      setHasMore(newProducts.length < filteredProducts.length);
-      setLoading(false);
-    }, 400); // delay for smoother UX
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+  const endIndex = startIndex + PRODUCTS_PER_PAGE;
+  const currentProducts = filteredProducts.slice(startIndex, endIndex);
+
+  // Scroll to top when page changes
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Infinite scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + window.scrollY >=
-        document.body.offsetHeight - 500
-      ) {
-        if (hasMore && !loading) loadMoreProducts();
-      }
-    };
+  // Generate page numbers to display
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = [];
+    const maxVisible = 5;
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [hasMore, loading, visibleProducts]);
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1);
+        pages.push('...');
+        for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        pages.push('...');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+
+    return pages;
+  };
 
   // Filter options
   const filterOptions = {
@@ -146,7 +156,7 @@ const ProductCategoryPage: React.FC = () => {
       "Green",
       "Blue",
     ],
-    gender: ["Men", "Women", "Unisex"], // ✅ Added missing gender field
+    gender: ["Men", "Women", "Unisex"],
     category: getCategories(),
     sortBy: [
       { value: "best-seller", label: "Best Seller" },
@@ -264,20 +274,88 @@ const ProductCategoryPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-8 pb-20">
         {filteredProducts.length > 0 ? (
           <>
-            {/* ✅ 3-column Product Grid with infinite scroll */}
-            <ProductGrid products={visibleProducts} viewMode={viewMode} />
+            {/* Product Grid with pagination */}
+            <ProductGrid products={currentProducts} viewMode={viewMode} />
 
-            {/* Loader or End Message */}
-            <div className="flex justify-center py-8">
-              {loading && (
-                <span className="text-gray-600 animate-pulse">
-                  Loading more products...
-                </span>
-              )}
-              {!hasMore && !loading && (
-                <span className="text-gray-400">You've reached the end 🎉</span>
-              )}
-            </div>
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/20 mt-12">
+                {/* Page info */}
+                <div className="text-sm text-slate-600">
+                  Showing {startIndex + 1}-{Math.min(endIndex, filteredProducts.length)} of {filteredProducts.length} products
+                </div>
+
+                {/* Pagination controls */}
+                <div className="flex items-center gap-2">
+                  {/* Previous button */}
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={`p-2 rounded-lg border transition-all ${
+                      currentPage === 1
+                        ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
+                        : 'bg-white text-slate-700 border-slate-300 hover:bg-[#9a8457] hover:text-white hover:border-[#9a8457]'
+                    }`}
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+
+                  {/* Page numbers */}
+                  <div className="flex items-center gap-1">
+                    {getPageNumbers().map((page, index) => (
+                      typeof page === 'number' ? (
+                        <button
+                          key={index}
+                          onClick={() => handlePageChange(page)}
+                          className={`min-w-[40px] h-10 rounded-lg border transition-all ${
+                            currentPage === page
+                              ? 'bg-[#9a8457] text-white border-[#9a8457] font-semibold'
+                              : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      ) : (
+                        <span key={index} className="px-2 text-slate-400">
+                          {page}
+                        </span>
+                      )
+                    ))}
+                  </div>
+
+                  {/* Next button */}
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className={`p-2 rounded-lg border transition-all ${
+                      currentPage === totalPages
+                        ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
+                        : 'bg-white text-slate-700 border-slate-300 hover:bg-[#9a8457] hover:text-white hover:border-[#9a8457]'
+                    }`}
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Jump to page - hidden on mobile */}
+                <div className="hidden sm:flex items-center gap-2">
+                  <span className="text-sm text-slate-600">Go to:</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max={totalPages}
+                    value={currentPage}
+                    onChange={(e) => {
+                      const page = parseInt(e.target.value);
+                      if (page >= 1 && page <= totalPages) {
+                        handlePageChange(page);
+                      }
+                    }}
+                    className="w-16 px-2 py-1 border border-slate-300 rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-[#9a8457]"
+                  />
+                </div>
+              </div>
+            )}
           </>
         ) : (
           // Empty state
