@@ -1,27 +1,23 @@
 // contexts/AppContext.tsx
-import React, { createContext, useContext, useReducer, ReactNode,useEffect } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
 import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL;
 
 // Types
 export interface Product {
-  _id: string;               // from MongoDB
-        // fallback for local/demo products
-sku?: string; 
+  _id: string;
+  sku?: string; 
   name: string;
   description?: string;
-
-  // ✅ Pricing
   price: number;
-  originalPrice?: number;     // optional, only for discounts
-  discount?: number;          // optional, computed on frontend
+  originalPrice?: number;
+  discount?: number;
   prices?: {
     [key: string]: {
       amount: number;
       symbol: string;
     };
   };
-
   makingCharges?: number;
   makingChargesByCountry?: {
     [key: string]: {
@@ -30,56 +26,40 @@ sku?: string;
       symbol: string;
     };
   };
-
-  // ✅ Product details
-  type?: string;              // Ring, Chain, Bracelet etc.
+  type?: string;
   subCategory?: string[];
   category?: string | string[]; 
-
   metalType?: string;
   stoneType?: string;
   style?: string;
   size?: string | string[]; 
   color?: string;
-
   weight?: number;
   purity?: string;
-
-  // ✅ Stock & flags
   stock?: number;
   isNew?: boolean;
   isBestSeller?: boolean;
   isMadetoOrder?: boolean;
-  inStock?: boolean;          // legacy field (maps to stock > 0)
-
-  // ✅ Images
- coverImage?: string;
+  inStock?: boolean;
+  coverImage?: string;
   images?: string[];
   videoUrl?: string;
-
-  // ✅ Rating
   rating?: number;
   reviews?: number;
-
-   diamondDetails?: Record<string, string | number>;
+  diamondDetails?: Record<string, string | number>;
   sideDiamondDetails?: Record<string, string | number>;
-
-  variantLinks?: {               // ✅ Added variant links for metal types
-    [metalType: string]: string; // metal type -> product ID
+  variantLinks?: {
+    [metalType: string]: string;
   };
-
-  // ✅ Misc
   tags?: string[];
   gender?: "Men" | "Women" | "Unisex";
 }
-
 
 export interface CartItem extends Product {
   quantity: number;
   selectedSize?: string;
   selectedMetal?: string;
   engraving?: string;
-
   makingCharges?: number;
   makingChargesByCountry?: {
     [key: string]: {
@@ -118,18 +98,17 @@ export interface AppState {
   filters: {
     metalType: string[];
     stoneType: string[];
-    type: string[];
     style: string[];
     size: string[];
     color: string[];
     category: string[];
-     subCategory: string[];
-          gender: string[]; 
+    subCategory: string[];
+    gender: string[]; 
     sortBy: string;
     priceRange?: [number, number];
-    page: number;       // ✅ added
-    limit: number;      // ✅ added
-    currency: string;   // ✅ added
+    page: number;
+    limit: number;
+    currency: string;
   };
 }
 
@@ -137,11 +116,11 @@ export interface AppState {
 export type AppAction =
   | { type: 'SET_PRODUCTS'; payload: Product[] }
   | { type: 'ADD_TO_CART'; payload: { product: Product; quantity: number; options?: any } }
-  | { type: 'REMOVE_FROM_CART'; payload: string }   // ✅ changed to string
-  | { type: 'UPDATE_CART_QUANTITY'; payload: { _id: string; quantity: number } }  // ✅ changed id → _id:string
+  | { type: 'REMOVE_FROM_CART'; payload: string }
+  | { type: 'UPDATE_CART_QUANTITY'; payload: { _id: string; quantity: number } }
   | { type: 'CLEAR_CART' }
   | { type: 'ADD_TO_WISHLIST'; payload: Product }
-  | { type: 'REMOVE_FROM_WISHLIST'; payload: string }   // ✅ changed to string
+  | { type: 'REMOVE_FROM_WISHLIST'; payload: string }
   | { type: 'CLEAR_WISHLIST' }
   | { type: 'SET_USER'; payload: User }
   | { type: 'LOGOUT' }
@@ -150,11 +129,6 @@ export type AppAction =
   | { type: 'SET_FILTERS'; payload: Partial<AppState['filters']> }
   | { type: 'RESET_FILTERS' };
 
-
-// Enhanced Sample Products Data with better categorization
-
-
-// Initial State - Load user from localStorage if available
 const loadUserFromStorage = (): User => {
   try {
     const storedUser = localStorage.getItem('user');
@@ -178,18 +152,17 @@ const initialState: AppState = {
   filters: {
     metalType: [],
     stoneType: [],
-     type: [],
     style: [],
     size: [],
     color: [],
     category: [],
     subCategory: [],
-    gender: [],              // ✅ Added missing gender field
+    gender: [],
     priceRange: undefined,
     sortBy: 'best-seller',
-    page: 1,                 // ✅ default to first page
-    limit: 600,               // ✅ default number of products per page
-    currency: "INR",         // ✅ default to INR
+    page: 1,
+    limit: 600,
+    currency: "INR",
   }
 };
 
@@ -221,46 +194,43 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
       };
 
     case 'REMOVE_FROM_CART':
-  return {
-    ...state,
-    cart: state.cart.filter(item => item._id !== action.payload) // ✅ consistent with _id:string
-  };
+      return {
+        ...state,
+        cart: state.cart.filter(item => item._id !== action.payload)
+      };
 
-
-  case 'UPDATE_CART_QUANTITY':
-  return {
-    ...state,
-    cart: state.cart
-      .map(item =>
-        item._id === action.payload._id   // ✅ compare using _id (string)
-          ? { ...item, quantity: Math.max(0, action.payload.quantity) }
-          : item
-      )
-      .filter(item => item.quantity > 0),
-  };
-
+    case 'UPDATE_CART_QUANTITY':
+      return {
+        ...state,
+        cart: state.cart
+          .map(item =>
+            item._id === action.payload._id
+              ? { ...item, quantity: Math.max(0, action.payload.quantity) }
+              : item
+          )
+          .filter(item => item.quantity > 0),
+      };
 
     case 'CLEAR_CART':
       return { ...state, cart: [] };
 
-  case 'ADD_TO_WISHLIST': {
-  const isAlreadyInWishlist = state.wishlist.some(
-    item => item._id === action.payload._id   // ✅ compare with _id (string)
-  );
-  if (isAlreadyInWishlist) return state;
+    case 'ADD_TO_WISHLIST': {
+      const isAlreadyInWishlist = state.wishlist.some(
+        item => item._id === action.payload._id
+      );
+      if (isAlreadyInWishlist) return state;
 
-  return {
-    ...state,
-    wishlist: [
-      ...state.wishlist,
-      { 
-        ...action.payload, 
-        addedDate: new Date().toISOString().split('T')[0] 
-      }
-    ]
-  };
-}
-
+      return {
+        ...state,
+        wishlist: [
+          ...state.wishlist,
+          { 
+            ...action.payload, 
+            addedDate: new Date().toISOString().split('T')[0] 
+          }
+        ]
+      };
+    }
 
     case 'REMOVE_FROM_WISHLIST':
       return {
@@ -272,7 +242,6 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
       return { ...state, wishlist: [] };
 
     case 'SET_USER':
-      // Also store in localStorage
       try {
         localStorage.setItem('user', JSON.stringify(action.payload));
       } catch (error) {
@@ -281,7 +250,6 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
       return { ...state, user: action.payload };
 
     case 'LOGOUT':
-      // Clear localStorage
       try {
         localStorage.removeItem('user');
       } catch (error) {
@@ -310,17 +278,15 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
           stoneType: [],
           style: [],
           size: [],
-          type:[],
           color: [],
           category: [],
-           subCategory: [],
-          gender: [],           // ✅ Added missing gender field
+          subCategory: [],
+          gender: [],
           sortBy: 'best-seller',
-           priceRange: undefined,  // reset to no price range
-      page: 1,                // reset back to first page
-      limit: 12,              // reset default items per page
-      currency: 'INR'         // reset to INR by default
-          
+          priceRange: undefined,
+          page: 1,
+          limit: 12,
+          currency: 'INR'
         }
       };
 
@@ -329,13 +295,11 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
   }
 };
 
-// Context
 const AppContext = createContext<{
   state: AppState;
   dispatch: React.Dispatch<AppAction>;
 } | null>(null);
 
-// Provider Component
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
@@ -346,7 +310,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   );
 };
 
-// Custom Hook
 export const useAppContext = () => {
   const context = useContext(AppContext);
   if (!context) {
@@ -355,7 +318,6 @@ export const useAppContext = () => {
   return context;
 };
 
-// Helper Functions
 export const useCart = () => {
   const { state, dispatch } = useAppContext();
 
@@ -364,13 +326,12 @@ export const useCart = () => {
   };
 
   const removeFromCart = (id: string) => {
-  dispatch({ type: 'REMOVE_FROM_CART', payload: id });
-};
+    dispatch({ type: 'REMOVE_FROM_CART', payload: id });
+  };
 
-const updateQuantity = (_id: string, quantity: number) => {
-  dispatch({ type: 'UPDATE_CART_QUANTITY', payload: { _id, quantity } });
-};
-
+  const updateQuantity = (_id: string, quantity: number) => {
+    dispatch({ type: 'UPDATE_CART_QUANTITY', payload: { _id, quantity } });
+  };
 
   const clearCart = () => {
     dispatch({ type: 'CLEAR_CART' });
@@ -393,14 +354,13 @@ const updateQuantity = (_id: string, quantity: number) => {
 export const useWishlist = () => {
   const { state, dispatch } = useAppContext();
 
-  const addToWishlist =(product: Product) => {
+  const addToWishlist = (product: Product) => {
     dispatch({ type: 'ADD_TO_WISHLIST', payload: product });
   };
 
   const removeFromWishlist = (_id: string) => {
-  dispatch({ type: 'REMOVE_FROM_WISHLIST', payload: _id });
-};
-
+    dispatch({ type: 'REMOVE_FROM_WISHLIST', payload: _id });
+  };
 
   const clearWishlist = () => {
     dispatch({ type: 'CLEAR_WISHLIST' });
@@ -423,30 +383,17 @@ export const useWishlist = () => {
 export const useProducts = () => {
   const { state, dispatch } = useAppContext();
 
-  // Fetch products from backend whenever filters/searchQuery change
+  // Fetch ALL products from backend (no filtering on backend)
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const params: any = {
-          category: state.filters.category?.join(","),
-          subCategory: state.filters.subCategory?.join(","),
-
-          metalType: state.filters.metalType?.join(","),
-          stoneType: state.filters.stoneType?.join(","),
-          style: state.filters.style?.join(","),
-          size: state.filters.size?.join(","),
-          color: state.filters.color?.join(","),
-          minPrice: state.filters.priceRange?.[0],
-          maxPrice: state.filters.priceRange?.[1],
-          type: state.filters.type?.join(","),
-          search: state.searchQuery,
-          sort: state.filters.sortBy,
-          page: state.filters.page,
-          limit: state.filters.limit,
-          currency: state.filters.currency,
-        };
-
-        const res = await axios.get(`${API_URL}/api/user/ornaments`, { params });
+        // Fetch all products without filters
+        const res = await axios.get(`${API_URL}/api/user/ornaments`, {
+          params: {
+            limit: 1000, // Get all products
+            currency: state.filters.currency,
+          }
+        });
 
         if (res.data?.ornaments) {
           dispatch({ type: "SET_PRODUCTS", payload: res.data.ornaments });
@@ -457,17 +404,137 @@ export const useProducts = () => {
     };
 
     fetchProducts();
-  }, [state.filters, state.searchQuery, dispatch]);
+  }, [dispatch]); // Only fetch once on mount
 
   const getFilteredProducts = () => {
-    let filtered = state.products;
+    let filtered = [...state.products];
 
-    if (state.searchQuery) {
+    // Filter by search query
+    if (state.searchQuery && state.searchQuery.trim() !== '') {
+      const query = state.searchQuery.toLowerCase();
       filtered = filtered.filter((product: any) =>
-        product.name?.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
-        product.description?.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
-        product.category?.toLowerCase().includes(state.searchQuery.toLowerCase())
+        product.name?.toLowerCase().includes(query) ||
+        product.description?.toLowerCase().includes(query) ||
+        product.category?.toLowerCase().includes(query) ||
+        product.tags?.some((tag: string) => tag.toLowerCase().includes(query))
       );
+    }
+
+    // Filter by category
+    if (state.filters.category.length > 0) {
+      filtered = filtered.filter((product: any) => {
+        const productCategory = Array.isArray(product.category) 
+          ? product.category 
+          : [product.category];
+        return state.filters.category.some(cat => 
+          productCategory.some((pc: string) => pc?.toLowerCase() === cat.toLowerCase())
+        );
+      });
+    }
+
+    // Filter by subCategory
+    if (state.filters.subCategory.length > 0) {
+      filtered = filtered.filter((product: any) => {
+        const productSubCats = Array.isArray(product.subCategory) 
+          ? product.subCategory 
+          : product.subCategory ? [product.subCategory] : [];
+        return state.filters.subCategory.some(subCat => 
+          productSubCats.some((psc: string) => psc?.toLowerCase() === subCat.toLowerCase())
+        );
+      });
+    }
+
+    // Filter by metal type
+    if (state.filters.metalType.length > 0) {
+      filtered = filtered.filter((product: any) =>
+        state.filters.metalType.some(metal => 
+          product.metalType?.toLowerCase() === metal.toLowerCase()
+        )
+      );
+    }
+
+    // Filter by stone type
+    if (state.filters.stoneType.length > 0) {
+      filtered = filtered.filter((product: any) =>
+        state.filters.stoneType.some(stone => 
+          product.stoneType?.toLowerCase() === stone.toLowerCase()
+        )
+      );
+    }
+
+    // Filter by style
+    if (state.filters.style.length > 0) {
+      filtered = filtered.filter((product: any) =>
+        state.filters.style.some(style => 
+          product.style?.toLowerCase() === style.toLowerCase()
+        )
+      );
+    }
+
+    // Filter by size
+    if (state.filters.size.length > 0) {
+      filtered = filtered.filter((product: any) => {
+        const productSizes = Array.isArray(product.size) 
+          ? product.size 
+          : product.size ? [product.size] : [];
+        return state.filters.size.some(size => 
+          productSizes.some((ps: string) => ps?.toLowerCase() === size.toLowerCase())
+        );
+      });
+    }
+
+    // Filter by color
+    if (state.filters.color.length > 0) {
+      filtered = filtered.filter((product: any) =>
+        state.filters.color.some(color => 
+          product.color?.toLowerCase() === color.toLowerCase()
+        )
+      );
+    }
+
+    // Filter by gender
+    if (state.filters.gender.length > 0) {
+      filtered = filtered.filter((product: any) =>
+        state.filters.gender.some(gender => 
+          product.gender?.toLowerCase() === gender.toLowerCase()
+        )
+      );
+    }
+
+    // Filter by price range
+    if (state.filters.priceRange) {
+      const [minPrice, maxPrice] = state.filters.priceRange;
+      filtered = filtered.filter((product: any) =>
+        product.price >= minPrice && product.price <= maxPrice
+      );
+    }
+
+    // Sort products
+    switch (state.filters.sortBy) {
+      case 'price_asc':
+        filtered.sort((a, b) => a.price - b.price);
+        break;
+      case 'price_desc':
+        filtered.sort((a, b) => b.price - a.price);
+        break;
+      case 'rating':
+        filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        break;
+      case 'newest':
+        filtered.sort((a, b) => {
+          if (a.isNew && !b.isNew) return -1;
+          if (!a.isNew && b.isNew) return 1;
+          return 0;
+        });
+        break;
+      case 'best-seller':
+      default:
+        filtered.sort((a, b) => {
+          if (a.isBestSeller && !b.isBestSeller) return -1;
+          if (!a.isBestSeller && b.isBestSeller) return 1;
+          return 0;
+        });
+        break;
     }
 
     return filtered;
@@ -492,7 +559,13 @@ export const useProducts = () => {
   const getCategories = () => {
     const categories = new Set<string>();
     state.products.forEach((product: any) => {
-      if (product.category) categories.add(product.category);
+      if (product.category) {
+        if (Array.isArray(product.category)) {
+          product.category.forEach((cat: string) => categories.add(cat));
+        } else {
+          categories.add(product.category);
+        }
+      }
     });
     return Array.from(categories).sort();
   };
@@ -527,5 +600,4 @@ export const useAuth = () => {
     logout,
     isLoggedIn: state.user.isLoggedIn
   };
-
 };
