@@ -31,14 +31,20 @@ const ProductCategoryPage: React.FC = () => {
   // Set filters by category
 useEffect(() => {
   if (category) {
-    const backendCategory = category.toLowerCase();  // rings, earrings, etc
+    const backendCategory = category.toLowerCase();
 
     setFilters({
-      category: [backendCategory],   // backend expects "rings"
-      type: [backendCategory],       // backend expects "rings"
+      category: [backendCategory],
+      subCategory: [],   // reset
+      type: [],          // FIX: remove wrong matching
     });
   }
 }, [category]);
+
+useEffect(() => {
+  setIsLoaded(true);
+}, []);
+
 
 
   // Reset to page 1 when filters change
@@ -409,5 +415,6 @@ useEffect(() => {
 
 
 export default ProductCategoryPage;
+
 
 
