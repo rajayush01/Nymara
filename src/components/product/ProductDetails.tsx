@@ -50,6 +50,14 @@ const getMetalColor = (metal: string) => {
   return "#d1d5db"; // fallback gray
 };
 
+const VARIANT_COLORS = {
+  "Yellow Gold": "bg-gradient-to-r from-yellow-500 via-yellow-300 to-yellow-600 shadow-inner",
+  "White Gold": "bg-gradient-to-r from-gray-100 via-gray-200 to-gray-300 shadow-inner",
+  "Rose Gold": "bg-gradient-to-r from-[#b76e79] via-pink-200 to-[#b76e79] shadow-inner",
+  "Silver": "bg-gradient-to-r from-gray-200 via-gray-100 to-gray-400 shadow-inner",
+  "Platinum": "bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500 shadow-inner",
+};
+
 // simple luminance test for readable text color
 const isLightHex = (hex: string) => {
   if (!hex) return true;
@@ -173,56 +181,7 @@ const ProductDetail = () => {
     Boolean
   ); // remove undefined/null
 
-  {
-    /* Metal Variants */
-  }
-  {
-    product.variantLinks && Object.keys(product.variantLinks).length > 0 && (
-      <div>
-        <label className="block text-sm font-medium text-gray-900 mb-3">
-          Metal: {product.metalType || "Select"}
-        </label>
-        <div className="grid grid-cols-2 gap-3">
-          {Object.entries(product.variantLinks).map(([metal, variantId]) => {
-            const isActive = product.metalType
-              ?.toLowerCase()
-              .includes(metal.toLowerCase());
-
-            let color = "#d1d5db";
-            if (metal.toLowerCase().includes("yellow")) color = "#FFD700";
-            else if (metal.toLowerCase().includes("white")) color = "#E5E4E2";
-            else if (metal.toLowerCase().includes("rose")) color = "#B76E79";
-            else if (metal.toLowerCase().includes("silver")) color = "#C0C0C0";
-            else if (metal.toLowerCase().includes("platinum"))
-              color = "#E5E4E2";
-
-            return (
-              <button
-                key={metal}
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.open(`/product/${variantId}`, "_blank");
-                }}
-                className={`p-3 rounded-lg border-2 font-medium transition-all text-left ${
-                  isActive
-                    ? "border-[#9a8457] bg-[#9a8457]/5 text-[#9a8457]"
-                    : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
-                }`}
-              >
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">{metal}</span>
-                  <div
-                    className="w-6 h-6 rounded-full border"
-                    style={{ backgroundColor: color }}
-                  />
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    );
-  }
+ 
 
   // Standard customer-selectable sizes
   // Standard customer-selectable sizes
@@ -242,7 +201,7 @@ const ProductDetail = () => {
     "10",
   ];
 
-  // When product loads, preselect its size if valid
+
 
   // Always use standard sizes for customers
   const sizeOptions = STANDARD_SIZES;
@@ -493,6 +452,61 @@ const ProductDetail = () => {
                 )}
               </div>
             </div>
+
+            {product.variants && product.variants.length > 0 && (
+  <div>
+    <label className="block text-sm font-medium text-gray-900 mb-3">
+      Metal: {product.metalType || "Select"}
+    </label>
+
+    <div className="grid grid-cols-2 gap-3">
+      {product.variants.map((variant, index) => {
+        const metal = (variant.metalType || "")
+          .replace("18K ", "")
+          .replace("14K ", "");
+
+        const colorClass =
+          VARIANT_COLORS[metal as keyof typeof VARIANT_COLORS] ||
+          "bg-gray-200 shadow-inner";
+
+        const isActive = product.metalType === variant.metalType;
+
+        return (
+          <button
+            key={index}
+           onClick={() => {
+  setProduct(prev => {
+    if (!prev) return prev;
+
+    return {
+      ...prev,
+      metalType: variant.metalType,
+      coverImage: variant.coverImage || prev.coverImage,
+      images: variant.images && variant.images.length > 0
+        ? variant.images        // ONLY variant images
+        : prev.images           // fallback if variant has none
+    };
+  });
+
+  setActiveImageIndex(0);
+}}
+
+
+            className={`p-3 rounded-lg border-2 transition-all font-medium text-left flex items-center justify-between ${
+              isActive
+                ? "border-[#9a8457] bg-[#9a8457]/5 text-[#9a8457]"
+                : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
+            }`}
+          >
+            <span className="text-sm">{metal}</span>
+            <div className={`w-6 h-6 rounded-full border ${colorClass}`}></div>
+          </button>
+        );
+      })}
+    </div>
+  </div>
+)}
+
 
             {/* Thumbnail images */}
             <div className="grid grid-cols-4 gap-4">
@@ -1316,5 +1330,6 @@ const ProductDetail = () => {
     </div>
   );
 };
+
 
 export default ProductDetail;
