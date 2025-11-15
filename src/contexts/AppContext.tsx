@@ -118,6 +118,7 @@ export interface AppState {
   filters: {
     metalType: string[];
     stoneType: string[];
+    type: string[];
     style: string[];
     size: string[];
     color: string[];
@@ -177,6 +178,7 @@ const initialState: AppState = {
   filters: {
     metalType: [],
     stoneType: [],
+     type: [],
     style: [],
     size: [],
     color: [],
@@ -308,6 +310,7 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
           stoneType: [],
           style: [],
           size: [],
+          type:[],
           color: [],
           category: [],
            subCategory: [],
@@ -435,6 +438,7 @@ export const useProducts = () => {
           color: state.filters.color?.join(","),
           minPrice: state.filters.priceRange?.[0],
           maxPrice: state.filters.priceRange?.[1],
+          type: state.filters.type?.join(","),
           search: state.searchQuery,
           sort: state.filters.sortBy,
           page: state.filters.page,
@@ -523,4 +527,5 @@ export const useAuth = () => {
     logout,
     isLoggedIn: state.user.isLoggedIn
   };
+
 };
