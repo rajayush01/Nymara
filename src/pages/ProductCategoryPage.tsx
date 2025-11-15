@@ -40,10 +40,6 @@ useEffect(() => {
   }
 }, [category]);
 
-  // Mark page loaded
-  useEffect(() => {
-    setIsLoaded(true);
-  }, []);
 
   // Reset to page 1 when filters change
   useEffect(() => {
@@ -413,4 +409,5 @@ useEffect(() => {
 
 
 export default ProductCategoryPage;
+
 
