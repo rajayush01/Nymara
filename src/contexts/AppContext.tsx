@@ -48,6 +48,19 @@ export interface Product {
   reviews?: number;
   diamondDetails?: Record<string, string | number>;
   sideDiamondDetails?: Record<string, string | number>;
+
+    variants?: {
+  color?: string;
+  metalType?: string;
+  size?: string;
+  price?: number;
+  coverImage?: string;
+  images?: string[];
+  videoUrl?: string;
+  model3D?: string;
+  isDefault?: boolean;
+}[];
+
   variantLinks?: {
     [metalType: string]: string;
   };
@@ -601,3 +614,4 @@ export const useAuth = () => {
     isLoggedIn: state.user.isLoggedIn
   };
 };
+
