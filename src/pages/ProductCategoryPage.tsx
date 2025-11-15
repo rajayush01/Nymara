@@ -29,47 +29,16 @@ const ProductCategoryPage: React.FC = () => {
   } = useProducts();
 
   // Set filters by category
-    const CATEGORY_MAP_BACKEND_TO_FRONT: Record<string, string> = {
-  rings: "Ring",
-  earrings: "Earring",
-  necklaces: "Necklace",
-  bracelets: "Bracelet",
-  mens: "Men",
-};
-
-const TYPE_MAP_BACKEND_TO_FRONT: Record<string, string> = {
-  rings: "Ring",
-  earrings: "Earring",
-  necklaces: "Necklace",
-  bracelets: "Bracelet",
-  mens: "Men",
-};
-
 useEffect(() => {
   if (category) {
-    const frontendCategory =
-      CATEGORY_MAP_BACKEND_TO_FRONT[category.toLowerCase()] || category;
+    const backendCategory = category.toLowerCase();  // rings, earrings, etc
 
     setFilters({
-      ...filters,
-      category: [frontendCategory],
+      category: [backendCategory],   // backend expects "rings"
+      type: [backendCategory],       // backend expects "rings"
     });
   }
 }, [category]);
-
-
-useEffect(() => {
-  if (category) {
-    const mappedType =
-      TYPE_MAP_BACKEND_TO_FRONT[category.toLowerCase()] || category;
-
-    setFilters({
-      ...filters,
-      type: [mappedType],
-    });
-  }
-}, [category]);
-
 
   // Mark page loaded
   useEffect(() => {
@@ -444,3 +413,4 @@ useEffect(() => {
 
 
 export default ProductCategoryPage;
+
