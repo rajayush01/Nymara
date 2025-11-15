@@ -28,24 +28,30 @@ const ProductCategoryPage: React.FC = () => {
     getCategories,
   } = useProducts();
 
-  // Set filters by category
-useEffect(() => {
-  if (category) {
-    const backendCategory = category.toLowerCase();
+  // Set filters by category - FIXED VERSION
+  useEffect(() => {
+    if (category) {
+      // Reset filters and set only the category from URL
+      setFilters({
+        metalType: [],
+        stoneType: [],
+        style: [],
+        size: [],
+        color: [],
+        gender: [],
+        category: [category],  // Only set the current category
+        sortBy: filters.sortBy || "best-seller"  // Preserve sort order
+      });
+    } else {
+      // If no category in URL, reset to show all products
+      resetFilters();
+    }
+  }, [category]); // Only depend on category changes
 
-    setFilters({
-      category: [backendCategory],
-      subCategory: [],   // reset
-      type: [],          // FIX: remove wrong matching
-    });
-  }
-}, [category]);
-
-useEffect(() => {
-  setIsLoaded(true);
-}, []);
-
-
+  // Mark page loaded
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
 
   // Reset to page 1 when filters change
   useEffect(() => {
@@ -413,8 +419,4 @@ useEffect(() => {
   );
 };
 
-
 export default ProductCategoryPage;
-
-
-
