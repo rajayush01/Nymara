@@ -283,10 +283,19 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
       {/* Price */}
     <div className="flex items-center space-x-4 mb-4">
   <div className="flex items-center space-x-3">
-    <span className="text-3xl font-bold text-gray-900">
+    {/* <span className="text-3xl font-bold text-gray-900">
       {product?.currency}
       {product?.totalConvertedPrice?.toLocaleString()}
-    </span>
+    </span> */}
+
+         <span className="text-3xl font-bold text-gray-900">
+  {product?.currency}
+  {Number(
+    product?.currency === "₹"
+      ? product?.totalConvertedPrice
+      : product?.displayPrice
+  ).toLocaleString()}
+</span>
   </div>
 </div>
 
