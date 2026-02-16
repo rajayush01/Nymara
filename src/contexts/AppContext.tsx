@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
 import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL;
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 // Types
 export interface Product {
@@ -455,38 +456,68 @@ export const useProducts = () => {
   const { state, dispatch } = useAppContext();
 
   // Fetch ALL products from backend (no filtering on backend)
+  // useEffect(() => {
+  //   const fetchProducts = async () => {
+  //     try {
+  //       console.log("🚀 Fetching products from backend...");
+  //       // Fetch all products without filters
+  //       const res = await axios.get(`${API_URL}/api/user/ornaments`, {
+  //         params: {
+  //           limit: 1000, // Get all products
+  //           currency: state.filters.currency,
+  //         }
+  //       });
+
+  //       if (res.data?.ornaments) {
+  //         console.log("📦 Products fetched from backend:", res.data.ornaments.length);
+  //         console.log("📋 Sample products:", res.data.ornaments.slice(0, 3).map((p: any) => ({ 
+  //           name: p.name, 
+  //           category: p.category, 
+  //           subCategory: p.subCategory,
+  //           metal: p.metal?.metalType 
+  //         })));
+  //         dispatch({ type: "SET_PRODUCTS", payload: res.data.ornaments });
+  //       }
+  //     } catch (error: any) {
+  //       console.error("❌ Failed to fetch products:", error.response?.data || error.message);
+  //     }
+  //   };
+
+  //   // Only fetch if we don't have products yet
+  //   if (state.products.length === 0) {
+  //     fetchProducts();
+  //   }
+  // }, [state.products.length]); // Only depend on products length
+
+    const { selectedCountry } = useCurrency();
+
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        console.log("🚀 Fetching products from backend...");
-        // Fetch all products without filters
+        console.log(" Fetching products for currency:", state.filters.currency);
+
         const res = await axios.get(`${API_URL}/api/user/ornaments`, {
           params: {
-            limit: 1000, // Get all products
-            currency: state.filters.currency,
-          }
+            limit: 1000,
+            currency: selectedCountry.currency,
+
+          },
         });
 
         if (res.data?.ornaments) {
-          console.log("📦 Products fetched from backend:", res.data.ornaments.length);
-          console.log("📋 Sample products:", res.data.ornaments.slice(0, 3).map((p: any) => ({ 
-            name: p.name, 
-            category: p.category, 
-            subCategory: p.subCategory,
-            metal: p.metal?.metalType 
-          })));
           dispatch({ type: "SET_PRODUCTS", payload: res.data.ornaments });
         }
       } catch (error: any) {
-        console.error("❌ Failed to fetch products:", error.response?.data || error.message);
+        console.error(
+          " Failed to fetch products:",
+          error.response?.data || error.message,
+        );
       }
     };
 
-    // Only fetch if we don't have products yet
-    if (state.products.length === 0) {
-      fetchProducts();
-    }
-  }, [state.products.length]); // Only depend on products length
+    fetchProducts();
+  }, [selectedCountry.currency]);
 
   const getFilteredProducts = () => {
     let filtered = [...state.products];
@@ -744,6 +775,7 @@ export const useAuth = () => {
     isLoggedIn: state.user.isLoggedIn
   };
 };
+
 
 
 
