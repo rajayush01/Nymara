@@ -31,16 +31,16 @@ export default function Footer() {
           <div className="space-y-4 ml-0 md:ml-5">
             <h4 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">About</h4>
             <div className="space-y-2">
-              <a href="#our-story" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
+              <a href="/about#story" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
                 Our Story
               </a>
-              <a href="#our-mission" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
+              <a href="/about#mission" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
                 Our Mission
               </a>
               <a href="#responsible-sourcing" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
                 Responsible Sourcing
               </a>
-              <a href="#sustainability" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
+              <a href="/about#sustainability" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
                 Sustainability Goals
               </a>
               <a href="#reviews" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
@@ -56,28 +56,28 @@ export default function Footer() {
           <div className="space-y-4">
             <h4 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Education</h4>
             <div className="space-y-2">
-              <a href="#diamond-4cs" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
+              <a href="/education#4cs" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
                 4 C's of Diamond Guide
               </a>
-              <a href="#lab-grown-diamonds" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
+              <a href="/education#lab-grown" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
                 Lab Grown Diamonds
               </a>
-              <a href="#lab-grown-gemstones" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
+              <a href="/education#gemstones" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
                 Lab Grown Gemstones
               </a>
-              <a href="#diamond-shapes" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
+              <a href="/education#shapes" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
                 Diamond Shapes Guide
               </a>
-              <a href="#ring-size-guide" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
+              <a href="/ring-size" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
                 Ring Size Guide
               </a>
-              <a href="#necklace-size-guide" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
+              <a href="/necklace-size" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
                 Necklace Size Guide
               </a>
-              <a href="#bracelet-size-guide" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
+              <a href="/bracelet-size" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
                 Bracelet Size Guide
               </a>
-              <a href="#faq" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
+              <a href="/education#faq" className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors">
                 FAQ
               </a>
             </div>

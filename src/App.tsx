@@ -452,6 +452,7 @@ function App() {
               />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/about" element={<AboutUs />} />
+          
               <Route path="/education" element={<EducationPage />} />
               <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/cart" element={<CartPage />} />

@@ -16,19 +16,39 @@ import {
 } from "lucide-react";
 import img1 from "../assets/4c.png";
 import video from "../assets/bracelets-video.gif";
-import round from '../assets/round2.png'
-import princess from '../assets/princess1.png'
-import emerald from '../assets/emerald.png'
-import oval from '../assets/oval.png'
-import cushion from '../assets/cushion.png'
-import pear from '../assets/pear.png'
-import marquise from '../assets/marquise.png'
-import asscher from '../assets/asscher.png'
-import heart from '../assets/heart.png'
+import round from "../assets/round2.png";
+import princess from "../assets/princess1.png";
+import emerald from "../assets/emerald.png";
+import oval from "../assets/oval.png";
+import cushion from "../assets/cushion.png";
+import pear from "../assets/pear.png";
+import marquise from "../assets/marquise.png";
+import asscher from "../assets/asscher.png";
+import heart from "../assets/heart.png";
+import { useEffect } from 'react';
 
 const EducationPage = () => {
   const [activeSection, setActiveSection] = useState("4cs");
   const [openFAQ, setOpenFAQ] = useState<number | null>(null);
+
+useEffect(() => {
+  const hash = window.location.hash.replace('#', '');
+  
+  // Section mapping based on your sections array
+  const validSections = ['4cs', 'lab-grown', 'gemstones', 'shapes', 'faq'];
+  
+  if (hash && validSections.includes(hash)) {
+    setActiveSection(hash);
+  }
+  
+  // Optional: Smooth scroll to top
+  if (hash) {
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  }
+}, []);
+
 
   const sections = [
     {
@@ -212,10 +232,9 @@ const EducationPage = () => {
   ];
 
   const diamondShapes = [
-   
     {
       name: "Round Brilliant",
-      image: round, 
+      image: round,
       description:
         "Most popular cut with maximum brilliance, featuring 57-58 facets perfectly arranged for light performance",
       ratio: "1.00",
@@ -225,7 +244,7 @@ const EducationPage = () => {
     },
     {
       name: "Princess",
-      image: princess, 
+      image: princess,
       description:
         "Square shape with brilliant-style faceting, sharp corners create contemporary appeal",
       ratio: "1.00-1.05",
@@ -236,7 +255,7 @@ const EducationPage = () => {
     },
     {
       name: "Emerald",
-      image: emerald, 
+      image: emerald,
       description:
         "Rectangular step-cut with elegant hall-of-mirrors effect and clean lines",
       ratio: "1.30-1.50",
@@ -246,7 +265,7 @@ const EducationPage = () => {
     },
     {
       name: "Oval",
-      image: oval, 
+      image: oval,
       description:
         "Elongated brilliant cut that makes fingers appear longer while maximizing sparkle",
       ratio: "1.35-1.50",
@@ -256,7 +275,7 @@ const EducationPage = () => {
     },
     {
       name: "Cushion",
-      image: cushion, 
+      image: cushion,
       description:
         "Pillow-like outline with vintage romance appeal and soft, rounded corners",
       ratio: "1.00-1.20",
@@ -266,7 +285,7 @@ const EducationPage = () => {
     },
     {
       name: "Pear",
-      image: pear, 
+      image: pear,
       description:
         "Teardrop shape combining round and marquise elements for unique elegance",
       ratio: "1.45-1.60",
@@ -276,7 +295,7 @@ const EducationPage = () => {
     },
     {
       name: "Marquise",
-      image: marquise, 
+      image: marquise,
       description:
         "Boat-shaped with pointed ends, maximizes carat weight and creates dramatic presence",
       ratio: "1.90-2.20",
@@ -286,7 +305,7 @@ const EducationPage = () => {
     },
     {
       name: "Asscher",
-      image: asscher, 
+      image: asscher,
       description:
         "Square step-cut with Art Deco allure and mesmerizing windmill pattern",
       ratio: "1.00-1.05",
@@ -296,7 +315,7 @@ const EducationPage = () => {
     },
     {
       name: "Heart",
-      image: heart, 
+      image: heart,
       description:
         "Ultimate symbol of romance with brilliant-style facets and distinctive cleft",
       ratio: "0.90-1.10",
@@ -1131,21 +1150,21 @@ const EducationPage = () => {
                   </div>
                 </div>
 
-               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/30">
-  <div>
-    <p className="font-medium text-sm text-white/90 mb-1">
-      WhatsApp Support
-    </p>
-    <a
-      href="https://wa.me/447867089659"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-white text-md hover:text-white/80 transition-colors"
-    >
-      +44 7867089659
-    </a>
-  </div>
-</div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/30">
+                  <div>
+                    <p className="font-medium text-sm text-white/90 mb-1">
+                      WhatsApp Support
+                    </p>
+                    <a
+                      href="https://wa.me/447867089659"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-white text-md hover:text-white/80 transition-colors"
+                    >
+                      +44 7867089659
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

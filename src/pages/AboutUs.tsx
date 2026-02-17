@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import video from "../assets/vid.mp4";
 import nimay from "../assets/nimay.jpeg";
+import { useEffect } from 'react';
 
 const AboutUs = () => {
   const [activeSection, setActiveSection] = useState("story");
@@ -99,21 +100,47 @@ const AboutUs = () => {
     },
   ];
 
+useEffect(() => {
+  const hash = window.location.hash.replace('#', '');
+  
+  // Hash to section mapping
+  const sectionMap: { [key: string]: string } = {
+    'story': 'story',
+    'our-story': 'story',
+    'faq': 'faq',
+    'mission': 'mission',
+    'our-mission': 'mission',
+    'values': 'values',
+    'process': 'process',
+    'responsible-sourcing': 'responsible-sourcing',
+    'sustainability': 'sustainability',
+    'bracelet-size-guide': 'bracelet-size-guide'
+  };
+  
+  if (hash && sectionMap[hash]) {
+    setActiveSection(sectionMap[hash]);
+  }
+  
+  if (hash) {
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  }
+}, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50">
       {/* Hero Section */}
-      <section
-        className="relative py-24 overflow-hidden bg-cover bg-center mt-0 md:mt-10"
-      >
+      <section className="relative py-24 overflow-hidden bg-cover bg-center mt-0 md:mt-10">
         <video
-    className="absolute inset-0 w-full h-full object-cover"
-    src={video} // your imported MP4 file
-    autoPlay
-    loop
-    muted
-    playsInline
-  />
-   <div className="absolute inset-0 bg-black/40"></div>
+          className="absolute inset-0 w-full h-full object-cover"
+          src={video} // your imported MP4 file
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
+        <div className="absolute inset-0 bg-black/40"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-gray-900/10 to-[#9a8457] opacity-80"></div>
         <div className="absolute inset-0 bg-black/40"></div>
 
@@ -137,7 +164,9 @@ const AboutUs = () => {
           <div className="mb-8 mt-20">
             <div className="inline-flex items-center space-x-2 bg-[#9a8457]/20 backdrop-blur-sm rounded-full px-6 py-2 border border-black text-black text-sm font-medium mb-2">
               <Sparkles className="w-4 h-4" />
-              <span className="text-black">Est. with Love • Crafted with Conscience</span>
+              <span className="text-black">
+                Est. with Love • Crafted with Conscience
+              </span>
             </div>
 
             <h1 className="text-5xl md:text-7xl font-light text-white mb-6 leading-tight">
@@ -232,7 +261,7 @@ const AboutUs = () => {
                     </div>
                   </div> */}
 
-                       <div className="relative w-full md:w-80 lg:w-72 mx-auto">
+                  <div className="relative w-full md:w-80 lg:w-72 mx-auto">
                     <div className="aspect-square bg-gradient-to-br from-[#9a8457]/10 to-[#9a8457]/20 rounded-2xl overflow-hidden border-2 border-[#9a8457]/30">
                       <img
                         src={nimay}
@@ -449,5 +478,3 @@ const AboutUs = () => {
 };
 
 export default AboutUs;
-
-
