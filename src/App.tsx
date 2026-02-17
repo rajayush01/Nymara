@@ -28,6 +28,7 @@ import ReturnPolicy from "./components/ReturnPolicy";
 import ShippingPolicy from "./components/ShippingPolicy";
 import TermsAndConditions from "./components/TermsAndConditions";
 import WarrantyPolicy from "./components/WarrantyPolicy";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const Home = lazy(() => import("./pages/Home"));
 
@@ -461,6 +462,7 @@ function App() {
               <Route path="/shippingpolicy" element={<ShippingPolicy />} />
               <Route path="/termsandconditions" element={<TermsAndConditions />} />
               <Route path="/warrantypolicy" element={<WarrantyPolicy />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy/>}/>
               
 
               <Route

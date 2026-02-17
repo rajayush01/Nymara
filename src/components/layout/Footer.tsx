@@ -189,6 +189,15 @@ export default function Footer() {
               >
                 Loose Diamonds
               </a>
+              
+              <a
+                href="/privacy-policy"
+                className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors"
+              >
+                Privacy Policy
+              </a>
+
+
             </div>
           </div>
 
