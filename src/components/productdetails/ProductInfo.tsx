@@ -383,7 +383,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
           Price Breakdown
         </h3>
 
-        <div className="flex justify-between text-sm py-1">
+        {/* <div className="flex justify-between text-sm py-1">
           <span>Gold Value</span>
           <span>
             {product?.currency}
@@ -423,7 +423,51 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
       {product?.currency}
       {product?.convertedMakingCharge?.toLocaleString()}
     </span>
-  </div>
+  </div> */}
+
+             {selectedCountry.currency === "INR" && (
+  <>
+    <div className="flex justify-between text-sm py-1">
+      <span>Gold Value</span>
+      <span>
+        {product?.currency}
+        {Number(product?.metalTotal ?? 0).toLocaleString()}
+      </span>
+    </div>
+
+    <div className="flex justify-between text-sm py-1">
+      <span>Main Diamond</span>
+      <span>
+        {product?.currency}
+        {Number(product?.mainDiamondTotal ?? 0).toLocaleString()}
+      </span>
+    </div>
+
+    <div className="flex justify-between text-sm py-1">
+      <span>Side Diamonds</span>
+      <span>
+        {product?.currency}
+        {Number(product?.sideDiamondTotal ?? 0).toLocaleString()}
+      </span>
+    </div>
+
+    <div className="flex justify-between text-sm py-1">
+      <span>Gemstones</span>
+      <span>
+        {product?.currency}
+        {Number(product?.gemstonesTotal ?? 0).toLocaleString()}
+      </span>
+    </div>
+
+    <div className="flex justify-between text-sm py-1">
+      <span>Making Charges</span>
+      <span>
+        {product?.currency}
+        {Number(product?.convertedMakingCharge ?? 0).toLocaleString()}
+      </span>
+    </div>
+  </>
+)}
 
           <div className="flex justify-between text-base font-bold border-t pt-2">
           <span>Total Price</span>
