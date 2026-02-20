@@ -519,7 +519,7 @@ import p1 from '@/assets/ring1.jpg';
 import p2 from '@/assets/ring2.jpg';
 import p3 from '@/assets/ring3.jpg';
 import p5 from '@/assets/ring4.jpg';
-import p4 from '@/assets/home1.png';
+import p4 from '@/assets/roundbrillint.png';
 
 
 interface Product {
@@ -1075,3 +1075,4 @@ useEffect(() => {
 		</div>
 	);
 }
+
