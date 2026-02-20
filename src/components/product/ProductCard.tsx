@@ -479,10 +479,35 @@ console.log("========================================");
       <div className="p-6 flex flex-col flex-grow">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center">
-            <Star className="w-4 h-4 text-yellow-400 fill-current" />
+            {/* <Star className="w-4 h-4 text-yellow-400 fill-current" />
             <span className="text-sm text-slate-600 ml-1">
               {product.rating} ({product.reviews})
-            </span>
+            </span> */}
+
+             <div className="flex items-center gap-1">
+  <div className="flex">
+    {[1, 2, 3, 4, 5].map((star) => {
+      const rawRating = Number(product.rating);
+      const rating =
+        isNaN(rawRating) || rawRating < 0 ? 0 : Math.round(rawRating);
+
+      return (
+        <span
+          key={star}
+          className={`text-lg ${
+            star <= rating ? "text-yellow-500" : "text-gray-300"
+          }`}
+        >
+          ★
+        </span>
+      );
+    })}
+  </div>
+
+  <span className="text-sm text-slate-600 ml-1">
+    {Number(product.rating) || 0} ({product.reviews ?? 0})
+  </span>
+</div>
           </div>
           <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
             {product.style}
@@ -538,3 +563,4 @@ console.log("========================================");
 };
 
 export default ProductCard;
+
