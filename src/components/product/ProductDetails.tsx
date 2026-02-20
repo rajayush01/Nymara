@@ -42,7 +42,9 @@ const ProductLoader = () => {
             <ShoppingBag className="w-10 h-10 text-[#9a8457]" />
           </div>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Loading Product...</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          Loading Product...
+        </h2>
         <p className="text-gray-600">Please wait while we fetch the details</p>
       </div>
     </div>
@@ -86,7 +88,7 @@ const ProductDetail = () => {
       try {
         setLoading(true);
         const res = await axios.get(
-          `${VITE_API_URL}/api/user/ornaments/${id}?currency=${selectedCountry.currency}`
+          `${VITE_API_URL}/api/user/ornaments/${id}?currency=${selectedCountry.currency}`,
         );
 
         if (res.data?.ornament) {
@@ -98,7 +100,7 @@ const ProductDetail = () => {
               ([metalType, id]) => ({
                 _id: id,
                 metalType,
-              })
+              }),
             );
           } else {
             normalizedVariants = ornament.variants || [];
@@ -128,7 +130,7 @@ const ProductDetail = () => {
 
   // Scroll to top whenever the product ID changes (including related product clicks)
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id]);
 
   // Set default size
@@ -173,12 +175,29 @@ const ProductDetail = () => {
   }
 
   const productImages = [product.coverImage, ...(product.images || [])].filter(
-    (img): img is string => Boolean(img)
+    (img): img is string => Boolean(img),
   );
 
   const STANDARD_SIZES = [
-    "4", "4.5", "5", "5.5", "6", "6.5", "7",
-    "7.5", "8", "8.5", "9", "9.5", "10",
+    "4",
+    "4.5",
+    "5",
+    "5.5",
+    "6",
+    "6.5",
+    "7",
+    "7.5",
+    "8",
+    "8.5",
+    "9",
+    "9.5",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
   ];
 
   const calculatePrice = (): { amount: number; symbol: string } => {
@@ -196,9 +215,9 @@ const ProductDetail = () => {
     };
   };
 
-  const categoryString =
-  Array.isArray(product.category) ? product.category.join(" ").toLowerCase() : product.category?.toLowerCase?.() || "";
-
+  const categoryString = Array.isArray(product.category)
+    ? product.category.join(" ").toLowerCase()
+    : product.category?.toLowerCase?.() || "";
 
   const handleAddToCart = () => {
     if (!selectedSize) {
@@ -240,7 +259,7 @@ const ProductDetail = () => {
         p._id !== product._id &&
         (p.category === product.category ||
           p.style === product.style ||
-          p.stoneType === product.stoneType)
+          p.stoneType === product.stoneType),
     )
     .slice(0, 4);
 
@@ -286,33 +305,30 @@ const ProductDetail = () => {
               setActiveImageIndex={setActiveImageIndex}
             />
 
-             {
- Array.isArray(product.purityOptions) &&
- product.purityOptions.length > 0 && (
-  <div className="flex items-center gap-3">
-    <span className="text-sm font-medium text-gray-600">
-      Purity:
-    </span>
+            {Array.isArray(product.purityOptions) &&
+              product.purityOptions.length > 0 && (
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-gray-600">
+                    Purity:
+                  </span>
 
-    {product.purityOptions.map((option) => (
-      <button
-        key={option.id}
-        disabled={option.purity === product.currentPurity}
-        onClick={() => navigate(`/product/${option.id}`)}
-        className={`px-4 py-2 border rounded-md text-sm transition
+                  {product.purityOptions.map((option) => (
+                    <button
+                      key={option.id}
+                      disabled={option.purity === product.currentPurity}
+                      onClick={() => navigate(`/product/${option.id}`)}
+                      className={`px-4 py-2 border rounded-md text-sm transition
           ${
             option.purity === product.currentPurity
               ? "bg-[#9a8457] text-white border-[#9a8457]"
               : "border-gray-300 hover:border-[#9a8457] hover:text-[#9a8457]"
           }`}
-      >
-        {option.purity}
-      </button>
-    ))}
-  </div>
-)}
-
-
+                    >
+                      {option.purity}
+                    </button>
+                  ))}
+                </div>
+              )}
             <ProductConfiguration
               product={product}
               selectedSize={selectedSize}
@@ -322,6 +338,77 @@ const ProductDetail = () => {
               setShowSizeGuide={setShowSizeGuide}
               standardSizes={STANDARD_SIZES}
             />
+
+            <div className="flex items-start gap-3 bg-orange-50 border border-orange-100 rounded-xl px-4 py-3 my-2">
+              <span className="text-orange-500 mt-0.5 shrink-0">
+                {/* Ruler / Size Icon */}
+                <svg
+                  className="w-5 h-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M2 12h20M2 12l4-4M2 12l4 4M22 12l-4-4M22 12l-4 4" />
+                </svg>
+              </span>
+              <div className="flex-1">
+                <p className="text-md font-semibold text-gray-800 leading-snug">
+                  Need a Specific size?
+                </p>
+                <p className="text-sm text-gray-500 mt-0.5 mb-2.5">
+                  Contact us for custom sizing & pricing.
+                </p>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {/* WhatsApp */}
+                  <a
+                    href="https://wa.me/+447867089659"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 bg-[#25D366] hover:bg-[#1ebe5d] text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-all duration-150 hover:shadow-md active:scale-95"
+                  >
+                    <svg
+                      className="w-3.5 h-3.5 shrink-0"
+                      viewBox="0 0 24 24"
+                      fill="white"
+                    >
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+                      <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.528 5.855L.057 23.882l6.194-1.624A11.934 11.934 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.368l-.359-.214-3.68.964.982-3.588-.234-.369A9.818 9.818 0 1112 21.818z" />
+                    </svg>
+                    WhatsApp
+                  </a>
+
+                  {/* Email */}
+
+                 <div className="flex items-center gap-1.5 bg-white text-gray-400 text-xs font-semibold px-3 py-1.5 rounded-lg border border-gray-200">
+  <svg
+    className="w-3.5 h-3.5 shrink-0 text-gray-600"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+    <polyline points="22,6 12,13 2,6" />
+  </svg>
+  Email Us on{" "}
+  <a
+    href="mailto:business@nymarajewels.com"
+    target="_blank"
+    rel="noopener noreferrer"
+    onClick={(e) => e.stopPropagation()}
+    className="text-gray-900 hover:text-orange-600 hover:underline underline-offset-2 cursor-pointer select-all transition-colors duration-150"
+  >
+    business@nymarajewels.com
+  </a>
+</div>
+                </div>
+              </div>
+            </div>
 
             <ProductFeatures setShowDropHintModal={setShowDropHintModal} />
 
@@ -358,16 +445,16 @@ const ProductDetail = () => {
         )}
 
         {showSizeGuide && !categoryString.includes("earring") && (
-            <SizeGuide
-              isOpen={showSizeGuide}
-              onClose={() => setShowSizeGuide(false)}
-              productType={
-                Array.isArray(product.category)
-                  ? product.category[0]
-                  : product.category
-              }
-            />
-          )}
+          <SizeGuide
+            isOpen={showSizeGuide}
+            onClose={() => setShowSizeGuide(false)}
+            productType={
+              Array.isArray(product.category)
+                ? product.category[0]
+                : product.category
+            }
+          />
+        )}
 
         {showShareModal && (
           <ShareModal
@@ -390,7 +477,4 @@ const ProductDetail = () => {
   );
 };
 
-
 export default ProductDetail;
-
-

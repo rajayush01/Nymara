@@ -18,7 +18,7 @@ import img1 from "../assets/4c.png";
 import video from "../assets/bracelets-video.gif";
 import round from "../assets/round2.png";
 import princess from "../assets/princess1.png";
-import emerald from "../assets/emerald.png";
+import emerald from "../assets/emerald1.png";
 import oval from "../assets/oval.png";
 import cushion from "../assets/cushion.png";
 import pear from "../assets/pear.png";
@@ -775,11 +775,11 @@ useEffect(() => {
                   className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100"
                 >
                   <div className="text-center mb-6">
-                    <div className="w-20 h-20  rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-[#9a8457]/30">
+                    <div className="w-24 h-24  rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-[#9a8457]/30">
                       <img
                         src={shape.image}
                         alt={shape.name}
-                        className="w-16 h-16 object-contain"
+                        className="w-20 h-20 object-contain"
                       />
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
