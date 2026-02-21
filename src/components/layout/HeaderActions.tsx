@@ -318,7 +318,13 @@ const handleCategorySearchClick = (category: string, searchTerm: string) => {
                   {popularSearches.map((search, index) => (
                     <button
                       key={index}
-                      onClick={() => handleCategorySearchClick(search.category, search.term)}
+
+                    
+
+                         onClick={() => {
+  navigate(`/products?category=${search.category}`);
+  setIsSearchOpen(false);
+}}
                       className="text-left px-3 py-2 bg-gray-50 text-gray-700 rounded-lg text-sm hover:bg-[#9a8457] hover:text-white transition-colors duration-200"
                     >
                       {search.term}
@@ -565,5 +571,6 @@ const handleCategorySearchClick = (category: string, searchTerm: string) => {
     </div>
   );
 };
+
 
 export default HeaderActions;

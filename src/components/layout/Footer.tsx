@@ -413,7 +413,7 @@ export default function Footer() {
               </a>
 
               <a
-                href="https://wa.me/447867089659" target="_blank" rel="noopener noreferrer"
+                href="#"
                 className="w-9 h-9 sm:w-10 sm:h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#9a8457] transition-colors"
                 aria-label="WhatsApp"
               >
