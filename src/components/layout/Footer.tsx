@@ -1,4 +1,4 @@
-import { Phone, Mail, Clock, Shield,MapPin, Award, Heart } from "lucide-react";
+import { Phone, Mail, Clock, Shield, MapPin, Award, Heart } from "lucide-react";
 import logo from "../../assets/logo_main1.png";
 
 export default function Footer() {
@@ -189,15 +189,13 @@ export default function Footer() {
               >
                 Loose Diamonds
               </a>
-              
+
               <a
                 href="/privacy-policy"
                 className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors"
               >
                 Privacy Policy
               </a>
-
-
             </div>
           </div>
 
@@ -351,7 +349,9 @@ export default function Footer() {
 
             <div className="flex space-x-3 sm:space-x-4">
               <a
-                href="#"
+                href="https://www.instagram.com/nymarajewels/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-9 h-9 sm:w-10 sm:h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#9a8457] transition-colors"
                 aria-label="Instagram"
               >
@@ -365,7 +365,9 @@ export default function Footer() {
               </a>
 
               <a
-                href="#"
+                href="https://www.facebook.com/people/Nymara-Jewels/61588214350773/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-9 h-9 sm:w-10 sm:h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#9a8457] transition-colors"
                 aria-label="Facebook"
               >
@@ -379,7 +381,9 @@ export default function Footer() {
               </a>
 
               <a
-                href="#"
+                href="https://in.pinterest.com/157n5bx7van97js7oezcolxsbp28lw/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-9 h-9 sm:w-10 sm:h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#9a8457] transition-colors"
                 aria-label="Pinterest"
               >
@@ -393,7 +397,9 @@ export default function Footer() {
               </a>
 
               <a
-                href="#"
+                href="https://www.linkedin.com/company/nymara-jewels/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-9 h-9 sm:w-10 sm:h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#9a8457] transition-colors"
                 aria-label="LinkedIn"
               >
@@ -407,7 +413,7 @@ export default function Footer() {
               </a>
 
               <a
-                href="#"
+                href="https://wa.me/447867089659" target="_blank" rel="noopener noreferrer"
                 className="w-9 h-9 sm:w-10 sm:h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#9a8457] transition-colors"
                 aria-label="WhatsApp"
               >
