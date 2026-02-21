@@ -319,7 +319,7 @@ const handleCategorySearchClick = (category: string, searchTerm: string) => {
                     <button
                       key={index}
 
-                      {/* onClick={() => handleCategorySearchClick(search.category, search.term)} */}
+                      
                       
                          onClick={() => {
   navigate(`/products?category=${search.category}`);

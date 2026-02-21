@@ -371,8 +371,8 @@ useEffect(() => {
         className="relative py-24 overflow-hidden mt-0 md:mt-20 bg-cover bg-center"
         style={{ backgroundImage: `url(${video})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-[#9a8457] opacity-80"></div>
-        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-[#9a8457] opacity-40"></div>
+        <div className="absolute inset-0 bg-black/10"></div>
         <div className="absolute inset-0 overflow-hidden">
           {[...Array(25)].map((_, i) => (
             <div
@@ -388,7 +388,7 @@ useEffect(() => {
           ))}
         </div>
         <div className="relative max-w-7xl mx-auto px-8 text-center mt-20">
-          <div className="inline-flex items-center space-x-2 bg-[#9a8457]/20 backdrop-blur-sm rounded-full px-4 py-2 border border-[#9a8457]/50 text-[#9a8457] text-sm font-medium mb-6">
+          <div className="inline-flex items-center space-x-2 bg-[#9a8457]/20 backdrop-blur-sm rounded-full px-4 py-2 border border-[#9a8457]/50 text-black-600 text-sm font-medium mb-6">
             <BookOpen className="w-4 h-4" />
             <span>Expert Knowledge • Certified Information</span>
           </div>
