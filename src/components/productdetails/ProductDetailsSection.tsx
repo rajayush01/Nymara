@@ -239,34 +239,77 @@ const ProductDetailsSection: React.FC<ProductDetailsSectionProps> = ({
   expandedDetails,
   setExpandedDetails,
 }) => {
-  const itemDetails = [
-    {
-      label: "SKU",
-      value:
-        product.sku || `JW${product._id.toString().slice(-5).toUpperCase()}`,
-    },
-    {
-      label: "Category",
-      value: Array.isArray(product.category)
-        ? product.category.join(", ")
-        : product.category || "Jewelry",
-    },
-    { label: "Style", value: product.style || "—" },
-    { label: "Metal Type", value: product.metalType || "—" },
-    { label: "Stone Type", value: product.stoneType || "—" },
-    { label: "Color", value: product.color || "—" },
-    {
-      label: "Rating",
-      value:
-        (product.reviews ?? 0) > 0
-          ? `${product.rating ?? 0}/5 (${product.reviews} reviews)`
-          : "No reviews yet",
-    },
-    {
-      label: "Availability",
-      value: (product.stock ?? 0) > 0 ? "In Stock" : "Out of Stock",
-    },
-  ];
+  // const itemDetails = [
+  //   {
+  //     label: "SKU",
+  //     value:
+  //       product.sku || `JW${product._id.toString().slice(-5).toUpperCase()}`,
+  //   },
+  //   {
+  //     label: "Category",
+  //     value: Array.isArray(product.category)
+  //       ? product.category.join(", ")
+  //       : product.category || "Jewelry",
+  //   },
+  //   { label: "Style", value: product.style || "—" },
+  //   { label: "Metal Type", value: product.metalType || "—" },
+  //   { label: "Stone Type", value: product.stoneType || "—" },
+  //   { label: "Color", value: product.color || "—" },
+  //   {
+  //     label: "Rating",
+  //     value:
+  //       (product.reviews ?? 0) > 0
+  //         ? `${product.rating ?? 0}/5 (${product.reviews} reviews)`
+  //         : "No reviews yet",
+  //   },
+  //   {
+  //     label: "Availability",
+  //     value: (product.stock ?? 0) > 0 ? "In Stock" : "Out of Stock",
+  //   },
+  // ];
+
+         const itemDetails = [
+  {
+    label: "SKU",
+    value:
+      product.sku || `JW${product._id.toString().slice(-5).toUpperCase()}`,
+  },
+  {
+    label: "Category",
+    value: Array.isArray(product.category)
+      ? product.category.join(", ")
+      : product.category || "Jewelry",
+  },
+  { label: "Style", value: product.style || "—" },
+
+  // ✅ FIXED METAL TYPE
+  {
+    label: "Metal Type",
+    value: product.metal?.metalType || "—",
+  },
+
+  // ✅ ADD PURITY
+  {
+    label: "Purity",
+    value: product.metal?.purity || "—",
+  },
+
+  // ✅ ADD WEIGHT
+  {
+    label: "Metal Weight",
+    value: product.metal?.weight
+      ? `${product.metal.weight} g`
+      : "—",
+  },
+
+  { label: "Stone Type", value: product.stoneType || "—" },
+  { label: "Color", value: product.color || "—" },
+
+  {
+    label: "Availability",
+    value: (product.stock ?? 0) > 0 ? "In Stock" : "Out of Stock",
+  },
+];
 
   return (
     <div className="mt-16 space-y-8">
