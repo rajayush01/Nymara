@@ -11,11 +11,14 @@ import {
 } from "lucide-react";
 import video from "../assets/vid.mp4";
 import nimay from "../assets/nimay.jpeg";
-import { useEffect } from 'react';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import VirtualAppointmentModal from "@/components/layout/VirtualAppointmentModal";
 
 const AboutUs = () => {
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("story");
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const sections = [
     { id: "story", title: "Our Story", icon: <Heart className="w-5 h-5" /> },
     {
@@ -100,36 +103,40 @@ const AboutUs = () => {
     },
   ];
 
-useEffect(() => {
-  const hash = window.location.hash.replace('#', '');
-  
-  // Hash to section mapping
-  const sectionMap: { [key: string]: string } = {
-    'story': 'story',
-    'our-story': 'story',
-    'faq': 'faq',
-    'mission': 'mission',
-    'our-mission': 'mission',
-    'values': 'values',
-    'process': 'process',
-    'responsible-sourcing': 'responsible-sourcing',
-    'sustainability': 'sustainability',
-    'bracelet-size-guide': 'bracelet-size-guide'
-  };
-  
-  if (hash && sectionMap[hash]) {
-    setActiveSection(sectionMap[hash]);
-  }
-  
-  if (hash) {
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 100);
-  }
-}, []);
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+
+    // Hash to section mapping
+    const sectionMap: { [key: string]: string } = {
+      story: "story",
+      "our-story": "story",
+      faq: "faq",
+      mission: "mission",
+      "our-mission": "mission",
+      values: "values",
+      process: "process",
+      "responsible-sourcing": "responsible-sourcing",
+      sustainability: "sustainability",
+      "bracelet-size-guide": "bracelet-size-guide",
+    };
+
+    if (hash && sectionMap[hash]) {
+      setActiveSection(sectionMap[hash]);
+    }
+
+    if (hash) {
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 100);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50">
+      <VirtualAppointmentModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
       {/* Hero Section */}
       <section className="relative py-24 overflow-hidden bg-cover bg-center mt-0 md:mt-10">
         <video
@@ -141,8 +148,8 @@ useEffect(() => {
           playsInline
         />
         <div className="absolute inset-0 bg-black/20"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-gray-900/10 to-[#9a8457] opacity-40"></div>
-        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-gray-900/10 to-[#9a8457] opacity-30"></div>
+        <div className="absolute inset-0 bg-black/20"></div>
 
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
@@ -171,7 +178,7 @@ useEffect(() => {
 
             <h1 className="text-5xl md:text-7xl font-light text-white mb-6 leading-tight">
               Our Story of
-              <span className="block text-[#9a8457] font-normal">
+              <span className="block text-black/70 font-normal">
                 Conscious Luxury
               </span>
             </h1>
@@ -464,10 +471,16 @@ useEffect(() => {
             integrity at its core.
           </p>
           <div className="flex flex-wrap justify-center gap-6">
-            <button className="bg-white text-[#9a8457] px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors duration-200 shadow-lg hover:shadow-xl">
+            <button
+              onClick={() => navigate("/rings")}
+              className="bg-white text-[#9a8457] px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors duration-200 shadow-lg hover:shadow-xl"
+            >
               Explore Collections
             </button>
-            <button className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-[#9a8457] transition-colors duration-200">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-[#9a8457] transition-colors duration-200"
+            >
               Book Consultation
             </button>
           </div>
@@ -478,5 +491,3 @@ useEffect(() => {
 };
 
 export default AboutUs;
-
-

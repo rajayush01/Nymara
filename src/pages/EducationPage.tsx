@@ -14,6 +14,7 @@ import {
   BookOpen,
   Eye,
 } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
 import img1 from "../assets/4c.png";
 import video from "../assets/bracelets-video.gif";
 import round from "../assets/round2.png";
@@ -26,10 +27,12 @@ import marquise from "../assets/marquise.png";
 import asscher from "../assets/asscher.png";
 import heart from "../assets/heart.png";
 import { useEffect } from 'react';
-
+import VirtualAppointmentModal from "@/components/layout/VirtualAppointmentModal";
 const EducationPage = () => {
   const [activeSection, setActiveSection] = useState("4cs");
   const [openFAQ, setOpenFAQ] = useState<number | null>(null);
+  const navigate = useNavigate();
+   const [isModalOpen, setIsModalOpen] = useState(false);
 
 useEffect(() => {
   const hash = window.location.hash.replace('#', '');
@@ -366,12 +369,17 @@ useEffect(() => {
   ];
 
   return (
+    
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50">
+       <VirtualAppointmentModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          />
       <section
         className="relative py-24 overflow-hidden mt-0 md:mt-20 bg-cover bg-center"
         style={{ backgroundImage: `url(${video})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-[#9a8457] opacity-40"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-[#9a8457] opacity-30"></div>
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="absolute inset-0 overflow-hidden">
           {[...Array(25)].map((_, i) => (
@@ -1181,10 +1189,14 @@ useEffect(() => {
             crafted, lab-grown diamond jewelry.
           </p>
           <div className="flex flex-wrap justify-center gap-6">
-            <button className="bg-[#9a8457] text-white px-8 py-3 rounded-full font-medium hover:bg-[#89754d] transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 duration-200">
+            <button
+            onClick={() => navigate('/rings')}
+            className="bg-[#9a8457] text-white px-8 py-3 rounded-full font-medium hover:bg-[#89754d] transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 duration-200">
               Explore Collections
             </button>
-            <button className="border-2 border-[#9a8457] text-[#9a8457] px-8 py-3 rounded-full font-medium hover:bg-[#9a8457] hover:text-white transition-colors duration-200">
+            <button
+            onClick={() => setIsModalOpen(true)}
+            className="border-2 border-[#9a8457] text-[#9a8457] px-8 py-3 rounded-full font-medium hover:bg-[#9a8457] hover:text-white transition-colors duration-200">
               Book Consultation
             </button>
             <a
