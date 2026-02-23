@@ -17,7 +17,8 @@ const ProductCategoryPage: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
   
   // Extract category from URL path if not in params (for legacy routes like /rings)
-  const actualCategory = category || location.pathname.split('/')[1];
+  const pathCategory = location.pathname.split('/')[1];
+const actualCategory = category || (pathCategory && pathCategory !== "products" ? pathCategory : undefined);
   const actualSubCategory = subCategory;
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [isLoaded, setIsLoaded] = useState(false);
@@ -499,5 +500,6 @@ const ProductCategoryPage: React.FC = () => {
     </div>
   );
 };
+
 
 export default ProductCategoryPage;
