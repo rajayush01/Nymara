@@ -141,8 +141,8 @@ useEffect(() => {
           playsInline
         />
         <div className="absolute inset-0 bg-black/20"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-gray-900/10 to-[#9a8457] opacity-40"></div>
-        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-gray-900/10 to-[#9a8457] opacity-30"></div>
+        <div className="absolute inset-0 bg-black/20"></div>
 
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
@@ -478,5 +478,6 @@ useEffect(() => {
 };
 
 export default AboutUs;
+
 
 
