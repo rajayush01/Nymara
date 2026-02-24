@@ -9,7 +9,8 @@ import {
   Diamond,
   Sparkles,
 } from "lucide-react";
-import video from "../assets/vid.mp4";
+import video from "../assets/Our_story.mp4";
+import video2 from '../assets/Our_value.mp4';
 import nimay from "../assets/nimay.jpeg";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -140,16 +141,20 @@ const AboutUs = () => {
       {/* Hero Section */}
       <section className="relative py-24 overflow-hidden bg-cover bg-center mt-0 md:mt-10">
         <video
-          className="absolute inset-0 w-full h-full object-cover"
-          src={video} // your imported MP4 file
-          autoPlay
-          loop
-          muted
-          playsInline
-        />
-        <div className="absolute inset-0 bg-black/20"></div>
+    className="absolute inset-0 w-full h-full object-cover"
+    src={
+      activeSection === "story" || activeSection === "mission"
+        ? video
+        : video2
+    }
+    autoPlay
+    loop
+    muted
+    playsInline
+  />
+        <div className="absolute inset-0 bg-black/10"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-gray-900/10 to-[#9a8457] opacity-30"></div>
-        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="absolute inset-0 bg-black/10"></div>
 
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
@@ -171,14 +176,14 @@ const AboutUs = () => {
           <div className="mb-8 mt-20">
             <div className="inline-flex items-center space-x-2 bg-[#9a8457]/20 backdrop-blur-sm rounded-full px-6 py-2 border border-black text-black text-sm font-medium mb-2">
               <Sparkles className="w-4 h-4" />
-              <span className="text-black">
+              <span className="text-white">
                 Est. with Love • Crafted with Conscience
               </span>
             </div>
 
             <h1 className="text-5xl md:text-7xl font-light text-white mb-6 leading-tight">
               Our Story of
-              <span className="block text-black/70 font-normal">
+              <span className="block text-white/70 font-normal">
                 Conscious Luxury
               </span>
             </h1>

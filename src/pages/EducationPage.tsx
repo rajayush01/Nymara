@@ -14,9 +14,10 @@ import {
   BookOpen,
   Eye,
 } from "lucide-react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import img1 from "../assets/4c.png";
-import video from "../assets/bracelets-video.gif";
+// import video from "../assets/bracelets-video.gif";
+import video from "../assets/Lab_Grown.mp4";
 import round from "../assets/round2.png";
 import princess from "../assets/princess1.png";
 import emerald from "../assets/emerald1.png";
@@ -26,32 +27,31 @@ import pear from "../assets/pear.png";
 import marquise from "../assets/marquise.png";
 import asscher from "../assets/asscher.png";
 import heart from "../assets/heart.png";
-import { useEffect } from 'react';
+import { useEffect } from "react";
 import VirtualAppointmentModal from "@/components/layout/VirtualAppointmentModal";
 const EducationPage = () => {
   const [activeSection, setActiveSection] = useState("4cs");
   const [openFAQ, setOpenFAQ] = useState<number | null>(null);
   const navigate = useNavigate();
-   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-useEffect(() => {
-  const hash = window.location.hash.replace('#', '');
-  
-  // Section mapping based on your sections array
-  const validSections = ['4cs', 'lab-grown', 'gemstones', 'shapes', 'faq'];
-  
-  if (hash && validSections.includes(hash)) {
-    setActiveSection(hash);
-  }
-  
-  // Optional: Smooth scroll to top
-  if (hash) {
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 100);
-  }
-}, []);
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
 
+    // Section mapping based on your sections array
+    const validSections = ["4cs", "lab-grown", "gemstones", "shapes", "faq"];
+
+    if (hash && validSections.includes(hash)) {
+      setActiveSection(hash);
+    }
+
+    // Optional: Smooth scroll to top
+    if (hash) {
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 100);
+    }
+  }, []);
 
   const sections = [
     {
@@ -369,17 +369,24 @@ useEffect(() => {
   ];
 
   return (
-    
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-amber-50">
-       <VirtualAppointmentModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-          />
+    <div className="min-h-screen">
+      <VirtualAppointmentModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
       <section
         className="relative py-24 overflow-hidden mt-0 md:mt-20 bg-cover bg-center"
-        style={{ backgroundImage: `url(${video})` }}
+        // style={{ backgroundImage: `url(${video})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-[#9a8457] opacity-30"></div>
+        <video
+                  className="absolute inset-0 w-full h-full object-cover"
+                  src={video} // your imported MP4 file
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                />
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-500 to-[#9a8457] opacity-10"></div>
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="absolute inset-0 overflow-hidden">
           {[...Array(25)].map((_, i) => (
@@ -396,13 +403,13 @@ useEffect(() => {
           ))}
         </div>
         <div className="relative max-w-7xl mx-auto px-8 text-center mt-20">
-          <div className="inline-flex items-center space-x-2 bg-[#9a8457]/20 backdrop-blur-sm rounded-full px-4 py-2 border border-[#9a8457]/50 text-black-600 text-sm font-medium mb-6">
+          <div className="inline-flex items-center space-x-2  rounded-full px-4 py-2 border border-[#9a8457]/50 text-black-900 text-sm font-medium mb-6">
             <BookOpen className="w-4 h-4" />
-            <span>Expert Knowledge • Certified Information</span>
+            <span className="text-black">Expert Knowledge • Certified Information</span>
           </div>
           <h1 className="text-6xl font-light text-white mb-6">
             Diamond & Gemstone
-            <span className="block text-[#9a8457] font-normal">
+            <span className="block text-white font-normal">
               Education Center
             </span>
           </h1>
@@ -1190,13 +1197,15 @@ useEffect(() => {
           </p>
           <div className="flex flex-wrap justify-center gap-6">
             <button
-            onClick={() => navigate('/rings')}
-            className="bg-[#9a8457] text-white px-8 py-3 rounded-full font-medium hover:bg-[#89754d] transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 duration-200">
+              onClick={() => navigate("/rings")}
+              className="bg-[#9a8457] text-white px-8 py-3 rounded-full font-medium hover:bg-[#89754d] transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 duration-200"
+            >
               Explore Collections
             </button>
             <button
-            onClick={() => setIsModalOpen(true)}
-            className="border-2 border-[#9a8457] text-[#9a8457] px-8 py-3 rounded-full font-medium hover:bg-[#9a8457] hover:text-white transition-colors duration-200">
+              onClick={() => setIsModalOpen(true)}
+              className="border-2 border-[#9a8457] text-[#9a8457] px-8 py-3 rounded-full font-medium hover:bg-[#9a8457] hover:text-white transition-colors duration-200"
+            >
               Book Consultation
             </button>
             <a
