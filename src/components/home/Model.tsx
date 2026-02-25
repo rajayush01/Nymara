@@ -1,5 +1,5 @@
 import React from 'react';
-import dare from '../../assets/dare.mp4';
+import dare from '../../assets/dare1.mp4';
 
 const Model = () => {
   return (
