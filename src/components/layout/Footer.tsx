@@ -290,7 +290,7 @@ export default function Footer() {
               <p className="text-xs text-gray-400">
                 IGI Certified Lab Diamonds
                 <br />
-                Ethically Sourced Materials
+                BIS 100% Hallmarked Gold
               </p>
             </div>
           </div>

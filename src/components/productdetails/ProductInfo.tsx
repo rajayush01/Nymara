@@ -131,7 +131,6 @@
 
 //         console.log("🔍 Full Base Product Received:", fullBase);
 
-       
 //       if (
 //   fullBase.metalTotal === undefined ||
 //   fullBase.mainDiamondTotal === undefined
@@ -167,7 +166,6 @@
 //     <span>Back to Base Product</span>
 //   </button>
 // )}
-
 
 //       {/* Price Breakdown */}
 //       <div className="bg-white p-5 rounded-xl border border-gray-200 space-y-3 mt-6">
@@ -235,9 +233,6 @@
 //     </div>
 //   );
 
-
-
-
 import React, { useEffect } from "react";
 import { Star, ArrowLeft } from "lucide-react";
 import { Product } from "@/contexts/AppContext";
@@ -261,11 +256,6 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
   setProduct,
   setActiveImageIndex,
 }) => {
-
- 
-
- 
-
   useEffect(() => {
     console.log(" ProductInfo mounted or updated");
   }, [product, baseProduct]);
@@ -276,35 +266,31 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
       <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
         {product?.name}
       </h1>
-      <div className="text-sm text-gray-600 mb-4">
-        SKU: {product?.sku}
-      </div>
+      <div className="text-sm text-gray-600 mb-4">SKU: {product?.sku}</div>
 
       {/* Price */}
-    <div className="flex items-center space-x-4 mb-4">
-  <div className="flex items-center space-x-3">
-    {/* <span className="text-3xl font-bold text-gray-900">
+      <div className="flex items-center space-x-4 mb-4">
+        <div className="flex items-center space-x-3">
+          {/* <span className="text-3xl font-bold text-gray-900">
       {product?.currency}
       {product?.totalConvertedPrice?.toLocaleString()}
     </span> */}
 
-         <span className="text-3xl font-bold text-gray-900">
-  {product?.currency}
-  {Number(
-    product?.currency === "₹"
-      ? product?.totalConvertedPrice
-      : product?.displayPrice
-  ).toLocaleString()}
-</span>
-  </div>
-</div>
+          <span className="text-3xl font-bold text-gray-900">
+            {product?.currency}
+            {Number(
+              product?.currency === "₹"
+                ? product?.totalConvertedPrice
+                : product?.displayPrice,
+            ).toLocaleString()}
+          </span>
+        </div>
+      </div>
 
       {/* Back to Base Product Button */}
       {baseProduct && product?._id !== baseProduct?._id && (
         <button
           onClick={async () => {
-           
-
             try {
               if (!baseProduct?._id) {
                 console.error(" Base product ID missing!");
@@ -313,11 +299,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
 
               const url = `${import.meta.env.VITE_API_URL}/api/user/ornaments/${baseProduct._id}?currency=${selectedCountry.currency}`;
 
-            ;
-
               const res = await fetch(url);
-
-            
 
               if (!res.ok) {
                 const text = await res.text();
@@ -425,67 +407,67 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
     </span>
   </div> */}
 
-             {selectedCountry.currency === "INR" && (
-  <>
-    <div className="flex justify-between text-sm py-1">
-      <span>Gold Value</span>
-      <span>
-        {product?.currency}
-        {Number(product?.metalTotal ?? 0).toLocaleString()}
-      </span>
-    </div>
+        {selectedCountry.currency === "INR" && (
+          <>
+            <div className="flex justify-between text-sm py-1">
+              <span>Gold Value</span>
+              <span>
+                {product?.currency}
+                {Number(product?.metalTotal ?? 0).toLocaleString()}
+              </span>
+            </div>
 
-    <div className="flex justify-between text-sm py-1">
-      <span>Main Diamond</span>
-      <span>
-        {product?.currency}
-        {Number(product?.mainDiamondTotal ?? 0).toLocaleString()}
-      </span>
-    </div>
+            <div className="flex justify-between text-sm py-1">
+              <span>Main Diamond</span>
+              <span>
+                {product?.currency}
+                {Number(product?.mainDiamondTotal ?? 0).toLocaleString()}
+              </span>
+            </div>
 
-    <div className="flex justify-between text-sm py-1">
-      <span>Side Diamonds</span>
-      <span>
-        {product?.currency}
-        {Number(product?.sideDiamondTotal ?? 0).toLocaleString()}
-      </span>
-    </div>
+            <div className="flex justify-between text-sm py-1">
+              <span>Side Diamonds</span>
+              <span>
+                {product?.currency}
+                {Number(product?.sideDiamondTotal ?? 0).toLocaleString()}
+              </span>
+            </div>
 
-    <div className="flex justify-between text-sm py-1">
-      <span>Gemstones</span>
-      <span>
-        {product?.currency}
-        {Number(product?.gemstonesTotal ?? 0).toLocaleString()}
-      </span>
-    </div>
+            <div className="flex justify-between text-sm py-1">
+              <span>Gemstones</span>
+              <span>
+                {product?.currency}
+                {Number(product?.gemstonesTotal ?? 0).toLocaleString()}
+              </span>
+            </div>
 
-    <div className="flex justify-between text-sm py-1">
-      <span>Making Charges</span>
-      <span>
-        {product?.currency}
-        {Number(product?.convertedMakingCharge ?? 0).toLocaleString()}
-      </span>
-    </div>
-  </>
-)}
+            <div className="flex justify-between text-sm py-1">
+              <span>Making Charges</span>
+              <span>
+                {product?.currency}
+                {Number(product?.convertedMakingCharge ?? 0).toLocaleString()}
+              </span>
+            </div>
+          </>
+        )}
 
-          <div className="flex justify-between text-base font-bold border-t pt-2">
+        <div className="flex justify-between text-base font-bold border-t pt-2">
           <span>Total Price</span>
           <span>
-  {product?.currency}
-  {Number(
-    selectedCountry.currency === "INR"
-      ? product?.totalConvertedPrice
-      : product?.displayPrice
-  ).toLocaleString()}
-</span>
+            {product?.currency}
+            {Number(
+              selectedCountry.currency === "INR"
+                ? product?.totalConvertedPrice
+                : product?.displayPrice,
+            ).toLocaleString()}
+          </span>
         </div>
       </div>
 
       {/* Description */}
-      <div className="bg-gray-50 p-4 rounded-lg mt-6">
+      {/* <div className="bg-gray-50 p-4 rounded-lg mt-6">
         <p>{product?.description}</p>
-      </div>
+      </div> */}
     </div>
   );
 };

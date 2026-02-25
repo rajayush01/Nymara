@@ -382,30 +382,30 @@ const ProductDetail = () => {
 
                   {/* Email */}
 
-                 <div className="flex items-center gap-1.5 bg-white text-gray-400 text-xs font-semibold px-3 py-1.5 rounded-lg border border-gray-200">
-  <svg
-    className="w-3.5 h-3.5 shrink-0 text-gray-600"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-    <polyline points="22,6 12,13 2,6" />
-  </svg>
-  Email Us on{" "}
-  <a
-    href="mailto:business@nymarajewels.com"
-    target="_blank"
-    rel="noopener noreferrer"
-    onClick={(e) => e.stopPropagation()}
-    className="text-gray-900 hover:text-orange-600 hover:underline underline-offset-2 cursor-pointer select-all transition-colors duration-150"
-  >
-    business@nymarajewels.com
-  </a>
-</div>
+                  <div className="flex items-center gap-1.5 bg-white text-gray-400 text-xs font-semibold px-3 py-1.5 rounded-lg border border-gray-200">
+                    <svg
+                      className="w-3.5 h-3.5 shrink-0 text-gray-600"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                      <polyline points="22,6 12,13 2,6" />
+                    </svg>
+                    Email Us on{" "}
+                    <a
+                      href="mailto:business@nymarajewels.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-gray-900 hover:text-orange-600 hover:underline underline-offset-2 cursor-pointer select-all transition-colors duration-150"
+                    >
+                      business@nymarajewels.com
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -472,6 +472,10 @@ const ProductDetail = () => {
             VITE_API_URL={VITE_API_URL}
           />
         )}
+        {/*Product Description Section (moved from ProductInfo) */}
+        {/* <div className="bg-gray-50 p-4 rounded-lg mt-6">
+          <p>{product?.description}</p>
+        </div> */}
       </div>
     </div>
   );
