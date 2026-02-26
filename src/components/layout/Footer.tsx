@@ -264,7 +264,7 @@ export default function Footer() {
               </div>
             </div>
 
-            <div className="space-y-2 pt-4">
+            <div className="space-y-0 pt-2 sm:pl-8">
               <h5 className="text-sm font-medium text-gray-200">Services:</h5>
               <a
                 href="#corporate-gifting"
@@ -280,14 +280,14 @@ export default function Footer() {
               </a>
             </div>
 
-            <div className="pt-4">
-              <div className="flex items-center space-x-2 mb-2">
+            <div className="pt-2 sm:pl-8">
+              <div className="flex items-center space-x-2 mb-1">
                 <Award className="w-5 h-5 text-yellow-400 flex-shrink-0" />
                 <span className="text-sm font-medium text-gray-200">
                   Certifications
                 </span>
               </div>
-              <p className="text-xs text-gray-400">
+              <p className="text-sm text-gray-400">
                 IGI Certified Lab Diamonds
                 <br />
                 BIS 100% Hallmarked Gold

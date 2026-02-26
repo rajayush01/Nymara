@@ -18,6 +18,17 @@ import { useNavigate } from "react-router-dom";
 import img1 from "../assets/4c.png";
 // import video from "../assets/bracelets-video.gif";
 import video from "../assets/Lab_Grown.mp4";
+import colour from '../assets/colour.png';
+import clarity from '../assets/clarity.png';
+import create from "../assets/create.png";
+import carat from '../assets/carat.png';
+import ideal from "../assets/ideal.png";
+import lightperformance from "../assets/lightperformance.png";
+import very from "../assets/very.png";
+import excellent from "../assets/excellent.png";
+import good from "../assets/good.png";
+import fair from "../assets/fair.png";
+import poor from "../assets/poor.png";
 import round from "../assets/round2.png";
 import princess from "../assets/princess1.png";
 import emerald from "../assets/emerald1.png";
@@ -125,30 +136,36 @@ const EducationPage = () => {
     cut: [
       {
         grade: "Ideal",
+        image: ideal,
         description:
           "Extraordinary brilliance and perfect symmetry, engineered to exact proportions for optimal light performance",
       },
       {
         grade: "Excellent",
+        image: excellent,
         description:
           "Superior sparkle with uniform patterns and exceptional fire",
       },
       {
         grade: "Very Good",
+        image: very,
         description:
           "Strong brilliance and good symmetry with impressive light return",
       },
       {
         grade: "Good",
+        image: good,
         description:
           "Pleasing sparkle with fair polish and symmetry, good value option",
       },
       {
         grade: "Fair",
+        image: fair,
         description: "Limited sparkle and uneven finish, often asymmetrical",
       },
       {
         grade: "Poor",
+        image: poor,
         description:
           "Lackluster appearance with visible irregularities and little brilliance",
       },
@@ -379,13 +396,13 @@ const EducationPage = () => {
         // style={{ backgroundImage: `url(${video})` }}
       >
         <video
-                  className="absolute inset-0 w-full h-full object-cover"
-                  src={video} // your imported MP4 file
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                />
+          className="absolute inset-0 w-full h-full object-cover"
+          src={video} // your imported MP4 file
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
         <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-500 to-[#9a8457] opacity-10"></div>
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="absolute inset-0 overflow-hidden">
@@ -405,9 +422,11 @@ const EducationPage = () => {
         <div className="relative max-w-7xl mx-auto px-8 text-center mt-20">
           <div className="inline-flex items-center space-x-2  rounded-full px-4 py-2 border border-[#9a8457]/50 text-black-900 text-sm font-medium mb-6">
             <BookOpen className="w-4 h-4" />
-            <span className="text-black">Expert Knowledge • Certified Information</span>
+            <span className="text-black">
+              Expert Knowledge • Certified Information
+            </span>
           </div>
-          <h1 className="text-6xl font-light text-white mb-6">
+          <h1 className="text-5xl sm:text-6xl font-light text-white mb-6">
             Diamond & Gemstone
             <span className="block text-white font-normal">
               Education Center
@@ -453,11 +472,12 @@ const EducationPage = () => {
                 choices.
               </p>
             </div>
+            <img src={create} alt="Create" className="mx-auto w-full h-88 " />
 
-            <div className="bg-white rounded-3xl shadow-xl p-12 border border-gray-100">
+            <div className="bg-white rounded-3xl shadow-xl p-4 sm:p-12 border border-gray-100">
               <div className="grid lg:grid-cols-2 gap-12 items-center">
                 <div>
-                  <div className="flex items-center space-x-3 mb-6">
+                  <div className="flex sm:flex-row flex-col items-center space-x-3 mb-6">
                     <div className="p-3 bg-[#9a8457]/10 rounded-full border border-[#9a8457]/30">
                       <Diamond className="w-8 h-8 text-[#9a8457]" />
                     </div>
@@ -476,8 +496,17 @@ const EducationPage = () => {
                         key={index}
                         className="p-4 bg-[#9a8457]/5 rounded-xl border border-[#9a8457]/10 hover:border-[#9a8457]/30 transition-colors"
                       >
-                        <div className="font-semibold text-[#9a8457] mb-1">
-                          {grade.grade}
+                        <div className="flex items-center gap-3 mb-1">
+                          {grade.image && (
+                            <img
+                              src={grade.image}
+                              alt={grade.grade}
+                              className="w-10 h-10 rounded-full object-cover mr-0"
+                            />
+                          )}
+                          <span className="font-semibold text-[#9a8457]">
+                            {grade.grade}
+                          </span>
                         </div>
                         <div className="text-sm text-gray-600">
                           {grade.description}
@@ -487,7 +516,10 @@ const EducationPage = () => {
                   </div>
                 </div>
                 <div className="bg-gradient-to-br from-[#9a8457]/10 to-[#b39968]/10 rounded-2xl p-8 text-center border-2 border-[#9a8457]/30">
-                  <Diamond className="w-24 h-24 text-[#9a8457] mx-auto mb-6" />
+                  <img
+                    src={lightperformance}
+                    className="w-96 h-88 text-[#9a8457] mx-auto mb-6"
+                  />
                   <h4 className="text-xl font-semibold text-gray-900 mb-4">
                     Light Performance Components
                   </h4>
@@ -515,18 +547,19 @@ const EducationPage = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-3xl shadow-xl p-12 border border-gray-100">
+            <div className="bg-white rounded-3xl shadow-xl sm:p-12 p-4 border border-gray-100">
               <h3 className="text-3xl font-semibold text-gray-900 mb-6 text-center">
                 Color - The Absence of Color
               </h3>
               <p className="text-gray-600 leading-relaxed mb-8 text-center max-w-3xl mx-auto">
                 The less color present, the more brilliant the diamond.
               </p>
+              <img src={colour} alt="Diamond Color Guide" className="mx-auto w-full h-88 " />
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {diamondGrades.color.map((grade, index) => (
                   <div
                     key={index}
-                    className="text-center p-6 bg-gray-50 rounded-xl hover:shadow-lg hover:bg-[#9a8457]/5 transition-all border border-transparent hover:border-[#9a8457]/30"
+                    className="text-center sm:p-6 p-2 bg-gray-50 rounded-xl hover:shadow-lg hover:bg-[#9a8457]/5 transition-all border border-transparent hover:border-[#9a8457]/30"
                   >
                     <div className="font-semibold text-gray-900 mb-2">
                       {grade.grade}
@@ -539,15 +572,16 @@ const EducationPage = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-3xl shadow-xl p-12 border border-gray-100">
+            <div className="bg-white rounded-3xl shadow-xl p-4 sm:p-12 border border-gray-100">
               <h3 className="text-3xl font-semibold text-gray-900 mb-6 text-center">
                 Clarity - Internal Perfection
               </h3>
+              <img src={clarity} alt="Diamond Clarity Guide" className="mx-auto w-full h-88" />
               <div className="space-y-3">
                 {diamondGrades.clarity.map((grade, index) => (
                   <div
                     key={index}
-                    className="flex items-center space-x-6 p-4 bg-gray-50 rounded-lg hover:bg-[#9a8457]/5 transition-colors border border-transparent hover:border-[#9a8457]/30"
+                    className="flex flex-col sm:flex-row items-center space-x-6 p-4 bg-gray-50 rounded-lg hover:bg-[#9a8457]/5 transition-colors border border-transparent hover:border-[#9a8457]/30"
                   >
                     <div className="font-semibold text-gray-900 w-24 flex-shrink-0">
                       {grade.grade}
@@ -558,10 +592,11 @@ const EducationPage = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-3xl shadow-xl p-12 border border-gray-100">
+            <div className="bg-white rounded-3xl shadow-xl p-4  sm:p-12 border border-gray-100">
               <h3 className="text-3xl font-semibold text-gray-900 mb-6 text-center">
                 Carat - Weight and Size
               </h3>
+              <img src={carat} alt="Diamond Carat Guide" className="mx-auto py-4 my-4 w-full h-88" />
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {caratWeightGuide.map((guide, index) => (
                   <div

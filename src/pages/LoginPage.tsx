@@ -7,7 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 type LoginPageProps = {
   onSwitchToSignup: () => void;
-}
+};
 
 type Ripple = {
   id: number;
@@ -17,31 +17,206 @@ type Ripple = {
   opacity: number;
 };
 
+type ToastType = "success" | "error";
+
+interface ToastProps {
+  message: string;
+  type: ToastType;
+  onClose: () => void;
+}
+
+function Toast({ message, type, onClose }: ToastProps) {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 4000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  const isSuccess = type === "success";
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: "24px",
+        right: "24px",
+        zIndex: 9999,
+        animation: "slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+      }}
+    >
+      <style>{`
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateX(120%) scale(0.9); }
+          to   { opacity: 1; transform: translateX(0)   scale(1);   }
+        }
+        @keyframes shrink {
+          from { width: 100%; }
+          to   { width: 0%;   }
+        }
+        .toast-progress {
+          animation: shrink 4s linear forwards;
+        }
+      `}</style>
+
+      <div
+        style={{
+          background: "#fff",
+          borderRadius: "14px",
+          boxShadow: "0 8px 40px rgba(0,0,0,0.14), 0 1px 3px rgba(0,0,0,0.08)",
+          overflow: "hidden",
+          minWidth: "320px",
+          maxWidth: "400px",
+          border: `1px solid ${isSuccess ? "#e8f5e9" : "#fce4e4"}`,
+        }}
+      >
+        {/* Body */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            padding: "16px 16px 14px",
+          }}
+        >
+          {/* Icon */}
+          <div
+            style={{
+              width: "36px",
+              height: "36px",
+              borderRadius: "50%",
+              background: isSuccess ? "#f0faf0" : "#fff0f0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+              marginRight: "12px",
+            }}
+          >
+            {isSuccess ? (
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="9" fill="#22c55e" fillOpacity="0.15" />
+                <path
+                  d="M5 9.5l3 3 5-6"
+                  stroke="#16a34a"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="9" fill="#ef4444" fillOpacity="0.12" />
+                <path
+                  d="M9 5.5v4M9 12.5v.5"
+                  stroke="#dc2626"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            )}
+          </div>
+
+          {/* Text */}
+          <div style={{ flex: 1, paddingTop: "2px" }}>
+            <p
+              style={{
+                margin: 0,
+                fontWeight: 600,
+                fontSize: "14px",
+                color: "#111827",
+                fontFamily: "inherit",
+              }}
+            >
+              {isSuccess ? "Welcome back!" : "Login failed"}
+            </p>
+            <p
+              style={{
+                margin: "3px 0 0",
+                fontSize: "13px",
+                color: "#6b7280",
+                fontFamily: "inherit",
+                lineHeight: "1.4",
+              }}
+            >
+              {message}
+            </p>
+          </div>
+
+          {/* Close */}
+          <button
+            onClick={onClose}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: "2px",
+              marginLeft: "8px",
+              color: "#9ca3af",
+              flexShrink: 0,
+              lineHeight: 1,
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path
+                d="M4 4l8 8M12 4l-8 8"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
+        </div>
+
+        {/* Progress bar */}
+        <div
+          style={{
+            height: "3px",
+            background: isSuccess ? "#f0fdf4" : "#fff5f5",
+          }}
+        >
+          <div
+            className="toast-progress"
+            style={{
+              height: "100%",
+              background: isSuccess ? "#9a8457" : "#ef4444",
+              borderRadius: "0 0 14px 14px",
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToSignup }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-const [mousePos, setMousePos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-const [ripples, setRipples] = useState<Ripple[]>([]);
-const [focusField, setFocusField] = useState<"email" | "password" | null>(null);
+  const [mousePos, setMousePos] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
+  const [ripples, setRipples] = useState<Ripple[]>([]);
+  const [focusField, setFocusField] = useState<"email" | "password" | null>(
+    null,
+  );
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
 
   // Sophisticated mouse tracking
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      const rect = document.querySelector('.login-container')?.getBoundingClientRect();
+      const rect = document
+        .querySelector(".login-container")
+        ?.getBoundingClientRect();
       if (rect) {
-        setMousePos({ 
+        setMousePos({
           x: (e.clientX - rect.left) / rect.width,
-          y: (e.clientY - rect.top) / rect.height
+          y: (e.clientY - rect.top) / rect.height,
         });
       }
     };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   // Ripple effect system
@@ -51,34 +226,38 @@ const [focusField, setFocusField] = useState<"email" | "password" | null>(null);
       x,
       y,
       scale: 0,
-      opacity: 1
+      opacity: 1,
     };
-    setRipples(prev => [...prev, newRipple]);
-    
+    setRipples((prev) => [...prev, newRipple]);
+
     setTimeout(() => {
-      setRipples(prev => prev.filter(r => r.id !== newRipple.id));
+      setRipples((prev) => prev.filter((r) => r.id !== newRipple.id));
     }, 2000);
   };
 
   const [showForgotModal, setShowForgotModal] = useState(false);
-const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotEmail, setForgotEmail] = useState("");
 
-const handleForgotPassword = async () => {
-  if (!forgotEmail) {
-    alert("Please enter your email");
-    return;
-  }
-  try {
-    await axios.post(`${API_URL}/api/user/forgetpassword`, { email: forgotEmail });
-    alert("✅ Reset link sent to your email!");
-    setShowForgotModal(false);
-  } catch (err: any) {
-    console.error("❌ Error:", err.response?.data || err.message);
-    alert(err.response?.data?.message || "Something went wrong");
-  }
-};
+  const handleForgotPassword = async () => {
+    if (!forgotEmail) {
+      alert("Please enter your email");
+      return;
+    }
+    try {
+      await axios.post(`${API_URL}/api/user/forgetpassword`, {
+        email: forgotEmail,
+      });
+      alert("✅ Reset link sent to your email!");
+      setShowForgotModal(false);
+    } catch (err: any) {
+      console.error("❌ Error:", err.response?.data || err.message);
+      alert(err.response?.data?.message || "Something went wrong");
+    }
+  };
 
-const handleClick = (e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) => {
+  const handleClick = (
+    e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>,
+  ) => {
     const rect = e.currentTarget.getBoundingClientRect();
     createRipple(e.clientX - rect.left, e.clientY - rect.top);
   };
@@ -87,33 +266,59 @@ const handleClick = (e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>) =>
     setIsLoaded(true);
   }, []);
 
-const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
+
+  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       const res = await axios.post(`${API_URL}/api/auth/login`, formData);
-
       const { token, user } = res.data;
 
-      // Store auth data
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify({ ...user, isLoggedIn: true }));
 
-      console.log("✅ Login successful:", res.data);
+      setToast({ message: "You've been logged in successfully.", type: "success" });
 
-      // Navigate to profile
-      window.location.href = "/profile";
+      setTimeout(() => {
+        window.location.href = "/profile";
+      }, 1500); // slight delay so user sees the success toast
+
     } catch (err: any) {
-      console.error("❌ Login failed:", err.response?.data || err.message);
-      alert(err.response?.data?.message || "Login failed. Please try again.");
+      const message = err.response?.data?.message || "Something went wrong. Please try again.";
+      setToast({ message, type: "error" });
     }
   };
+
+  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   try {
+  //     const res = await axios.post(`${API_URL}/api/auth/login`, formData);
+
+  //     const { token, user } = res.data;
+
+  //     // Store auth data
+  //     localStorage.setItem("token", token);
+  //     localStorage.setItem(
+  //       "user",
+  //       JSON.stringify({ ...user, isLoggedIn: true }),
+  //     );
+
+  //     console.log("✅ Login successful:", res.data);
+
+  //     // Navigate to profile
+  //     window.location.href = "/profile";
+  //   } catch (err: any) {
+  //     console.error("❌ Login failed:", err.response?.data || err.message);
+  //     alert(err.response?.data?.message || "Login failed. Please try again.");
+  //   }
+  // };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center p-4 relative overflow-hidden">
@@ -275,32 +480,40 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
       {/* Sophisticated background */}
       <div className="absolute inset-0 bg-luxury"></div>
-      
+         {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
       {/* Floating elegant diamonds */}
       {[...Array(8)].map((_, i) => (
         <div
           key={i}
           className="absolute diamond-sparkle"
           style={{
-            left: `${15 + (i * 12)}%`,
+            left: `${15 + i * 12}%`,
             top: `${20 + (i % 3) * 25}%`,
-            animationDelay: `${i * 0.8}s`
+            animationDelay: `${i * 0.8}s`,
           }}
         >
-          <Sparkles 
+          <Sparkles
             className="w-3 h-3"
             style={{
-              color: 'rgba(154, 132, 87, 0.3)',
-              filter: 'blur(0.5px)'
+              color: "rgba(154, 132, 87, 0.3)",
+              filter: "blur(0.5px)",
             }}
           />
         </div>
       ))}
 
       {/* Main container */}
-      <div className={`login-container relative w-full max-w-md mt-40 ${isLoaded ? 'elegant-entrance' : 'opacity-0'}`}>
+      <div
+        className={`login-container relative w-full max-w-md mt-40 ${isLoaded ? "elegant-entrance" : "opacity-0"}`}
+      >
         {/* Ripple effects */}
-        {ripples.map(ripple => (
+        {ripples.map((ripple) => (
           <div
             key={ripple.id}
             className="ripple"
@@ -308,53 +521,54 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
               left: ripple.x - 25,
               top: ripple.y - 25,
               width: 50,
-              height: 50
+              height: 50,
             }}
           />
         ))}
 
         <div className="glass-card rounded-3xl overflow-hidden gentle-breathe magnetic relative">
-          
           {/* Subtle top accent */}
           <div className="absolute top-0 left-1/2 w-20 h-0.5 liquid-line transform -translate-x-1/2"></div>
-          
+
           {/* Header */}
           <div className="p-8 text-center relative">
             <div className="absolute inset-0 bg-gradient-to-b from-white/50 to-transparent"></div>
-            
+
             <div className="relative z-10">
-              <div 
+              <div
                 className="mx-auto w-32 h-32 rounded-2xl flex items-center justify-center mb-6 hover-lift cursor-pointer"
                 onClick={handleClick}
                 style={{
-                  boxShadow: '0 8px 25px rgba(154, 132, 87, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+                  boxShadow:
+                    "0 8px 25px rgba(154, 132, 87, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3)",
                 }}
               >
                 <img src={logomain} alt="" />
               </div>
-              
+
               <h1 className="text-3xl font-light text-slate-800 mb-2 tracking-wide">
                 <span className="bg-[#9a8457] bg-clip-text text-transparent">
                   Welcome
                 </span>
               </h1>
-              <p className="text-slate-500 text-sm font-light">Sign in to your account</p>
+              <p className="text-slate-500 text-sm font-light">
+                Sign in to your account
+              </p>
             </div>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="px-8 pb-8 space-y-6">
-            
             {/* Email field */}
             <div className="relative group">
               <label className="block text-slate-700 text-sm mb-2 font-medium">
                 Email
               </label>
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10 mt-8">
-                <Mail 
+                <Mail
                   className="h-4 w-4 text-slate-400 transition-colors duration-300"
                   style={{
-                    color: focusField === 'email' ? '#9a8457' : undefined
+                    color: focusField === "email" ? "#9a8457" : undefined,
                   }}
                 />
               </div>
@@ -363,11 +577,11 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                onFocus={() => setFocusField('email')}
+                onFocus={() => setFocusField("email")}
                 onBlur={() => setFocusField(null)}
                 placeholder="your@email.com"
                 className={`w-full pl-11 pr-4 py-3 rounded-xl focus:outline-none text-slate-800 placeholder-slate-400 text-sm input-pristine ${
-                  focusField === 'email' ? 'field-focus' : ''
+                  focusField === "email" ? "field-focus" : ""
                 }`}
                 required
               />
@@ -379,10 +593,10 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                 Password
               </label>
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10 mt-8">
-                <Lock 
+                <Lock
                   className="h-4 w-4 text-slate-400 transition-colors duration-300"
                   style={{
-                    color: focusField === 'password' ? '#9a8457' : undefined
+                    color: focusField === "password" ? "#9a8457" : undefined,
                   }}
                 />
               </div>
@@ -391,11 +605,11 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                onFocus={() => setFocusField('password')}
+                onFocus={() => setFocusField("password")}
                 onBlur={() => setFocusField(null)}
                 placeholder="Enter your password"
                 className={`w-full pl-11 pr-11 py-3 rounded-xl focus:outline-none text-slate-800 placeholder-slate-400 text-sm input-pristine ${
-                  focusField === 'password' ? 'field-focus' : ''
+                  focusField === "password" ? "field-focus" : ""
                 }`}
                 required
               />
@@ -416,60 +630,60 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             <div className="flex items-center justify-between">
               <label className="flex items-center cursor-pointer group">
                 <input type="checkbox" className="sr-only peer" />
-                <div 
-                  className="w-4 h-4 bg-white border border-slate-300 rounded flex items-center justify-center mr-3 peer-checked:border-[#9a8457] transition-all duration-200 hover-lift"
-                  style={{
-                    backgroundColor: 'white'
-                  }}
-                >
-                  <div 
-                    className="w-2 h-2 rounded-sm opacity-0 peer-checked:opacity-100 transition-opacity"
-                    style={{
-                      backgroundColor: '#9a8457'
-                    }}
-                  ></div>
+                <div className="w-4 h-4 bg-white border border-slate-300 rounded flex items-center justify-center mr-3 transition-all duration-200 peer-checked:bg-[#9a8457] peer-checked:border-[#9a8457]">
+                  <svg
+                    className="w-2.5 h-2.5 text-white scale-0 peer-checked:scale-100 transition-transform duration-200"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="2,6 5,9 10,3" />
+                  </svg>
                 </div>
                 <span className="text-slate-600 text-sm">Remember me</span>
               </label>
 
               <button
-  type="button"
-  onClick={() => setShowForgotModal(true)}
-  className="text-sm text-[#9a8457] hover:text-[#7d6b47] transition-colors hover-lift"
->
-  Forgot password?
-</button>
+                type="button"
+                onClick={() => setShowForgotModal(true)}
+                className="text-sm text-[#9a8457] hover:text-[#7d6b47] transition-colors hover-lift"
+              >
+                Forgot password?
+              </button>
 
-{showForgotModal && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-    <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full">
-      <h2 className="text-lg font-semibold mb-3">Reset Password</h2>
-      <input
-        type="email"
-        placeholder="Enter your email"
-        className="w-full border rounded-lg px-3 py-2 mb-3"
-        value={forgotEmail}
-        onChange={(e) => setForgotEmail(e.target.value)}
-      />
-      <div className="flex justify-end space-x-3">
-        <button
-          onClick={() => setShowForgotModal(false)}
-          className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleForgotPassword}
-          className="px-4 py-2 bg-[#9a8457] text-white rounded-lg hover:bg-[#7d6b47]"
-        >
-          Send Link
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
-              
+              {showForgotModal && (
+                <div className="fixed inset-0  flex items-center justify-center bg-black bg-opacity-50">
+                  <div className="bg-white p-4 rounded-xl shadow-lg max-w-sm w-full">
+                    <h2 className="text-lg font-semibold mb-2">
+                      Reset Password
+                    </h2>
+                    <input
+                      type="email"
+                      placeholder="Enter your email"
+                      className="w-full border rounded-lg px-3 py-2 mb-3"
+                      value={forgotEmail}
+                      onChange={(e) => setForgotEmail(e.target.value)}
+                    />
+                    <div className="flex justify-end space-x-3">
+                      <button
+                        onClick={() => setShowForgotModal(false)}
+                        className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleForgotPassword}
+                        className="px-4 py-2 bg-[#9a8457] text-white rounded-lg hover:bg-[#7d6b47]"
+                      >
+                        Send Link
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Submit button */}
@@ -477,7 +691,7 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
               type="submit"
               className="w-full text-white bg-[#9a8457] font-medium py-3 rounded-xl transition-all duration-300 flex items-center justify-center group relative overflow-hidden hover-lift"
               style={{
-                boxShadow: '0 8px 25px rgba(154, 132, 87, 0.3)'
+                boxShadow: "0 8px 25px rgba(154, 132, 87, 0.3)",
               }}
             >
               <div className="absolute inset-0 energy-sweep opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -488,7 +702,7 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             {/* Sign up */}
             <div className="text-center pt-4">
               <p className="text-slate-600 text-sm">
-                Don't have an account?{' '}
+                Don't have an account?{" "}
                 <button
                   type="button"
                   onClick={onSwitchToSignup}
