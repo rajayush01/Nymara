@@ -1,7 +1,9 @@
 import React from 'react';
 import dare from '../../assets/Dare1.mp4';
+import { useNavigate } from 'react-router-dom';
 
 const Model = () => {
+   const navigate = useNavigate();
   return (
     <section className="relative h-screen bg-black overflow-hidden">
       {/* Video Background - Full screen */}
@@ -36,7 +38,9 @@ const Model = () => {
           </div>
 
           {/* CTA Button */}
-          <button className="group relative overflow-hidden px-8 py-3 border border-white text-white font-light text-sm tracking-[0.2em] transition-all duration-300 hover:bg-white hover:text-black uppercase">
+          <button
+            onClick={() => navigate('/earrings')}
+          className="group relative overflow-hidden px-8 py-3 border border-white text-white font-light text-sm tracking-[0.2em] transition-all duration-300 hover:bg-white hover:text-black uppercase">
             <span className="relative z-10">Shop fine jewelry</span>
             <div className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
           </button>
