@@ -11,7 +11,17 @@ import {
 } from "lucide-react";
 import logomain from "@/assets/logo_main1.png";
 import axios from "axios";
-import TermsAndCondition1 from "@/components/TermsAndCondition1";
+import TermsAndCondition1 from "@/components/TermsAndCondition1
+const countries = [
+  { code: "IN", flag: "🇮🇳", dialCode: "+91" },
+  { code: "US", flag: "🇺🇸", dialCode: "+1" },
+  { code: "GB", flag: "🇬🇧", dialCode: "+44" },
+  { code: "CA", flag: "🇨🇦", dialCode: "+1" },
+  { code: "AE", flag: "🇦🇪", dialCode: "+971" },
+  { code: "AU", flag: "🇦🇺", dialCode: "+61" },
+  { code: "SG", flag: "🇸🇬", dialCode: "+65" },
+  { code: "JP", flag: "🇯🇵", dialCode: "+81" },
+];
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -208,6 +218,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
   const [focusField, setFocusField] = useState<
     "name" | "email" | "phone" | "password" | "confirmPassword" | null
   >(null);
+  const [selectedCountry, setSelectedCountry] = useState(countries[0]);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -285,7 +296,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
       const res = await axios.post(`${API_URL}/api/auth/signup`, {
         name: formData.name,
         email: formData.email,
-        phoneNumber: formData.phone,
+        phoneNumber: `${selectedCountry.dialCode}${formData.phone}`,
         password: formData.password,
       });
 
@@ -660,7 +671,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
             </div>
 
             {/* Phone field */}
-            <div className="relative group">
+            {/* <div className="relative group">
               <label className="block text-slate-700 text-sm mb-2 font-medium">
                 Phone Number
               </label>
@@ -685,7 +696,59 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
                 }`}
                 required
               />
-            </div>
+            </div> */}
+
+            <div className="relative group">
+  <label className="block text-slate-700 text-sm mb-2 font-medium">
+    Phone Number
+  </label>
+
+  <div className="flex">
+
+    {/* Country Dropdown */}
+    <select
+      value={selectedCountry.code}
+      onChange={(e) =>
+        setSelectedCountry(
+          countries.find(c => c.code === e.target.value)!
+        )
+      }
+      className="px-3 py-3 rounded-l-xl text-sm input-pristine focus:outline-none"
+    >
+      {countries.map((country) => (
+        <option key={country.code} value={country.code}>
+          {country.flag} {country.dialCode}
+        </option>
+      ))}
+    </select>
+
+    {/* Phone Input */}
+    <div className="relative w-full">
+      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
+        <Phone 
+          className="h-4 w-4 text-slate-400 transition-colors duration-300"
+          style={{
+            color: focusField === 'phone' ? '#9a8457' : undefined
+          }}
+        />
+      </div>
+
+      <input
+        type="tel"
+        name="phone"
+        value={formData.phone}
+        onChange={handleInputChange}
+        onFocus={() => setFocusField('phone')}
+        onBlur={() => setFocusField(null)}
+        placeholder="Enter your phone number"
+        className={`w-full pl-11 pr-4 py-3 rounded-r-xl focus:outline-none text-slate-800 placeholder-slate-400 text-sm input-pristine ${
+          focusField === 'phone' ? 'field-focus' : ''
+        }`}
+        required
+      />
+    </div>
+  </div>
+</div>
 
             {/* Password field */}
             <div className="relative group">
@@ -849,3 +912,4 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
 };
 
 export default SignupPage;
+
