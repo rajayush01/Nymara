@@ -53,7 +53,7 @@ const ProductActions: React.FC<ProductActionsProps> = ({
           <button
             onClick={handleAddToCart}
             disabled={
-              !product.stock || (!selectedSize && standardSizes.length > 1)
+              !product.stock 
             }
             className="flex-1 bg-[#9a8457] text-white py-4 px-6 rounded-lg font-medium hover:bg-[#8a7547] disabled:bg-gray-400 disabled:cursor-not-allowed transition-all flex items-center justify-center space-x-2 relative overflow-hidden"
           >

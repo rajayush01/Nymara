@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import logomain from "@/assets/logo_main1.png";
 import axios from "axios";
+import TermsAndCondition1 from "@/components/TermsAndCondition1";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -24,7 +25,6 @@ type Ripple = {
   scale: number;
   opacity: number;
 };
-
 
 type ToastType = "success" | "error";
 
@@ -195,11 +195,11 @@ function Toast({ message, type, onClose }: ToastProps) {
   );
 }
 
-
 const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [modal, setModal] = useState<"terms" | "privacy" | null>(null);
   const [mousePos, setMousePos] = useState<{ x: number; y: number }>({
     x: 0,
     y: 0,
@@ -497,16 +497,40 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
           transform: translate(${(mousePos.x - 0.5) * 10}px, ${(mousePos.y - 0.5) * 5}px);
         }
       `}</style>
+       {modal !== null && (
+              <div
+                className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                onClick={() => setModal(null)}
+              >
+                <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+                <div
+                  className="relative bg-white rounded-xl shadow-2xl w-full max-w-full max-h-[95vh] flex flex-col z-10"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex justify-end p-3 border-b border-slate-100">
+                    <button
+                      onClick={() => setModal(null)}
+                      className="w-8 h-8 flex items-center font-bold justify-center rounded-lg text-slate-800 hover:text-slate-900 hover:bg-slate-100 transition-all"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <div className="overflow-y-auto flex-1">
+                    <TermsAndCondition1 />
+                  </div>
+                </div>
+              </div>
+            )}
 
       {/* Sophisticated background */}
       <div className="absolute inset-0 bg-luxury"></div>
- {toast && (
-      <Toast
-        message={toast.message}
-        type={toast.type}
-        onClose={() => setToast(null)}
-      />
-    )}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
       {/* Floating elegant diamonds */}
       {[...Array(8)].map((_, i) => (
         <div
@@ -742,14 +766,13 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
               </button>
             </div>
 
+           
+
             {/* Terms checkbox */}
             <div className="flex items-start">
               <label className="flex items-start cursor-pointer">
                 <input type="checkbox" className="sr-only peer" required />
-
-                {/* This div IS a direct sibling of input, so peer-checked works */}
                 <div className="w-4 h-4 shrink-0 border border-slate-300 rounded flex items-center justify-center mr-3 mt-0.5 transition-all duration-200 bg-white peer-checked:bg-[#9a8457] peer-checked:border-[#9a8457]">
-                  {/* Checkmark — always visible but hidden by parent's bg until checked */}
                   <svg
                     className="w-2.5 h-2.5 text-white scale-0 peer-checked:scale-100 transition-transform"
                     viewBox="0 0 12 12"
@@ -762,11 +785,14 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
                     <polyline points="2,6 5,9 10,3" />
                   </svg>
                 </div>
-
                 <span className="text-slate-600 text-sm">
                   I agree to the{" "}
                   <button
                     type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setModal("terms");
+                    }}
                     className="text-[#9a8457] hover:text-[#7d6b47] transition-colors font-medium"
                   >
                     Terms
@@ -774,6 +800,10 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
                   and{" "}
                   <button
                     type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setModal("privacy");
+                    }}
                     className="text-[#9a8457] hover:text-[#7d6b47] transition-colors font-medium"
                   >
                     Privacy Policy
@@ -781,6 +811,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
                 </span>
               </label>
             </div>
+
             {/* Submit button */}
             <button
               type="submit"

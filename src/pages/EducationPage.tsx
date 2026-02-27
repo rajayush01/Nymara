@@ -472,7 +472,7 @@ const EducationPage = () => {
                 choices.
               </p>
             </div>
-            <img src={create} alt="Create" className="mx-auto w-full h-88 " />
+            
 
             <div className="bg-white rounded-3xl shadow-xl p-4 sm:p-12 border border-gray-100">
               <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -645,6 +645,11 @@ const EducationPage = () => {
                   elegantly replicated.
                 </p>
               </div>
+            </div>
+
+            <div className="bg-white/90">
+              <h3 className="text-3xl py-4 font-semibold text-gray-900 mb-6 text-center">Labgrown diamond production process</h3>
+              <img src={create} alt="Create" className="mx-auto w-full h-88 " />
             </div>
 
             <div className="grid lg:grid-cols-2 gap-8">

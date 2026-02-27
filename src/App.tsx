@@ -29,6 +29,7 @@ import ShippingPolicy from "./components/ShippingPolicy";
 import TermsAndConditions from "./components/TermsAndConditions";
 import WarrantyPolicy from "./components/WarrantyPolicy";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import LooseDiamond from "./pages/LooseDiamond";
 
 const Home = lazy(() => import("./pages/Home"));
 
@@ -479,6 +480,7 @@ function App() {
               />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/bespoke" element={<BespokeService />} />
+              <Route path="/loose-diamonds" element={<LooseDiamond />} />
               <Route path="/bracelet-size" element={<BraceletSizeGuide />} />
               <Route path="/necklace-size" element={<NecklaceSizeGuide />} />
               <Route path="/ring-size" element={<RingSizeGuide />} />

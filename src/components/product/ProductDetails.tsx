@@ -220,10 +220,10 @@ const ProductDetail = () => {
     : product.category?.toLowerCase?.() || "";
 
   const handleAddToCart = () => {
-    if (!selectedSize) {
-      alert("Please select a size before adding to cart.");
-      return;
-    }
+    // if (!selectedSize) {
+    //   alert("Please select a size before adding to cart.");
+    //   return;
+    // }
 
     addToCart(product, quantity, {
       selectedMetal,

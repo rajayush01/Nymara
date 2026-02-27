@@ -254,6 +254,7 @@
 // export default ProductCard;
 
 // components/ProductCard.tsx
+
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Star, Heart, ShoppingBag, Eye } from "lucide-react";
