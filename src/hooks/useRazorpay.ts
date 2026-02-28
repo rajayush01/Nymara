@@ -89,7 +89,7 @@ export const useRazorpay = () => {
 
       // Razorpay options
       const options: RazorpayOptions = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_live_SJvp3RMzDQpMUa",
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: orderData.amount * 100, // Convert to paise
         currency: orderData.currency,
         name: "Nymara Jewelry",
