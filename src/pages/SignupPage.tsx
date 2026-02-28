@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import logomain from "@/assets/logo_main1.png";
 import axios from "axios";
-import TermsAndCondition1 from "@/components/TermsAndCondition1
+import TermsAndCondition1 from "@/components/TermsAndCondition1";
 const countries = [
   { code: "IN", flag: "🇮🇳", dialCode: "+91" },
   { code: "US", flag: "🇺🇸", dialCode: "+1" },
@@ -912,4 +912,5 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
 };
 
 export default SignupPage;
+
 
