@@ -12,6 +12,7 @@ import {
 import logomain from "@/assets/logo_main1.png";
 import axios from "axios";
 import TermsAndCondition1 from "@/components/TermsAndCondition1";
+import { P } from "framer-motion/dist/types.d-BJcRxCew";
 const countries = [
   { code: "IN", flag: "🇮🇳", dialCode: "+91" },
   { code: "US", flag: "🇺🇸", dialCode: "+1" },
@@ -299,6 +300,8 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
         phoneNumber: `${selectedCountry.dialCode}${formData.phone}`,
         password: formData.password,
       });
+
+      console.log(selectedCountry.dialCode + formData.phone);
 
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);

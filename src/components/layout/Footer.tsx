@@ -53,17 +53,17 @@ export default function Footer() {
               </a>
 
                <a
-                href="/about#sustainability"
+                href="/about#values"
                 className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors"
               >
-                Sustainability Goals
+                Our Values
               </a>
 
               <a
-                href="#responsible-sourcing"
+                href="/about#process"
                 className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors"
               >
-                Responsible Sourcing
+                Our Process
               </a>
              
               <a
