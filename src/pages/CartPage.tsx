@@ -1244,7 +1244,8 @@ const origAmount = item.originalPrice ?? item.prices?.[currency]?.amount ?? item
       const productSavings = originalSubtotal > subtotal ? originalSubtotal - subtotal : 0;
       const promoSavings = promoApplied ? subtotal * promoDiscount : 0;
       const currencySymbol = cart[0]?.prices?.[selectedCountry.currency]?.symbol || getSymbol(selectedCountry.currency);
-      const shippingCost = subtotal > 100000 ? 0 : 20;
+      const shippingCost = subtotal > 0 ? 0 : 20
+      ;
       const total = subtotal - promoSavings + shippingCost;
 
       return (

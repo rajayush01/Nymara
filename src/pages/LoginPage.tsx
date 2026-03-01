@@ -237,21 +237,35 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToSignup }) => {
 
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
+  const [isSendingReset, setIsSendingReset] = useState(false);
 
   const handleForgotPassword = async () => {
     if (!forgotEmail) {
-      alert("Please enter your email");
+      setToast({ message: "Please enter your email address", type: "error" });
       return;
     }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(forgotEmail)) {
+      setToast({ message: "Please enter a valid email address", type: "error" });
+      return;
+    }
+
+    setIsSendingReset(true);
     try {
       await axios.post(`${API_URL}/api/user/forgetpassword`, {
         email: forgotEmail,
       });
-      alert("✅ Reset link sent to your email!");
+      setToast({ message: "Password reset link sent to your email!", type: "success" });
       setShowForgotModal(false);
+      setForgotEmail(""); // Clear the email field
     } catch (err: any) {
-      console.error("❌ Error:", err.response?.data || err.message);
-      alert(err.response?.data?.message || "Something went wrong");
+      console.error("❌ Forgot Password Error:", err.response?.data || err.message);
+      const errorMessage = err.response?.data?.message || "Failed to send reset link. Please try again.";
+      setToast({ message: errorMessage, type: "error" });
+    } finally {
+      setIsSendingReset(false);
     }
   };
 
@@ -655,30 +669,66 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToSignup }) => {
               </button>
 
               {showForgotModal && (
-                <div className="fixed inset-0  flex items-center justify-center bg-black bg-opacity-50">
-                  <div className="bg-white p-4 rounded-xl shadow-lg max-w-sm w-full">
-                    <h2 className="text-lg font-semibold mb-2">
+                <div 
+                  className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4"
+                  style={{ zIndex: 9999 }}
+                  onClick={() => {
+                    if (!isSendingReset) {
+                      setShowForgotModal(false);
+                      setForgotEmail("");
+                    }
+                  }}
+                >
+                  <div 
+                    className="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <h2 className="text-xl font-semibold mb-3 text-slate-800">
                       Reset Password
                     </h2>
+                    <p className="text-sm text-slate-600 mb-4">
+                      Enter your email address and we'll send you a link to reset your password.
+                    </p>
                     <input
                       type="email"
                       placeholder="Enter your email"
-                      className="w-full border rounded-lg px-3 py-2 mb-3"
+                      className="w-full border border-slate-300 rounded-lg px-4 py-3 mb-4 focus:outline-none focus:border-[#9a8457] focus:ring-2 focus:ring-[#9a8457] focus:ring-opacity-20 transition-all"
                       value={forgotEmail}
                       onChange={(e) => setForgotEmail(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter' && !isSendingReset) {
+                          handleForgotPassword();
+                        }
+                      }}
+                      disabled={isSendingReset}
                     />
                     <div className="flex justify-end space-x-3">
                       <button
-                        onClick={() => setShowForgotModal(false)}
-                        className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+                        onClick={() => {
+                          setShowForgotModal(false);
+                          setForgotEmail("");
+                        }}
+                        className="px-5 py-2.5 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors font-medium"
+                        disabled={isSendingReset}
                       >
                         Cancel
                       </button>
                       <button
                         onClick={handleForgotPassword}
-                        className="px-4 py-2 bg-[#9a8457] text-white rounded-lg hover:bg-[#7d6b47]"
+                        className="px-5 py-2.5 bg-[#9a8457] text-white rounded-lg hover:bg-[#7d6b47] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                        disabled={isSendingReset}
                       >
-                        Send Link
+                        {isSendingReset ? (
+                          <>
+                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Sending...
+                          </>
+                        ) : (
+                          'Send Link'
+                        )}
                       </button>
                     </div>
                   </div>
