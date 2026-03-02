@@ -22,6 +22,54 @@ const countries = [
   { code: "AU", flag: "🇦🇺", dialCode: "+61" },
   { code: "SG", flag: "🇸🇬", dialCode: "+65" },
   { code: "JP", flag: "🇯🇵", dialCode: "+81" },
+
+  // European Countries
+  { code: "AL", flag: "🇦🇱", dialCode: "+355" },  // Albania
+  { code: "AD", flag: "🇦🇩", dialCode: "+376" },  // Andorra
+  { code: "AT", flag: "🇦🇹", dialCode: "+43" },   // Austria
+  { code: "BY", flag: "🇧🇾", dialCode: "+375" },  // Belarus
+  { code: "BE", flag: "🇧🇪", dialCode: "+32" },   // Belgium
+  { code: "BA", flag: "🇧🇦", dialCode: "+387" },  // Bosnia and Herzegovina
+  { code: "BG", flag: "🇧🇬", dialCode: "+359" },  // Bulgaria
+  { code: "HR", flag: "🇭🇷", dialCode: "+385" },  // Croatia
+  { code: "CY", flag: "🇨🇾", dialCode: "+357" },  // Cyprus
+  { code: "CZ", flag: "🇨🇿", dialCode: "+420" },  // Czech Republic
+  { code: "DK", flag: "🇩🇰", dialCode: "+45" },   // Denmark
+  { code: "EE", flag: "🇪🇪", dialCode: "+372" },  // Estonia
+  { code: "FI", flag: "🇫🇮", dialCode: "+358" },  // Finland
+  { code: "FR", flag: "🇫🇷", dialCode: "+33" },   // France
+  { code: "DE", flag: "🇩🇪", dialCode: "+49" },   // Germany
+  { code: "GR", flag: "🇬🇷", dialCode: "+30" },   // Greece
+  { code: "HU", flag: "🇭🇺", dialCode: "+36" },   // Hungary
+  { code: "IS", flag: "🇮🇸", dialCode: "+354" },  // Iceland
+  { code: "IE", flag: "🇮🇪", dialCode: "+353" },  // Ireland
+  { code: "IT", flag: "🇮🇹", dialCode: "+39" },   // Italy
+  { code: "XK", flag: "🇽🇰", dialCode: "+383" },  // Kosovo
+  { code: "LV", flag: "🇱🇻", dialCode: "+371" },  // Latvia
+  { code: "LI", flag: "🇱🇮", dialCode: "+423" },  // Liechtenstein
+  { code: "LT", flag: "🇱🇹", dialCode: "+370" },  // Lithuania
+  { code: "LU", flag: "🇱🇺", dialCode: "+352" },  // Luxembourg
+  { code: "MT", flag: "🇲🇹", dialCode: "+356" },  // Malta
+  { code: "MD", flag: "🇲🇩", dialCode: "+373" },  // Moldova
+  { code: "MC", flag: "🇲🇨", dialCode: "+377" },  // Monaco
+  { code: "ME", flag: "🇲🇪", dialCode: "+382" },  // Montenegro
+  { code: "NL", flag: "🇳🇱", dialCode: "+31" },   // Netherlands
+  { code: "MK", flag: "🇲🇰", dialCode: "+389" },  // North Macedonia
+  { code: "NO", flag: "🇳🇴", dialCode: "+47" },   // Norway
+  { code: "PL", flag: "🇵🇱", dialCode: "+48" },   // Poland
+  { code: "PT", flag: "🇵🇹", dialCode: "+351" },  // Portugal
+  { code: "RO", flag: "🇷🇴", dialCode: "+40" },   // Romania
+  { code: "RU", flag: "🇷🇺", dialCode: "+7" },    // Russia
+  { code: "SM", flag: "🇸🇲", dialCode: "+378" },  // San Marino
+  { code: "RS", flag: "🇷🇸", dialCode: "+381" },  // Serbia
+  { code: "SK", flag: "🇸🇰", dialCode: "+421" },  // Slovakia
+  { code: "SI", flag: "🇸🇮", dialCode: "+386" },  // Slovenia
+  { code: "ES", flag: "🇪🇸", dialCode: "+34" },   // Spain
+  { code: "SE", flag: "🇸🇪", dialCode: "+46" },   // Sweden
+  { code: "CH", flag: "🇨🇭", dialCode: "+41" },   // Switzerland
+  { code: "TR", flag: "🇹🇷", dialCode: "+90" },   // Turkey
+  { code: "UA", flag: "🇺🇦", dialCode: "+380" },  // Ukraine
+  { code: "VA", flag: "🇻🇦", dialCode: "+39" },   // Vatican City
 ];
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -220,6 +268,8 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
     "name" | "email" | "phone" | "password" | "confirmPassword" | null
   >(null);
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
+  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
+  const [countrySearch, setCountrySearch] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -244,6 +294,19 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
+
+  // Close country dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (showCountryDropdown && !target.closest('.relative.w-32')) {
+        setShowCountryDropdown(false);
+        setCountrySearch('');
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showCountryDropdown]);
 
   // Ripple effect system
   const createRipple = (x: number, y: number) => {
@@ -706,27 +769,69 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
     Phone Number
   </label>
 
-  <div className="flex">
+  <div className="flex gap-2">
 
-    {/* Country Dropdown */}
-    <select
-      value={selectedCountry.code}
-      onChange={(e) =>
-        setSelectedCountry(
-          countries.find(c => c.code === e.target.value)!
-        )
-      }
-      className="px-3 py-3 rounded-l-xl text-sm input-pristine focus:outline-none"
-    >
-      {countries.map((country) => (
-        <option key={country.code} value={country.code}>
-          {country.flag} {country.dialCode}
-        </option>
-      ))}
-    </select>
+    {/* Country Dropdown with Search */}
+    <div className="relative w-32">
+      <button
+        type="button"
+        onClick={() => setShowCountryDropdown(!showCountryDropdown)}
+        className="w-full px-2 py-3 rounded-xl text-sm input-pristine focus:outline-none flex items-center justify-between"
+      >
+        <span>{selectedCountry.flag} {selectedCountry.dialCode}</span>
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {/* Dropdown Menu */}
+      {showCountryDropdown && (
+        <div className="absolute top-full left-0 mt-1 w-72 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 max-h-80 overflow-hidden">
+          {/* Search Input */}
+          <div className="p-3 border-b border-gray-200 sticky top-0 bg-white">
+            <input
+              type="text"
+              placeholder="Search country..."
+              value={countrySearch}
+              onChange={(e) => setCountrySearch(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-transparent"
+              autoFocus
+            />
+          </div>
+
+          {/* Country List */}
+          <div className="overflow-y-auto max-h-60">
+            {countries
+              .filter(country => 
+                (country.name?.toLowerCase() || '').includes(countrySearch.toLowerCase()) ||
+                (country.dialCode || '').includes(countrySearch) ||
+                (country.code?.toLowerCase() || '').includes(countrySearch.toLowerCase())
+              )
+              .map((country) => (
+                <button
+                  key={country.code}
+                  type="button"
+                  onClick={() => {
+                    setSelectedCountry(country);
+                    setShowCountryDropdown(false);
+                    setCountrySearch('');
+                  }}
+                  className="w-full px-4 py-2.5 text-left hover:bg-[#f9f5ef] flex items-center gap-3 transition-colors"
+                >
+                  <span className="text-xl">{country.flag}</span>
+                  <div className="flex-1">
+                    <div className="text-sm font-medium text-gray-800">{country.name || country.code}</div>
+                    <div className="text-xs text-gray-500">{country.dialCode}</div>
+                  </div>
+                </button>
+              ))}
+          </div>
+        </div>
+      )}
+    </div>
 
     {/* Phone Input */}
-    <div className="relative w-full">
+    <div className="relative flex-1">
       <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
         <Phone 
           className="h-4 w-4 text-slate-400 transition-colors duration-300"
@@ -744,7 +849,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
         onFocus={() => setFocusField('phone')}
         onBlur={() => setFocusField(null)}
         placeholder="Enter your phone number"
-        className={`w-full pl-11 pr-4 py-3 rounded-r-xl focus:outline-none text-slate-800 placeholder-slate-400 text-sm input-pristine ${
+        className={`w-full pl-11 pr-4 py-3 rounded-xl focus:outline-none text-slate-800 placeholder-slate-400 text-sm input-pristine ${
           focusField === 'phone' ? 'field-focus' : ''
         }`}
         required
