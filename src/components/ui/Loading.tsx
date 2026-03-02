@@ -145,7 +145,11 @@ const Loading: React.FC<DPSLoadingProps> = ({
 		return text.split('').map((letter, index) => (
 			<span
 				key={index}
-				ref={(el) => el && (letterRefs.current[index] = el)}
+				ref={(el) => {
+					if (el) {
+						letterRefs.current[index] = el;
+					}
+				}}
 				className="inline-block"
 				style={{ 
 					marginRight: letter === ' ' ? '0.3em' : '0',

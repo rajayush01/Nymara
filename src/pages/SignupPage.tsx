@@ -12,64 +12,64 @@ import {
 import logomain from "@/assets/logo_main1.png";
 import axios from "axios";
 import TermsAndCondition1 from "@/components/TermsAndCondition1";
-import { P } from "framer-motion/dist/types.d-BJcRxCew";
+
 const countries = [
-  { code: "IN", flag: "🇮🇳", dialCode: "+91" },
-  { code: "US", flag: "🇺🇸", dialCode: "+1" },
-  { code: "GB", flag: "🇬🇧", dialCode: "+44" },
-  { code: "CA", flag: "🇨🇦", dialCode: "+1" },
-  { code: "AE", flag: "🇦🇪", dialCode: "+971" },
-  { code: "AU", flag: "🇦🇺", dialCode: "+61" },
-  { code: "SG", flag: "🇸🇬", dialCode: "+65" },
-  { code: "JP", flag: "🇯🇵", dialCode: "+81" },
+  { code: "IN", flag: "🇮🇳", dialCode: "+91", name: "India" },
+  { code: "US", flag: "🇺🇸", dialCode: "+1", name: "United States" },
+  { code: "GB", flag: "🇬🇧", dialCode: "+44", name: "United Kingdom" },
+  { code: "CA", flag: "🇨🇦", dialCode: "+1", name: "Canada" },
+  { code: "AE", flag: "🇦🇪", dialCode: "+971", name: "United Arab Emirates" },
+  { code: "AU", flag: "🇦🇺", dialCode: "+61", name: "Australia" },
+  { code: "SG", flag: "🇸🇬", dialCode: "+65", name: "Singapore" },
+  { code: "JP", flag: "🇯🇵", dialCode: "+81", name: "Japan" },
 
   // European Countries
-  { code: "AL", flag: "🇦🇱", dialCode: "+355" },  // Albania
-  { code: "AD", flag: "🇦🇩", dialCode: "+376" },  // Andorra
-  { code: "AT", flag: "🇦🇹", dialCode: "+43" },   // Austria
-  { code: "BY", flag: "🇧🇾", dialCode: "+375" },  // Belarus
-  { code: "BE", flag: "🇧🇪", dialCode: "+32" },   // Belgium
-  { code: "BA", flag: "🇧🇦", dialCode: "+387" },  // Bosnia and Herzegovina
-  { code: "BG", flag: "🇧🇬", dialCode: "+359" },  // Bulgaria
-  { code: "HR", flag: "🇭🇷", dialCode: "+385" },  // Croatia
-  { code: "CY", flag: "🇨🇾", dialCode: "+357" },  // Cyprus
-  { code: "CZ", flag: "🇨🇿", dialCode: "+420" },  // Czech Republic
-  { code: "DK", flag: "🇩🇰", dialCode: "+45" },   // Denmark
-  { code: "EE", flag: "🇪🇪", dialCode: "+372" },  // Estonia
-  { code: "FI", flag: "🇫🇮", dialCode: "+358" },  // Finland
-  { code: "FR", flag: "🇫🇷", dialCode: "+33" },   // France
-  { code: "DE", flag: "🇩🇪", dialCode: "+49" },   // Germany
-  { code: "GR", flag: "🇬🇷", dialCode: "+30" },   // Greece
-  { code: "HU", flag: "🇭🇺", dialCode: "+36" },   // Hungary
-  { code: "IS", flag: "🇮🇸", dialCode: "+354" },  // Iceland
-  { code: "IE", flag: "🇮🇪", dialCode: "+353" },  // Ireland
-  { code: "IT", flag: "🇮🇹", dialCode: "+39" },   // Italy
-  { code: "XK", flag: "🇽🇰", dialCode: "+383" },  // Kosovo
-  { code: "LV", flag: "🇱🇻", dialCode: "+371" },  // Latvia
-  { code: "LI", flag: "🇱🇮", dialCode: "+423" },  // Liechtenstein
-  { code: "LT", flag: "🇱🇹", dialCode: "+370" },  // Lithuania
-  { code: "LU", flag: "🇱🇺", dialCode: "+352" },  // Luxembourg
-  { code: "MT", flag: "🇲🇹", dialCode: "+356" },  // Malta
-  { code: "MD", flag: "🇲🇩", dialCode: "+373" },  // Moldova
-  { code: "MC", flag: "🇲🇨", dialCode: "+377" },  // Monaco
-  { code: "ME", flag: "🇲🇪", dialCode: "+382" },  // Montenegro
-  { code: "NL", flag: "🇳🇱", dialCode: "+31" },   // Netherlands
-  { code: "MK", flag: "🇲🇰", dialCode: "+389" },  // North Macedonia
-  { code: "NO", flag: "🇳🇴", dialCode: "+47" },   // Norway
-  { code: "PL", flag: "🇵🇱", dialCode: "+48" },   // Poland
-  { code: "PT", flag: "🇵🇹", dialCode: "+351" },  // Portugal
-  { code: "RO", flag: "🇷🇴", dialCode: "+40" },   // Romania
-  { code: "RU", flag: "🇷🇺", dialCode: "+7" },    // Russia
-  { code: "SM", flag: "🇸🇲", dialCode: "+378" },  // San Marino
-  { code: "RS", flag: "🇷🇸", dialCode: "+381" },  // Serbia
-  { code: "SK", flag: "🇸🇰", dialCode: "+421" },  // Slovakia
-  { code: "SI", flag: "🇸🇮", dialCode: "+386" },  // Slovenia
-  { code: "ES", flag: "🇪🇸", dialCode: "+34" },   // Spain
-  { code: "SE", flag: "🇸🇪", dialCode: "+46" },   // Sweden
-  { code: "CH", flag: "🇨🇭", dialCode: "+41" },   // Switzerland
-  { code: "TR", flag: "🇹🇷", dialCode: "+90" },   // Turkey
-  { code: "UA", flag: "🇺🇦", dialCode: "+380" },  // Ukraine
-  { code: "VA", flag: "🇻🇦", dialCode: "+39" },   // Vatican City
+  { code: "AL", flag: "🇦🇱", dialCode: "+355", name: "Albania" },
+  { code: "AD", flag: "🇦🇩", dialCode: "+376", name: "Andorra" },
+  { code: "AT", flag: "🇦🇹", dialCode: "+43", name: "Austria" },
+  { code: "BY", flag: "🇧🇾", dialCode: "+375", name: "Belarus" },
+  { code: "BE", flag: "🇧🇪", dialCode: "+32", name: "Belgium" },
+  { code: "BA", flag: "🇧🇦", dialCode: "+387", name: "Bosnia and Herzegovina" },
+  { code: "BG", flag: "🇧🇬", dialCode: "+359", name: "Bulgaria" },
+  { code: "HR", flag: "🇭🇷", dialCode: "+385", name: "Croatia" },
+  { code: "CY", flag: "🇨🇾", dialCode: "+357", name: "Cyprus" },
+  { code: "CZ", flag: "🇨🇿", dialCode: "+420", name: "Czech Republic" },
+  { code: "DK", flag: "🇩🇰", dialCode: "+45", name: "Denmark" },
+  { code: "EE", flag: "🇪🇪", dialCode: "+372", name: "Estonia" },
+  { code: "FI", flag: "🇫🇮", dialCode: "+358", name: "Finland" },
+  { code: "FR", flag: "🇫🇷", dialCode: "+33", name: "France" },
+  { code: "DE", flag: "🇩🇪", dialCode: "+49", name: "Germany" },
+  { code: "GR", flag: "🇬🇷", dialCode: "+30", name: "Greece" },
+  { code: "HU", flag: "🇭🇺", dialCode: "+36", name: "Hungary" },
+  { code: "IS", flag: "🇮🇸", dialCode: "+354", name: "Iceland" },
+  { code: "IE", flag: "🇮🇪", dialCode: "+353", name: "Ireland" },
+  { code: "IT", flag: "🇮🇹", dialCode: "+39", name: "Italy" },
+  { code: "XK", flag: "🇽🇰", dialCode: "+383", name: "Kosovo" },
+  { code: "LV", flag: "🇱🇻", dialCode: "+371", name: "Latvia" },
+  { code: "LI", flag: "🇱🇮", dialCode: "+423", name: "Liechtenstein" },
+  { code: "LT", flag: "🇱🇹", dialCode: "+370", name: "Lithuania" },
+  { code: "LU", flag: "🇱🇺", dialCode: "+352", name: "Luxembourg" },
+  { code: "MT", flag: "🇲🇹", dialCode: "+356", name: "Malta" },
+  { code: "MD", flag: "🇲🇩", dialCode: "+373", name: "Moldova" },
+  { code: "MC", flag: "🇲🇨", dialCode: "+377", name: "Monaco" },
+  { code: "ME", flag: "🇲🇪", dialCode: "+382", name: "Montenegro" },
+  { code: "NL", flag: "🇳🇱", dialCode: "+31", name: "Netherlands" },
+  { code: "MK", flag: "🇲🇰", dialCode: "+389", name: "North Macedonia" },
+  { code: "NO", flag: "🇳🇴", dialCode: "+47", name: "Norway" },
+  { code: "PL", flag: "🇵🇱", dialCode: "+48", name: "Poland" },
+  { code: "PT", flag: "🇵🇹", dialCode: "+351", name: "Portugal" },
+  { code: "RO", flag: "🇷🇴", dialCode: "+40", name: "Romania" },
+  { code: "RU", flag: "🇷🇺", dialCode: "+7", name: "Russia" },
+  { code: "SM", flag: "🇸🇲", dialCode: "+378", name: "San Marino" },
+  { code: "RS", flag: "🇷🇸", dialCode: "+381", name: "Serbia" },
+  { code: "SK", flag: "🇸🇰", dialCode: "+421", name: "Slovakia" },
+  { code: "SI", flag: "🇸🇮", dialCode: "+386", name: "Slovenia" },
+  { code: "ES", flag: "🇪🇸", dialCode: "+34", name: "Spain" },
+  { code: "SE", flag: "🇸🇪", dialCode: "+46", name: "Sweden" },
+  { code: "CH", flag: "🇨🇭", dialCode: "+41", name: "Switzerland" },
+  { code: "TR", flag: "🇹🇷", dialCode: "+90", name: "Turkey" },
+  { code: "UA", flag: "🇺🇦", dialCode: "+380", name: "Ukraine" },
+  { code: "VA", flag: "🇻🇦", dialCode: "+39", name: "Vatican City" },
 ];
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -379,9 +379,12 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
           window.location.href = "/profile";
         }, 1500);
       }
-    } catch (error: any) {
-      const message =
-        error.response?.data?.message || "Signup failed. Please try again.";
+    } catch (error: unknown) {
+      let message = "Signup failed. Please try again.";
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response?: { data?: { message?: string } } };
+        message = axiosError.response?.data?.message || message;
+      }
       setToast({ message, type: "error" });
       console.error("Signup error:", error);
     }
