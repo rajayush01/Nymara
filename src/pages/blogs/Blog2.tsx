@@ -2,7 +2,7 @@ import React from "react";
 import blog2 from '../../assets/blog2.png';
 const DiamondComparisonGuide: React.FC = () => {
   return (
-    <div className="bg-neutral-50 min-h-screen py-12 my-48 px-4">
+    <div className="bg-neutral-50 min-h-screen py-12 my-2 sm:my-48 px-4">
       <div className="max-w-5xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden">
 
         {/* Hero Image */}

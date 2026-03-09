@@ -3,7 +3,7 @@ import blog9 from "@/assets/blog9.png";
 const SustainableJewelleryEurope: React.FC = () => {
   return (
     <div className="bg-neutral-50 min-h-screen py-12 px-4">
-      <div className="max-w-5xl mx-auto bg-white shadow-xl my-48 rounded-2xl overflow-hidden">
+      <div className="max-w-5xl mx-auto bg-white shadow-xl my-2 sm:my-48 rounded-2xl overflow-hidden">
 
         {/* Hero Image */}
         <div className="w-full flex justify-center items-center bg-black">

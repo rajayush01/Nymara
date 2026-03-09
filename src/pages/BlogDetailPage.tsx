@@ -75,7 +75,7 @@ export default function BlogDetailPage() {
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-gray-900 mb-6 leading-tight">
             {post.title}
           </h1>
-          
+
           {/* Meta Info */}
           <div className="flex flex-wrap items-center justify-center text-sm text-gray-600 space-x-2 mb-4">
             <span>{post.date}</span>
@@ -91,7 +91,8 @@ export default function BlogDetailPage() {
             alt={post.title}
             className="w-full h-auto rounded-lg shadow-lg"
             onError={(e) => {
-              e.currentTarget.src = "https://via.placeholder.com/1200x600?text=Blog+Image";
+              e.currentTarget.src =
+                "https://via.placeholder.com/1200x600?text=Blog+Image";
             }}
           />
         </div>
@@ -120,11 +121,11 @@ export default function BlogDetailPage() {
 
         {/* Article Content */}
         <article className="prose prose-lg max-w-none">
-          <div 
+          <div
             className="text-gray-800 leading-relaxed text-lg"
-            style={{ 
-              fontFamily: 'Georgia, serif',
-              lineHeight: '1.8'
+            style={{
+              fontFamily: "Georgia, serif",
+              lineHeight: "1.8",
             }}
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
@@ -153,7 +154,8 @@ export default function BlogDetailPage() {
                         alt={relatedPost.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                         onError={(e) => {
-                          e.currentTarget.src = "https://via.placeholder.com/400x300?text=Blog+Image";
+                          e.currentTarget.src =
+                            "https://via.placeholder.com/400x300?text=Blog+Image";
                         }}
                       />
                     </div>

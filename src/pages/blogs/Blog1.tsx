@@ -3,7 +3,7 @@ import blog1 from '../../assets/blog1.png';
 const LabGrownDiamondGuide: React.FC = () => {
   return (
     <div className="bg-neutral-50 min-h-screen py-16  px-6">
-      <div className="max-w-5xl mx-auto bg-white shadow-xl my-40 rounded-2xl px-8">
+      <div className="max-w-5xl mx-auto bg-white shadow-xl my-2 sm:my-48 rounded-2xl px-8">
 
        <div className="w-full flex justify-center items-center my-8 bg-black">
           <img

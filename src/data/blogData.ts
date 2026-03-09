@@ -32,7 +32,7 @@ export const blogPosts: BlogPost[] = [
     excerpt: "Are you planning to propose in 2026? That's so exciting! Discover the top diamond engagement ring trends that couples are loving this year.",
     content: "",
     image: blog1,
-    author: "Besky Marketing",
+    author: "Nymara Jewels",
     date: "March 03, 2026",
     readTime: "5 min read",
     category: "Engagement Rings"
