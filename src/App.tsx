@@ -30,7 +30,21 @@ import TermsAndConditions from "./components/TermsAndConditions";
 import WarrantyPolicy from "./components/WarrantyPolicy";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import LooseDiamond from "./pages/LooseDiamond";
-
+import BlogListPage from "./pages/BlogListPage";
+import Blog1 from "./pages/blogs/Blog1";
+import Blog2 from "./pages/blogs/Blog2";
+import Blog3 from "./pages/blogs/Blog3";
+import Blog4 from "./pages/blogs/Blog4";
+import Blog5 from "./pages/blogs/Blog5";
+import Blog6 from "./pages/blogs/Blog6";
+import Blog7 from "./pages/blogs/Blog7";
+import Blog8 from "./pages/blogs/Blog8";
+import Blog9 from "./pages/blogs/Blog9";
+import Blog10 from "./pages/blogs/Blog10";
+import Blog11 from "./pages/blogs/Blog11";
+import Blog12 from "./pages/blogs/Blog12";
+import Blog13 from "./pages/blogs/Blog13";
+import ScrollToTop from './components/ScrollToTop'
 const Home = lazy(() => import("./pages/Home"));
 
 // Chatbot Component (unchanged)
@@ -391,6 +405,7 @@ function App() {
             </div>
           }
         >
+          <ScrollToTop />
           <Routes>
            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
             <Route
@@ -490,6 +505,20 @@ function App() {
                 path="/franchise-opportunity"
                 element={<FranchiseOpportunity />}
               />
+              <Route path="/blog" element={<BlogListPage />} />
+              <Route path="/blog/1" element={<Blog1 />} />
+              <Route path="/blog/2" element={<Blog2 />} />
+              <Route path="/blog/3" element={<Blog3 />} />
+              <Route path="/blog/4" element={<Blog4 />} />
+              <Route path="/blog/5" element={<Blog5 />} />
+              <Route path="/blog/6" element={<Blog6 />} />
+              <Route path="/blog/7" element={<Blog7 />} />
+              <Route path="/blog/8" element={<Blog8 />} />
+              <Route path="/blog/9" element={<Blog9 />} />
+              <Route path="/blog/10" element={<Blog10 />} />
+              <Route path="/blog/11" element={<Blog11 />} />
+              <Route path="/blog/12" element={<Blog12 />} />
+              <Route path="/blog/13" element={<Blog13 />} />
             </Route>
           </Routes>
 

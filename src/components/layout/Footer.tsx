@@ -73,7 +73,7 @@ export default function Footer() {
                 Customer Reviews
               </a>
               <a
-                href="#blog"
+                href="/blog"
                 className="block text-gray-400 text-sm hover:text-[#9a8457] transition-colors"
               >
                 Blog
