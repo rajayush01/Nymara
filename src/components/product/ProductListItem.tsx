@@ -120,11 +120,23 @@ const ProductListItem: React.FC<ProductListItemProps> = ({ product, index, isLoa
       onClick={handleProductClick}
     >
       <div className="relative w-80 h-60 overflow-hidden flex-shrink-0">
-        <img
-          src={product.coverImage}
-          alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-        />
+        {/* Check if product has video (for specific SKUs and their variants) */}
+        {(product.sku === 'DI-W-NEC-109' || product.sku === 'DI-W-NEC-121' || product.sku === 'DI-W-NEC-112' || product.sku === 'DI-W-NEC-124') && product.videoUrl ? (
+          <video
+            src={product.videoUrl}
+            className="w-full h-full object-cover"
+            autoPlay
+            loop
+            muted
+            playsInline
+          />
+        ) : (
+          <img
+            src={product.coverImage}
+            alt={product.name}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          />
+        )}
 
         {/* Product badges */}
         <div className="absolute top-4 left-4 flex flex-col space-y-2">

@@ -62,23 +62,97 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
   VITE_API_URL,
   setLoading,
 }) => {
+  // Check if this product or any of its variants has a video
+  const hasVideoInFamily = React.useMemo(() => {
+    const videoSKUs = ['DI-W-NEC-109', 'DI-W-NEC-121', 'DI-W-NEC-112', 'DI-W-NEC-124'];
+    
+    console.log('=== VIDEO CHECK DEBUG ===');
+    console.log('Current Product SKU:', product.sku);
+    console.log('Current Product videoUrl:', product.videoUrl);
+    console.log('Variants:', product.variants);
+    
+    // Helper function to check if SKU matches video products (including base SKU pattern)
+    const isVideoProduct = (sku: string) => {
+      if (!sku) return false;
+      // Check exact match
+      if (videoSKUs.includes(sku)) return true;
+      // Check if it's a variant of the video products (same base SKU pattern)
+      const baseSKU = sku.split('-').slice(0, -1).join('-'); // Get base without last part
+      return videoSKUs.some(vsku => vsku.startsWith(baseSKU) || baseSKU.startsWith(vsku.split('-').slice(0, -1).join('-')));
+    };
+    
+    // Check current product
+    if (product.videoUrl) {
+      console.log('✅ Found video on current product');
+      return product.videoUrl;
+    }
+    
+    // Check if current product SKU matches video products
+    if (isVideoProduct(product.sku)) {
+      console.log('✅ Current product SKU matches video products');
+      // Look for video in variants
+      if (product.variants && Array.isArray(product.variants)) {
+        for (const variant of product.variants) {
+          console.log('Checking variant:', variant.sku, variant.videoUrl);
+          if (variant.videoUrl) {
+            console.log('✅ Found video in variant:', variant.sku);
+            return variant.videoUrl;
+          }
+        }
+      }
+    }
+    
+    // Check variants for video
+    if (product.variants && Array.isArray(product.variants)) {
+      for (const variant of product.variants) {
+        if (variant.videoUrl && isVideoProduct(variant.sku)) {
+          console.log('✅ Found video in variant (alt check):', variant.sku);
+          return variant.videoUrl;
+        }
+      }
+    }
+    
+    console.log('❌ No video found in family');
+    return null;
+  }, [product]);
+
   return (
     <div className="space-y-4">
       {/* Main Image */}
       <div className="relative">
         <div
-          className={`aspect-square bg-white rounded-xl overflow-hidden border border-gray-200 cursor-zoom-in ${
+          className={`aspect-square bg-white rounded-xl overflow-hidden border border-gray-200 ${
+            hasVideoInFamily ? '' : 'cursor-zoom-in'
+          } ${
             isZoomed ? "fixed inset-4 z-50 aspect-auto" : ""
           }`}
-          onClick={() => setIsZoomed(!isZoomed)}
+          onClick={() => {
+            // Only allow zoom for images, not videos
+            if (!hasVideoInFamily) {
+              setIsZoomed(!isZoomed);
+            }
+          }}
         >
-          <img
-            src={productImages[activeImageIndex]}
-            alt={product.name}
-            className={`w-full h-full object-cover transition-transform duration-300 ${
-              isZoomed ? "scale-150" : "hover:scale-105"
-            }`}
-          />
+          {/* Check if current image is a video (for specific SKUs and their variants) */}
+          {hasVideoInFamily && activeImageIndex === 0 ? (
+            <video
+              src={hasVideoInFamily}
+              className="w-full h-full object-cover"
+              autoPlay
+              loop
+              muted
+              playsInline
+              controls
+            />
+          ) : (
+            <img
+              src={productImages[activeImageIndex]}
+              alt={product.name}
+              className={`w-full h-full object-cover transition-transform duration-300 ${
+                isZoomed ? "scale-150" : "hover:scale-105"
+              }`}
+            />
+          )}
         </div>
 
         {/* Product badges */}
@@ -128,9 +202,13 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
                       const child = res.data?.ornament;
                       if (!child) return;
 
+                      // Preserve video URL from parent/sibling if current variant doesn't have it
+                      const videoUrl = child.videoUrl || hasVideoInFamily || product.videoUrl;
+
                       setProduct({
                         ...child,
                         variants: product.variants,
+                        videoUrl: videoUrl, // Ensure video URL is preserved
                         images: [...(child.images || [])].filter(img => img && img !== child.coverImage),
                       });
                       setActiveImageIndex(0);
@@ -169,17 +247,35 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
           <button
             key={index}
             onClick={() => setActiveImageIndex(index)}
-            className={`aspect-square bg-white rounded-lg overflow-hidden border-2 transition-all ${
+            className={`aspect-square bg-white rounded-lg overflow-hidden border-2 transition-all relative ${
               activeImageIndex === index
                 ? "border-[#9a8457] ring-2 ring-[#9a8457]/20"
                 : "border-gray-200 hover:border-gray-300"
             }`}
           >
-            <img
-              src={image}
-              alt={`${product.name} ${index + 1}`}
-              className="w-full h-full object-cover"
-            />
+            {/* Show video thumbnail with play icon for first image if video exists in family */}
+            {hasVideoInFamily && index === 0 ? (
+              <>
+                <video
+                  src={hasVideoInFamily}
+                  className="w-full h-full object-cover"
+                  muted
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                  <div className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 text-gray-800 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <img
+                src={image}
+                alt={`${product.name} ${index + 1}`}
+                className="w-full h-full object-cover"
+              />
+            )}
           </button>
         ))}
       </div>
@@ -188,7 +284,7 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
       <div className="grid grid-cols-2 gap-4">
         <button
           onClick={() => {
-            if (product.videoUrl) {
+            if (hasVideoInFamily) {
               setShowVideoModal(true);
             } else {
               alert("No 360° view available for this product.");
