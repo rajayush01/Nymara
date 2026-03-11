@@ -88,14 +88,14 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
     }
     
     // Check if current product SKU matches video products
-    if (isVideoProduct(product.sku)) {
+ if (product.sku && isVideoProduct(product.sku)) {  
       console.log('✅ Current product SKU matches video products');
       // Look for video in variants
       if (product.variants && Array.isArray(product.variants)) {
         for (const variant of product.variants) {
-          console.log('Checking variant:', variant.sku, variant.videoUrl);
+          // console.log('Checking variant:', variant.sku, variant.videoUrl);
           if (variant.videoUrl) {
-            console.log('✅ Found video in variant:', variant.sku);
+            // console.log('✅ Found video in variant:', variant.sku);
             return variant.videoUrl;
           }
         }
@@ -105,8 +105,8 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
     // Check variants for video
     if (product.variants && Array.isArray(product.variants)) {
       for (const variant of product.variants) {
-        if (variant.videoUrl && isVideoProduct(variant.sku)) {
-          console.log('✅ Found video in variant (alt check):', variant.sku);
+       if (variant.videoUrl && variant.sku && isVideoProduct(variant.sku)) {
+          // console.log('✅ Found video in variant (alt check):', variant.sku);
           return variant.videoUrl;
         }
       }

@@ -89,7 +89,7 @@ totalConvertedPrice?: number;
 
 variants?: Array<{
     _id: string;
-
+    sku?: string;
     metal?: {
       metalType?: string;
       purity?: string;
