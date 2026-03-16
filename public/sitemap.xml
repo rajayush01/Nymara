@@ -81,4 +81,24 @@
     <priority>0.9</priority>
   </url>
 
+  <url>
+    <loc>https://nymarajewels.com/</loc>
+
+    <video:video>
+      <video:thumbnail_loc>
+      https://static.vecteezy.com/system/resources/thumbnails/053/704/767/small_2x/a-woman-wearing-a-diamond-necklace-and-ring-photo.jpeg
+      </video:thumbnail_loc>
+
+      <video:title>Nymara Jewels Collection Showcase</video:title>
+
+      <video:description>
+      Explore the elegant jewellery collection from Nymara Jewels.
+      </video:description>
+
+      <video:content_loc>
+      https://nymarajewels.com/assets/Dare1-Bt0vR130.mp4
+      </video:content_loc>
+    </video:video>
+  </url>
+
 </urlset>
