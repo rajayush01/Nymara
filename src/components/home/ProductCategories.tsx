@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { ArrowRight, Sparkles, Crown, Shield, Award, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import img1 from "@/assets/5.png";
+import img2 from "@/assets/6.png";
+import img3 from "@/assets/7.png";
+import img4 from "@/assets/8.png";
 const ProductCategories = () => {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -14,7 +17,7 @@ const ProductCategories = () => {
       description:
         "From timeless solitaires to bold cocktail rings, each piece tells your unique story",
       image:
-        "https://images.unsplash.com/photo-1605100804763-247f67b3557e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+        img1,
       gradient: "from-rose-400 to-pink-500",
       hoverGradient: "from-rose-500 to-pink-600",
       count: "250+ Designs",
@@ -26,7 +29,7 @@ const ProductCategories = () => {
       description:
         "Elegant studs to statement hoops that frame your face beautifully",
       image:
-        "https://images.unsplash.com/photo-1617038220319-276d3cfab638?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+        img2,
       gradient: "from-blue-400 to-indigo-500",
       hoverGradient: "from-blue-500 to-indigo-600",
       count: "180+ Designs",
@@ -38,7 +41,7 @@ const ProductCategories = () => {
       description:
         "Delicate chains to bold statement pieces for every neckline",
       image:
-        "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+        img3,
       gradient: "from-emerald-400 to-teal-500",
       hoverGradient: "from-emerald-500 to-teal-600",
       count: "120+ Designs",
@@ -50,7 +53,7 @@ const ProductCategories = () => {
       description:
         "Graceful tennis bracelets to bold bangles that adorn your wrists",
       image:
-        "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+        img4,
       gradient: "from-amber-400 to-orange-500",
       hoverGradient: "from-amber-500 to-orange-600",
       count: "95+ Designs",

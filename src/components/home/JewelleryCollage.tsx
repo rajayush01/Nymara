@@ -1,6 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProducts } from '@/contexts/AppContext';
+import img1 from '@/assets/1.png';
+import img2 from '@/assets/2.png';
+import img3 from '@/assets/3.png';
+import img4 from '@/assets/4.png';
 
 export default function JewelryCollage() {
   const navigate = useNavigate();
@@ -8,9 +12,9 @@ export default function JewelryCollage() {
 
   const collections = [
     {
-      title: "Him",
+      title: "Necklaces",
       description: "Classic pieces that never go out of style",
-      image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80",
+      image: img1,
       span: "col-span-2 row-span-2",
       filterType: "gender",
       filterValue: "Men"
@@ -18,7 +22,7 @@ export default function JewelryCollage() {
     {
       title: "Rings",
       description: "Sparkle with our finest diamonds",
-      image: "https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=800&q=80",
+      image: img2,
       span: "col-span-1 row-span-1",
       filterType: "category",
       filterValue: "rings"
@@ -26,15 +30,15 @@ export default function JewelryCollage() {
     {
       title: "Her",
       description: "Luxurious gold collections",
-      image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=800&q=80",
+      image: img4,
       span: "col-span-1 row-span-2",
       filterType: "gender",
       filterValue: "Women"
     },
     {
-      title: "Necklaces",
+      title: "Rings",
       description: "Contemporary designs for today",
-      image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800&q=80",
+      image: img3,
       span: "col-span-1 row-span-1",
       filterType: "category",
       filterValue: "necklaces"
