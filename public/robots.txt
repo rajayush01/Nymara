@@ -9,4 +9,4 @@ Disallow: /@vite/
 Disallow: /@react-refresh/
 
 # Sitemap (important for SEO – update with your real domain)
-Sitemap: http://localhost:5173/sitemap.xml
+Sitemap: https://nymarajewels.com/sitemap.xml
