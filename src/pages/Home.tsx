@@ -155,11 +155,11 @@ const EmailPopup = ({ onClose }: { onClose: () => void }) => {
         <div className="grid md:grid-cols-2 gap-0">
           {/* Image Side */}
           <div className="relative h-64 md:h-auto ">
-            <div className="absolute inset-0 flex items-center justify-center p-6">
-              <div className="text-center p-8 bg-white/80 rounded-lg shadow-lg">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center  bg-white/80 rounded-lg shadow-lg">
                <img src={img1} alt="Exquisite Jewelry" className="w-full h-full object-cover" />
-                <h3 className="text-2xl font-serif text-gray-800 m-2">Exquisite Jewelry</h3>
-                <p className="text-gray-600 italic">Timeless Elegance</p>
+                {/* <h3 className="text-2xl font-serif text-gray-800 m-2">Exquisite Jewelry</h3>
+                <p className="text-gray-600 italic">Timeless Elegance</p> */}
               </div>
             </div>
           </div>

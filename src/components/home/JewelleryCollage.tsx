@@ -41,7 +41,7 @@ export default function JewelryCollage() {
       image: img3,
       span: "col-span-1 row-span-1",
       filterType: "category",
-      filterValue: "necklaces"
+      filterValue: "rings"
     },
   ];
 
@@ -86,7 +86,8 @@ export default function JewelryCollage() {
             <div
               key={index}
               onClick={() => handleCollectionClick(collection.filterType, collection.filterValue)}
-              className={`${index === 0 ? 'sm:col-span-2 sm:row-span-2' : index === 2 ? 'sm:col-span-1 sm:row-span-2' : ''} ${collection.span.replace('col-span-', 'lg:col-span-').replace('row-span-', 'lg:row-span-')} group relative overflow-hidden rounded-lg cursor-pointer`}
+              //className={`${index === 0 ? 'sm:col-span-2 sm:row-span-2' : index === 2 ? 'sm:col-span-1 sm:row-span-2' : ''} ${collection.span.replace('col-span-', 'lg:col-span-').replace('row-span-', 'lg:row-span-')} group relative overflow-hidden rounded-lg cursor-pointer`}
+              className='col-span-2'
             >
               <img
                 src={collection.image}
