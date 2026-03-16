@@ -3,12 +3,13 @@ import { motion, useInView, AnimatePresence, Variants} from "framer-motion";
 import HeroSection from "@/components/home/HeroSection";
 import ProductCategories from "@/components/home/ProductCategories";
 // import EducationHubHome from "@/components/home/EducationHubHome";
-import DiamondShowcase from "@/components/home/DiamondShowcase";
+//import DiamondShowcase from "@/components/home/DiamondShowcase";
 import Model from "@/components/home/Model";
 import RingDesigner from "@/components/home/RingDesigner";
 import ImageFanDynamic from "@/components/home/CardTypes";
 import JewelryCollage from "@/components/home/JewelleryCollage";
 import { Mail, MessageCircle, Phone, X } from "lucide-react";
+import img1 from "@/assets/9.png";
 
 // Animation variants
 const container = {
@@ -153,13 +154,11 @@ const EmailPopup = ({ onClose }: { onClose: () => void }) => {
 
         <div className="grid md:grid-cols-2 gap-0">
           {/* Image Side */}
-          <div className="relative h-64 md:h-auto bg-gradient-to-br from-amber-100 via-rose-50 to-purple-100">
-            <div className="absolute inset-0 flex items-center justify-center p-8">
-              <div className="text-center">
-                <div className="w-32 h-32 mx-auto mb-4 bg-gradient-to-br from-amber-400 to-rose-400 rounded-full flex items-center justify-center shadow-xl">
-                  <span className="text-6xl">💎</span>
-                </div>
-                <h3 className="text-2xl font-serif text-gray-800 mb-2">Exquisite Jewelry</h3>
+          <div className="relative h-64 md:h-auto ">
+            <div className="absolute inset-0 flex items-center justify-center p-6">
+              <div className="text-center p-8 bg-white/80 rounded-lg shadow-lg">
+               <img src={img1} alt="Exquisite Jewelry" className="w-full h-full object-cover" />
+                <h3 className="text-2xl font-serif text-gray-800 m-2">Exquisite Jewelry</h3>
                 <p className="text-gray-600 italic">Timeless Elegance</p>
               </div>
             </div>
