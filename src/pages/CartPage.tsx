@@ -1051,10 +1051,10 @@ const CartPage = () => {
             lastName: user.name?.split(" ")[1] || "",
             email: user.email || "",
             phone: user.phoneNumber || "",
-            address: details?.address?.street || "",
+            address: `${details?.address?.houseNumber || ""} ${details?.address?.streetArea || ""}`.trim(),
+            zipCode: details?.address?.pinCode || "",
             city: details?.address?.city || "",
             state: details?.address?.state || "",
-            zipCode: details?.address?.postalCode || "",
             country: details?.address?.country || "India",
           });
         }
