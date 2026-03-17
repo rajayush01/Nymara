@@ -87,10 +87,16 @@ export const useRazorpay = () => {
         throw new Error("Failed to create order");
       }
 
+      console.log("💳 [RAZORPAY] Order Data from Backend:", orderData);
+      console.log("💳 [RAZORPAY] Amount received:", orderData.amount);
+      console.log("💳 [RAZORPAY] Amount type:", typeof orderData.amount);
+      console.log("💳 [RAZORPAY] Amount in paise (x100):", orderData.amount * 100);
+      console.log("💳 [RAZORPAY] Currency:", orderData.currency);
+
       // Razorpay options
       const options: RazorpayOptions = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: orderData.amount * 100, // Convert to paise
+        amount: Math.round(orderData.amount * 100), // Convert to paise and ensure integer
         currency: orderData.currency,
         name: "Nymara Jewelry",
         description: "Purchase from Nymara",

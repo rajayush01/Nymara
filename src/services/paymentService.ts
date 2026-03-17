@@ -19,6 +19,7 @@ export interface CreateOrderPayload {
   };
   currency?: string;
   symbol?: string;
+  totalAmount?: number; // Frontend-calculated total amount
 }
 
 export interface CreateOrderResponse {
