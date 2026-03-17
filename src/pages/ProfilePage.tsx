@@ -907,9 +907,11 @@ const ProfilePage = () => {
          {/* Account Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
           <div className="bg-white rounded-xl shadow-lg p-6 text-center">
-            <div className="text-3xl font-bold text-[#9a8457] mb-2">0</div>
+            {/* <Home className="mx-auto text-[#9a8457] mb-2" /> */}
+            <div className="text-3xl font-bold text-[#9a8457] mt-9 mb-2">0</div>
             <div className="text-gray-600">Total Orders</div>
           </div>
+
           <div
             onClick={() => (window.location.href = "/favorites")}
             className="bg-white rounded-xl shadow-lg p-6 text-center cursor-pointer hover:bg-[#f9f5ef] transition"
@@ -920,6 +922,7 @@ const ProfilePage = () => {
             </div>
             <div className="text-gray-600">Wishlist Items</div>
           </div>
+
           <div
             onClick={() => (window.location.href = "/account/addresses")}
             className="bg-white rounded-xl shadow-lg p-6 text-center cursor-pointer hover:bg-[#f9f5ef] transition"
@@ -928,6 +931,7 @@ const ProfilePage = () => {
             <div className="text-3xl font-bold text-[#9a8457] mb-2">1</div>
             <div className="text-gray-600">Saved Addresses</div>
           </div>
+
         </div> 
       </div>
     </div>

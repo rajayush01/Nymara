@@ -1,6 +1,6 @@
 import { Phone, Mail, Clock, Shield, MapPin, Award, Heart } from "lucide-react";
 import logo from "../../assets/logo_main1.png";
-
+import { Link } from "react-router-dom";
 export default function Footer() {
   return (
     <footer className="bg-gradient-to-b from-gray-900 to-black text-gray-300">
@@ -439,6 +439,25 @@ export default function Footer() {
               Conflict-free beauty
             </p>
           </div>
+          <div className="border-t border-gray-400 mx-4 sm:mx-8 lg:mx-[480px] mt-10"></div>
+          <div className="text-center text-slate-500 py-4">
+							<p className="text-xs sm:text-sm md:text-base lg:text-lg flex flex-col sm:flex-row items-center justify-center gap-1">
+								<span>Built with ❤️ by</span>
+								<Link
+									to="https://elite8digital.in"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="text-indigo-600 hover:text-indigo-500 transition-colors inline-flex items-center"
+								>
+									Elite8 Digital
+									<img
+										src="/elite8digital-nav.png"
+										alt="Elite8 Digital Logo"
+										className="h-8 sm:h-10 md:h-12 ml-1 sm:ml-2"
+									/>
+								</Link>
+							</p>
+						</div>  
         </div>
       </div>
     </footer>

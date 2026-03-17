@@ -259,6 +259,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [modal, setModal] = useState<"terms" | "privacy" | null>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [mousePos, setMousePos] = useState<{ x: number; y: number }>({
     x: 0,
     y: 0,
@@ -334,9 +335,25 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    
+    // Phone number validation - max 16 characters
+    if (name === 'phone') {
+      // Remove any non-digit characters for validation
+      const digitsOnly = value.replace(/\D/g, '');
+      
+      if (digitsOnly.length > 16) {
+        setToast({
+          message: "Phone number cannot exceed 16 digits",
+          type: "error",
+        });
+        return; // Don't update the field
+      }
+    }
+    
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
   };
 
@@ -852,6 +869,7 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
         onFocus={() => setFocusField('phone')}
         onBlur={() => setFocusField(null)}
         placeholder="Enter your phone number"
+        maxLength={16}
         className={`w-full pl-11 pr-4 py-3 rounded-xl focus:outline-none text-slate-800 placeholder-slate-400 text-sm input-pristine ${
           focusField === 'phone' ? 'field-focus' : ''
         }`}
@@ -945,19 +963,21 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
             {/* Terms checkbox */}
             <div className="flex items-start">
               <label className="flex items-start cursor-pointer">
-                <input type="checkbox" className="sr-only peer" required />
-                <div className="w-4 h-4 shrink-0 border border-slate-300 rounded flex items-center justify-center mr-3 mt-0.5 transition-all duration-200 bg-white peer-checked:bg-[#9a8457] peer-checked:border-[#9a8457]">
-                  <svg
-                    className="w-2.5 h-2.5 text-white scale-0 peer-checked:scale-100 transition-transform"
-                    viewBox="0 0 12 12"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polyline points="2,6 5,9 10,3" />
-                  </svg>
+                <input 
+                  type="checkbox" 
+                  className="sr-only" 
+                  required 
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                />
+                <div className={`w-5 h-5 shrink-0 border-2 rounded flex items-center justify-center mr-3 mt-0.5 transition-all duration-200 bg-white ${
+                  termsAccepted ? 'border-slate-400' : 'border-slate-300'
+                }`}>
+                  <span className={`text-black text-xl font-bold leading-none transition-transform ${
+                    termsAccepted ? 'scale-100' : 'scale-0'
+                  }`}>
+                    ✓
+                  </span>
                 </div>
                 <span className="text-slate-600 text-sm">
                   I agree to the{" "}

@@ -189,6 +189,7 @@ function Toast({ message, type, onClose }: ToastProps) {
 const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToSignup }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [mousePos, setMousePos] = useState<{ x: number; y: number }>({
     x: 0,
     y: 0,
@@ -643,19 +644,20 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToSignup }) => {
             {/* Remember & Forgot */}
             <div className="flex items-center justify-between">
               <label className="flex items-center cursor-pointer group">
-                <input type="checkbox" className="sr-only peer" />
-                <div className="w-4 h-4 bg-white border border-slate-300 rounded flex items-center justify-center mr-3 transition-all duration-200 peer-checked:bg-[#9a8457] peer-checked:border-[#9a8457]">
-                  <svg
-                    className="w-2.5 h-2.5 text-white scale-0 peer-checked:scale-100 transition-transform duration-200"
-                    viewBox="0 0 12 12"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polyline points="2,6 5,9 10,3" />
-                  </svg>
+                <input 
+                  type="checkbox" 
+                  className="sr-only" 
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                />
+                <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 transition-all duration-200 bg-white ${
+                  rememberMe ? 'border-slate-400' : 'border-slate-300'
+                }`}>
+                  <span className={`text-black text-xl font-bold leading-none transition-transform duration-200 ${
+                    rememberMe ? 'scale-100' : 'scale-0'
+                  }`}>
+                    ✓
+                  </span>
                 </div>
                 <span className="text-slate-600 text-sm">Remember me</span>
               </label>
