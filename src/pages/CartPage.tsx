@@ -1172,10 +1172,10 @@ const CartPage = () => {
         >
           {item.name}
         </h3>
-        <div className="text-xs sm:text-sm text-gray-600 mt-1">
+        {/* <div className="text-xs sm:text-sm text-gray-600 mt-1">
           {item.metalType} • {item.stoneType}
           {item.selectedSize && ` • Size: ${item.selectedSize}`}
-        </div>
+        </div> */}
         {item.engraving && (
           <div className="text-xs sm:text-sm text-gray-600 mt-1">
             Engraving: "{item.engraving}"
@@ -1203,13 +1203,29 @@ const CartPage = () => {
         {item.makingChargesByCountry?.[selectedCountry.currency] && (
           <div className="text-xs sm:text-sm text-gray-600 mt-1">
             <span className="font-medium">Making Charges:</span>{" "}
-            {selectedCountry.flag}{" "}
             {item.makingChargesByCountry[selectedCountry.currency].symbol}
             {item.makingChargesByCountry[
               selectedCountry.currency
             ].amount.toLocaleString()}
           </div>
         )}
+
+        {/* Total Price (Price + Making Charges) */}
+        {(() => {
+          const { amount, symbol } = getDisplayPrice(item);
+          const makingCharge = item.makingChargesByCountry?.[selectedCountry.currency]?.amount || 0;
+          const totalPrice = amount + makingCharge;
+          
+          return (
+            <div className="text-xs sm:text-sm text-gray-900 mt-1 pt-1 border-t border-gray-200 w-[200px]">
+              <span className="font-semibold">Total Price:</span>{" "}
+              {selectedCountry.flag} {symbol}
+              {totalPrice.toLocaleString()}
+            </div>
+          );
+        })()}
+        
+        
       </div>
       <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto space-x-4 sm:space-x-3">
         <div className="flex items-center space-x-3">
@@ -1333,7 +1349,7 @@ const CartPage = () => {
             </span>
           </div>
         </div>
-        {showPromo && !promoApplied && (
+        {/* {showPromo && !promoApplied && (
           <div className="mt-4 pt-4 border-t border-gray-200">
             <div className="flex space-x-2">
               <input
@@ -1354,7 +1370,7 @@ const CartPage = () => {
               Try code: SAVE10 for 10% off
             </p>
           </div>
-        )}
+        )} */}
         <div className="mt-4 flex items-center space-x-2 text-xs sm:text-sm text-gray-600">
           <Shield className="w-4 h-4 flex-shrink-0" />
           <span>Secure checkout with SSL encryption</span>
