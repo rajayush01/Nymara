@@ -980,7 +980,15 @@ const CartPage = () => {
     setPaymentProcessing(true);
 
     try {
-      // Prepare order payload
+      console.log("🛒 [FRONTEND] Cart Calculation:");
+      console.log("   Subtotal:", subtotal);
+      console.log("   Shipping:", shippingCost);
+      console.log("   Total:", total);
+      console.log("   Total (rounded):", Math.round(total));
+      console.log("   Currency:", selectedCountry.currency);
+      console.log("   Symbol:", symbol);
+      
+      // Prepare order payload with frontend-calculated total
       const orderPayload = {
         products: activeCart.map((item) => ({
           productId: item._id,
@@ -998,7 +1006,10 @@ const CartPage = () => {
         },
         currency: selectedCountry.currency,
         symbol: symbol,
+        totalAmount: Math.round(total), // Ensure it's a whole number
       };
+      
+      console.log("📦 [FRONTEND] Order Payload:", JSON.stringify(orderPayload, null, 2));
 
       // Initiate Razorpay payment
       await initiatePayment(
