@@ -439,7 +439,7 @@ export default function Footer() {
               Conflict-free beauty
             </p>
           </div>
-          <div className="border-t border-gray-400 mx-4 sm:mx-8 lg:mx-[480px] mt-10"></div>
+          <div className="border-t border-gray-400 mx-4 sm:mx-8 lg:mx-[400px] mt-10"></div>
           <div className="text-center text-slate-500 py-4">
 							<p className="text-xs sm:text-sm md:text-base lg:text-lg flex flex-col sm:flex-row items-center justify-center gap-1">
 								<span>Built with ❤️ by</span>

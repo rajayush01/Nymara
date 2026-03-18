@@ -653,7 +653,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToSignup }) => {
                 <div className={`w-5 h-5 border-2 rounded flex items-center justify-center mr-3 transition-all duration-200 bg-white ${
                   rememberMe ? 'border-slate-400' : 'border-slate-300'
                 }`}>
-                  <span className={`text-black text-xl font-bold leading-none transition-transform duration-200 ${
+                  <span className={`text-slate-400 text-xl font-bold leading-none transition-transform duration-200 ${
                     rememberMe ? 'scale-100' : 'scale-0'
                   }`}>
                     ✓
