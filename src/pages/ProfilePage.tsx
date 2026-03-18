@@ -6,6 +6,7 @@ import {
   MapPin,
   Edit2,
   Save,
+  ShoppingCart,
   X,
   Heart,
   Home,
@@ -229,7 +230,8 @@ const ProfilePage = () => {
                 </h1>
                 <p className="text-gray-500">{formData.email}</p>
               </div>
-              <div className="ml-auto mb-4">
+
+              {/* <div className="ml-auto mb-4">
                 {!isEditing ? (
                   <button
                     onClick={() => setIsEditing(true)}
@@ -256,7 +258,7 @@ const ProfilePage = () => {
                     </button>
                   </div>
                 )}
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -744,11 +746,42 @@ const ProfilePage = () => {
                   </div>
                 </div>
               )}
-            </div>
-          </div>
-        </div>
 
-       
+            </div>
+            
+              <div className="md:col-span-2 flex justify-center mb-4">
+              {!isEditing ? (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="flex items-center space-x-2 px-6 py-3 bg-[#9a8457] text-white rounded-lg hover:bg-[#8a7547] transition-colors duration-200"
+                >
+                  <Edit2 className="w-4 h-4" />
+                  <span>Edit Profile</span>
+                </button>
+              ) : (
+                <div className="flex space-x-3">
+                  <button
+                    onClick={handleSave}
+                    className="flex items-center space-x-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Save</span>
+                  </button>
+                  <button
+                    onClick={handleCancel}
+                    className="flex items-center space-x-2 px-6 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200"
+                  >
+                    <X className="w-4 h-4" />
+                    <span>Cancel</span>
+                  </button>
+                </div>
+              )}
+            </div>
+            
+          </div>
+          
+        </div>
+        
 
         {/* Terms & Conditions Section */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mt-6">
@@ -904,11 +937,11 @@ const ProfilePage = () => {
             </p>
           </div>
         </div>
-         {/* Account Stats */}
+        {/* Account Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
           <div className="bg-white rounded-xl shadow-lg p-6 text-center">
-            {/* <Home className="mx-auto text-[#9a8457] mb-2" /> */}
-            <div className="text-3xl font-bold text-[#9a8457] mt-9 mb-2">0</div>
+            <ShoppingCart className="mx-auto text-[#9a8457] mb-2" />
+            <div className="text-3xl font-bold text-[#9a8457]  mb-2">0</div>
             <div className="text-gray-600">Total Orders</div>
           </div>
 
@@ -931,8 +964,7 @@ const ProfilePage = () => {
             <div className="text-3xl font-bold text-[#9a8457] mb-2">1</div>
             <div className="text-gray-600">Saved Addresses</div>
           </div>
-
-        </div> 
+        </div>
       </div>
     </div>
   );
