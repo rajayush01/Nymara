@@ -132,8 +132,15 @@ const ProfilePage = () => {
           { field: 'pinCode', label: 'PIN Code' }
         ];
 
-        const missingFields = requiredFields.filter(({ field }) => !formData[field as keyof typeof formData]?.trim());
-        
+        const missingFields = requiredFields.filter(({ field }) => {
+  const value = formData[field as keyof typeof formData];
+
+  if (typeof value === "string") {
+    return value.trim() === "";
+  }
+
+  return !value; // handles boolean (false = missing)
+});
         if (missingFields.length > 0) {
           const fieldNames = missingFields.map(({ label }) => label).join(', ');
           setErrorMessage(`Missing required domestic address fields: ${fieldNames}`);
@@ -157,8 +164,16 @@ const ProfilePage = () => {
           { field: 'countryInternational', label: 'Country' }
         ];
 
-        const missingFields = requiredFields.filter(({ field }) => !formData[field as keyof typeof formData]?.trim());
-        
+        const missingFields = requiredFields.filter(({ field }) => {
+  const value = formData[field as keyof typeof formData];
+
+  if (typeof value === "string") {
+    return value.trim() === "";
+  }
+
+  return !value; // handles boolean (false = missing)
+});
+
         if (missingFields.length > 0) {
           const fieldNames = missingFields.map(({ label }) => label).join(', ');
           setErrorMessage(`Missing required international address fields: ${fieldNames}`);
