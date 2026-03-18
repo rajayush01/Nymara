@@ -39,7 +39,7 @@ export default function BespokeService() {
         color: formData.color === 'Other' ? otherFields.colorOther : formData.color,
         clarity: formData.clarity === 'Other' ? otherFields.clarityOther : formData.clarity
       };
-      const res = await axios.post("http://localhost:5000/api/bespoke/request", submitData);
+      const res = await axios.post("https://lets-taxify.onrender.com/api/nymara/contact/request", submitData);
       if (res.data.success) {
         alert("Your request has been sent successfully!");
         setFormData({
