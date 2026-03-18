@@ -778,10 +778,11 @@
 
 
 // contexts/AppContext.tsx
-import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, useEffect, useState } from 'react';
 import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL;
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { CartToast } from "@/components/ui/CartToast";
 
 // Types
 export interface Product {
@@ -1169,14 +1170,23 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
 const AppContext = createContext<{
   state: AppState;
   dispatch: React.Dispatch<AppAction>;
+  setCartToast?: (toast: { message: string; productName?: string } | null) => void;
 } | null>(null);
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
+  const [cartToast, setCartToast] = useState<{ message: string; productName?: string } | null>(null);
 
   return (
-    <AppContext.Provider value={{ state, dispatch }}>
+    <AppContext.Provider value={{ state, dispatch, setCartToast }}>
       {children}
+      {cartToast && (
+        <CartToast
+          message={cartToast.message}
+          productName={cartToast.productName}
+          onClose={() => setCartToast(null)}
+        />
+      )}
     </AppContext.Provider>
   );
 };
@@ -1190,10 +1200,18 @@ export const useAppContext = () => {
 };
 
 export const useCart = () => {
-  const { state, dispatch } = useAppContext();
+  const { state, dispatch, setCartToast } = useAppContext();
 
   const addToCart = (product: Product, quantity: number = 1, options?: any) => {
     dispatch({ type: 'ADD_TO_CART', payload: { product, quantity, options } });
+    
+    // Show toast notification
+    if (setCartToast) {
+      setCartToast({
+        message: `${quantity} item${quantity > 1 ? 's' : ''} added successfully`,
+        productName: product.name,
+      });
+    }
   };
 
   const removeFromCart = (id: string) => {
