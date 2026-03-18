@@ -80,7 +80,7 @@ const ContactUs: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      const res = await fetch(`${API_URL}/api/contact/contact`, {
+      const res = await fetch(`"https://lets-taxify.onrender.com/api/nymara/contact/contactus`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, phone, service, message }),
