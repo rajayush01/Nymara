@@ -833,6 +833,7 @@ const CartPage = () => {
   const [orderId, setOrderId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [dataFetched, setDataFetched] = useState(false);
+  const [removingItems, setRemovingItems] = useState<Set<string>>(new Set());
   const { selectedCountry } = useCurrency();
   const symbol = getSymbol(selectedCountry.currency);
   const {
@@ -902,6 +903,23 @@ const CartPage = () => {
     console.log("Moved to wishlist:", item.name);
   };
 
+  const handleRemoveItem = (itemId: string) => {
+    // Add to removing items set for visual feedback
+    setRemovingItems(prev => new Set(prev).add(itemId));
+    
+    // Remove from cart
+    removeFromCart(itemId);
+    
+    // Remove from removing items set after a short delay
+    setTimeout(() => {
+      setRemovingItems(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(itemId);
+        return newSet;
+      });
+    }, 300);
+  };
+
   const applyPromoCode = () => {
     if (promoCode.toLowerCase() === "save10") {
       setPromoApplied(true);
@@ -951,7 +969,7 @@ const CartPage = () => {
 
   const productSavings =
     originalSubtotal > subtotal ? originalSubtotal - subtotal : 0;
-  const shippingCost = subtotal > 0 ? 0 : 20;
+  const shippingCost = 0; // Always free shipping
 
   const total = subtotal + shippingCost;
 
@@ -1080,13 +1098,24 @@ const CartPage = () => {
   // Initial loading effect
   useEffect(() => {
     const timer = setTimeout(() => {
+      // Always set dataFetched to true after initial delay, regardless of cart length
+      // The fetchLatestPrices effect will handle cart-specific logic
+      setDataFetched(true);
       if (cart.length === 0) {
         setIsLoading(false);
-        setDataFetched(true);
       }
-    }, 200); // Reduced minimum loading time for faster UX
+    }, 1500); // Increased to 1.5 seconds to ensure actual prices are loaded, not cache
 
-    return () => clearTimeout(timer);
+    // Fallback: ensure page loads even if something goes wrong
+    const fallbackTimer = setTimeout(() => {
+      setIsLoading(false);
+      setDataFetched(true);
+    }, 5000); // Increased fallback to 5 seconds to allow more time for API calls
+
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(fallbackTimer);
+    };
   }, []);
 
   // useEffect(() => {
@@ -1137,6 +1166,7 @@ const CartPage = () => {
   useEffect(() => {
     const fetchLatestPrices = async () => {
       if (cart.length === 0) {
+        setUpdatedCart([]); // Clear updated cart immediately
         setIsLoading(false);
         setDataFetched(true);
         setPreviousCartIds([]);
@@ -1152,8 +1182,14 @@ const CartPage = () => {
         currentCartIds.length === previousCartIds.length &&
         currentCartIds.every((id, index) => id === previousCartIds[index]);
 
-      // Only show loader for initial load or when products are added/removed
-      if (!isQuantityOnlyUpdate) {
+      // Check if items were removed (fewer items than before)
+      const itemsRemoved = previousCartIds.length > currentCartIds.length;
+
+      // Check if this is the initial load (no previous cart IDs)
+      const isInitialLoad = previousCartIds.length === 0;
+
+      // Show loader for initial load or when products are added (not removed or quantity updates)
+      if (isInitialLoad || (!isQuantityOnlyUpdate && !itemsRemoved && previousCartIds.length > 0)) {
         setIsLoading(true);
       }
 
@@ -1190,17 +1226,25 @@ const CartPage = () => {
         );
 
         setUpdatedCart(updatedItems);
-        setDataFetched(true);
+        
+        // For initial load, ensure minimum loading time has passed before showing content
+        if (isInitialLoad) {
+          // Wait a bit more to ensure smooth transition and avoid cache flash
+          setTimeout(() => {
+            setDataFetched(true);
+            setIsLoading(false);
+          }, 500);
+        } else {
+          setDataFetched(true);
+          setIsLoading(false);
+        }
+        
         setPreviousCartIds(currentCartIds);
       } catch (err) {
         console.error("Failed to refresh cart prices", err);
         setDataFetched(true);
+        setIsLoading(false);
         setPreviousCartIds(currentCartIds);
-      } finally {
-        // Only hide loader if we showed it
-        if (!isQuantityOnlyUpdate) {
-          setIsLoading(false);
-        }
       }
     };
 
@@ -1208,7 +1252,9 @@ const CartPage = () => {
   }, [cart, selectedCountry.currency]);
 
   const CartItemComponent = ({ item }: { item: CartItem }) => (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 p-4 sm:p-6 bg-white rounded-lg border border-gray-200">
+    <div className={`flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 p-4 sm:p-6 bg-white rounded-lg border border-gray-200 transition-all duration-300 ${
+      removingItems.has(item._id) ? 'opacity-50 scale-95' : ''
+    }`}>
       <img
         src={item.coverImage}
         alt={item.name}
@@ -1302,11 +1348,14 @@ const CartPage = () => {
             <span className="hidden sm:inline">Save for later</span>
           </button>
           <button
-            onClick={() => removeFromCart(item._id)}
-            className="flex items-center space-x-1 text-xs sm:text-sm text-red-600 hover:text-red-700"
+            onClick={() => handleRemoveItem(item._id)}
+            disabled={removingItems.has(item._id)}
+            className="flex items-center space-x-1 text-xs sm:text-sm text-red-600 hover:text-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <X className="w-4 h-4" />
-            <span className="hidden sm:inline">Remove</span>
+            <span className="hidden sm:inline">
+              {removingItems.has(item._id) ? 'Removing...' : 'Remove'}
+            </span>
           </button>
         </div>
       </div>
@@ -1347,7 +1396,7 @@ const CartPage = () => {
     const currencySymbol =
       cart[0]?.prices?.[selectedCountry.currency]?.symbol ||
       getSymbol(selectedCountry.currency);
-    const shippingCost = subtotal > 0 ? 0 : 20;
+    const shippingCost = 0; // Always free shipping
     const total = subtotal - promoSavings + shippingCost;
 
     return (
@@ -1383,10 +1432,8 @@ const CartPage = () => {
           )}
           <div className="flex justify-between text-sm sm:text-base">
             <span className="text-gray-600">Shipping</span>
-            <span className={shippingCost === 0 ? "text-green-600" : ""}>
-              {shippingCost === 0
-                ? "Free"
-                : `${currencySymbol}${shippingCost.toLocaleString()}`}
+            <span className="text-green-600">
+              Free
             </span>
           </div>
         </div>
@@ -1470,9 +1517,9 @@ const CartPage = () => {
     );
   }
 
-  // Show loader while fetching data
-  if (isLoading || !dataFetched) {
-    return <PageLoader message="Loading your cart..." />;
+  // Show loader while fetching data (only show loader if we're actually loading and haven't fetched data yet)
+  if (isLoading && !dataFetched) {
+    return <PageLoader message="Loading latest prices..." />;
   }
 
   return (

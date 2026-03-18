@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Heart,
@@ -9,6 +9,8 @@ import {
   List,
   Star,
   Trash2,
+  X,
+  AlertTriangle,
 } from "lucide-react";
 import { useWishlist, useCart, WishlistItem } from "@/contexts/AppContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
@@ -20,6 +22,7 @@ const FavoritesPage = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
+  const [showClearModal, setShowClearModal] = useState(false);
 
   const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
   const { addToCart } = useCart();
@@ -65,6 +68,35 @@ const FavoritesPage = () => {
   });
 
   };
+
+  const handleClearWishlist = () => {
+    clearWishlist();
+    setShowClearModal(false);
+    // Show success toast
+    import('@/utils/toast').then(({ showSuccessToast }) => {
+      showSuccessToast("Wishlist cleared successfully");
+    });
+  };
+
+  // Handle ESC key to close modal
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && showClearModal) {
+        setShowClearModal(false);
+      }
+    };
+
+    if (showClearModal) {
+      document.addEventListener('keydown', handleEscKey);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+      document.body.style.overflow = 'unset';
+    };
+  }, [showClearModal]);
 
   const shareWishlist = () => {
     if (navigator.share) {
@@ -311,11 +343,7 @@ const FavoritesPage = () => {
                     <span>Share</span>
                   </button>
                   <button
-                    onClick={() => {
-                      if (confirm("Are you sure you want to clear your entire wishlist?")) {
-                        clearWishlist();
-                      }
-                    }}
+                    onClick={() => setShowClearModal(true)}
                     className="flex items-center space-x-2 px-4 py-2 text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -417,6 +445,63 @@ const FavoritesPage = () => {
           </>
         )}
       </div>
+
+      {/* Beautiful Clear Wishlist Confirmation Modal */}
+      {showClearModal && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-300"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowClearModal(false);
+            }
+          }}
+        >
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all duration-300 animate-in zoom-in-95">
+            {/* Modal Header */}
+            <div className="relative p-6 pb-4">
+              <button
+                onClick={() => setShowClearModal(false)}
+                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              
+              {/* Warning Icon */}
+              <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full animate-pulse">
+                <AlertTriangle className="w-8 h-8 text-red-600" />
+              </div>
+              
+              {/* Title */}
+              <h3 className="text-xl font-bold text-gray-900 text-center mb-2">
+                Clear Entire Wishlist?
+              </h3>
+              
+              {/* Description */}
+              <p className="text-gray-600 text-center leading-relaxed">
+                Are you sure you want to remove all <span className="font-semibold text-red-600">{wishlist.length}</span> items from your wishlist? 
+                This action cannot be undone.
+              </p>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex space-x-3 p-6 pt-2">
+              <button
+                onClick={() => setShowClearModal(false)}
+                className="flex-1 px-4 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium transition-all duration-200 hover:scale-105"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleClearWishlist}
+                className="flex-1 px-4 py-3 text-white bg-red-600 hover:bg-red-700 rounded-xl font-medium transition-all duration-200 hover:scale-105 flex items-center justify-center space-x-2"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Clear All</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

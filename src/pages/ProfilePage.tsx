@@ -10,6 +10,8 @@ import {
   X,
   Heart,
   Home,
+  AlertCircle,
+  CheckCircle,
 } from "lucide-react";
 import { useAuth, useWishlist } from "@/contexts/AppContext";
 import axios from "axios";
@@ -19,6 +21,9 @@ const ProfilePage = () => {
   const { user } = useAuth();
   const { wishlist, wishlistCount } = useWishlist();
   const [savedAddresses, setSavedAddresses] = useState(0);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const [isEditing, setIsEditing] = useState(false);
   const [addressType, setAddressType] = useState<"domestic" | "international">(
@@ -113,6 +118,55 @@ const ProfilePage = () => {
   };
   const handleSave = async () => {
     try {
+      // Client-side validation for domestic address
+      if (addressType === "domestic") {
+        const requiredFields = [
+          { field: 'firstName', label: 'First Name' },
+          { field: 'lastName', label: 'Last Name' },
+          { field: 'email', label: 'Email' },
+          { field: 'phone', label: 'Phone' },
+          { field: 'houseNumber', label: 'House/Flat Number' },
+          { field: 'streetArea', label: 'Street/Area' },
+          { field: 'city', label: 'City' },
+          { field: 'state', label: 'State' },
+          { field: 'pinCode', label: 'PIN Code' }
+        ];
+
+        const missingFields = requiredFields.filter(({ field }) => !formData[field as keyof typeof formData]?.trim());
+        
+        if (missingFields.length > 0) {
+          const fieldNames = missingFields.map(({ label }) => label).join(', ');
+          setErrorMessage(`Missing required domestic address fields: ${fieldNames}`);
+          setShowErrorModal(true);
+          return;
+        }
+      }
+
+      // Client-side validation for international address
+      if (addressType === "international") {
+        const requiredFields = [
+          { field: 'firstName', label: 'First Name' },
+          { field: 'lastName', label: 'Last Name' },
+          { field: 'email', label: 'Email' },
+          { field: 'phone', label: 'Phone' },
+          { field: 'apartmentSuite', label: 'Apartment/Suite Number' },
+          { field: 'streetName', label: 'Street Name' },
+          { field: 'cityInternational', label: 'City' },
+          { field: 'stateProvince', label: 'State/Province' },
+          { field: 'postalZipCode', label: 'Postal/ZIP Code' },
+          { field: 'countryInternational', label: 'Country' }
+        ];
+
+        const missingFields = requiredFields.filter(({ field }) => !formData[field as keyof typeof formData]?.trim());
+        
+        if (missingFields.length > 0) {
+          const fieldNames = missingFields.map(({ label }) => label).join(', ');
+          setErrorMessage(`Missing required international address fields: ${fieldNames}`);
+          setShowErrorModal(true);
+          return;
+        }
+      }
+
       const addressData =
         addressType === "domestic"
           ? {
@@ -155,6 +209,7 @@ const ProfilePage = () => {
 
       console.log("✅ Profile updated:", res.data);
       setIsEditing(false);
+      setShowSuccessModal(true);
 
       localStorage.setItem("userDetails", JSON.stringify(res.data));
     } catch (err: any) {
@@ -162,7 +217,8 @@ const ProfilePage = () => {
         "❌ Failed to update profile:",
         err.response?.data || err.message,
       );
-      alert(err.response?.data?.message || "Failed to update profile");
+      setErrorMessage(err.response?.data?.message || "Failed to update profile");
+      setShowErrorModal(true);
     }
   };
 
@@ -194,6 +250,31 @@ const ProfilePage = () => {
     }
     setIsEditing(false);
   };
+
+  // Handle ESC key to close modals
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        if (showErrorModal) {
+          setShowErrorModal(false);
+        }
+        if (showSuccessModal) {
+          setShowSuccessModal(false);
+        }
+      }
+    };
+
+    if (showErrorModal || showSuccessModal) {
+      document.addEventListener('keydown', handleEscKey);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+      document.body.style.overflow = 'unset';
+    };
+  }, [showErrorModal, showSuccessModal]);
 
   if (!user || !user.isLoggedIn) {
     return (
@@ -966,6 +1047,111 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+
+      {/* Beautiful Error Modal */}
+      {showErrorModal && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-300"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowErrorModal(false);
+            }
+          }}
+        >
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all duration-300 animate-in zoom-in-95">
+            {/* Modal Header */}
+            <div className="relative p-6 pb-4">
+              <button
+                onClick={() => setShowErrorModal(false)}
+                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              
+              {/* Error Icon */}
+              <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full animate-pulse">
+                <AlertCircle className="w-8 h-8 text-red-600" />
+              </div>
+              
+              {/* Title */}
+              <h3 className="text-xl font-bold text-gray-900 text-center mb-2">
+                Validation Error
+              </h3>
+              
+              {/* Description */}
+              <div className="text-gray-600 text-center leading-relaxed">
+                <p className="mb-2">{errorMessage.includes('Missing required') ? 'Please fill in the following required fields:' : errorMessage}</p>
+                {errorMessage.includes('Missing required') && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-3">
+                    <p className="text-red-700 text-sm font-medium">
+                      {errorMessage.split(': ')[1]}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex p-6 pt-2">
+              <button
+                onClick={() => setShowErrorModal(false)}
+                className="w-full px-4 py-3 text-white bg-red-600 hover:bg-red-700 rounded-xl font-medium transition-all duration-200 hover:scale-105 flex items-center justify-center space-x-2"
+              >
+                <span>Got it</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Beautiful Success Modal */}
+      {showSuccessModal && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-300"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowSuccessModal(false);
+            }
+          }}
+        >
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all duration-300 animate-in zoom-in-95">
+            {/* Modal Header */}
+            <div className="relative p-6 pb-4">
+              <button
+                onClick={() => setShowSuccessModal(false)}
+                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              
+              {/* Success Icon */}
+              <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full animate-bounce">
+                <CheckCircle className="w-8 h-8 text-green-600" />
+              </div>
+              
+              {/* Title */}
+              <h3 className="text-xl font-bold text-gray-900 text-center mb-2">
+                Profile Updated!
+              </h3>
+              
+              {/* Description */}
+              <p className="text-gray-600 text-center leading-relaxed">
+                Your profile information has been successfully updated and saved.
+              </p>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex p-6 pt-2">
+              <button
+                onClick={() => setShowSuccessModal(false)}
+                className="w-full px-4 py-3 text-white bg-green-600 hover:bg-green-700 rounded-xl font-medium transition-all duration-200 hover:scale-105 flex items-center justify-center space-x-2"
+              >
+                <span>Great!</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
