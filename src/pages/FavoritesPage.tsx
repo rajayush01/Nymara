@@ -121,7 +121,7 @@ const FavoritesPage = () => {
             alt={item.name}
             className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
           />
-          {!item.stock && (
+          {item.inStock === false && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
               <span className="bg-white px-3 py-1 rounded-full text-sm font-medium text-gray-800">
                 Out of Stock
@@ -199,11 +199,11 @@ const FavoritesPage = () => {
           <div className="flex space-x-2">
             <button
               onClick={() => handleAddToCart(item)}
-              disabled={!item.stock}
+              disabled={item.inStock === false}
               className="flex-1 bg-[#9a8457] text-white py-2 px-4 rounded-lg hover:bg-[#8a7547] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors duration-300 flex items-center justify-center"
             >
               <ShoppingBag className="w-4 h-4 mr-2" />
-              {item.stock ? "Add to Cart" : "Out of Stock"}
+              {item.inStock === false ? "Out of Stock" : "Add to Cart"}
             </button>
             <button
               onClick={() => removeFromWishlist(item._id)}
@@ -232,7 +232,7 @@ const FavoritesPage = () => {
             alt={item.name}
             className="w-20 h-20 object-cover rounded-lg"
           />
-          {!item.stock && (
+          {item.inStock === false && (
             <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
               <span className="text-white text-xs">Out</span>
             </div>
@@ -272,7 +272,7 @@ const FavoritesPage = () => {
         <div className="flex space-x-2">
           <button
             onClick={() => handleAddToCart(item)}
-            disabled={!item.stock}
+            disabled={item.inStock === false}
             className="bg-[#9a8457] text-white py-1 px-3 rounded text-sm hover:bg-[#8a7547] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
           >
             Add to Cart

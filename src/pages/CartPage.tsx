@@ -768,6 +768,7 @@ import { useEffect } from "react";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTracking } from "@/contexts/TrackingContext";
 import axios from "axios";
+import PageLoader from "@/components/ui/PageLoader";
 import { useRazorpay } from "@/hooks/useRazorpay";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -830,6 +831,8 @@ const CartPage = () => {
   const [promoDiscount, setPromoDiscount] = useState<number>(0);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [orderId, setOrderId] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [dataFetched, setDataFetched] = useState(false);
   const { selectedCountry } = useCurrency();
   const symbol = getSymbol(selectedCountry.currency);
   const {
@@ -883,13 +886,13 @@ const CartPage = () => {
       color: item.color,
       rating: item.rating,
       reviews: item.reviews,
-      image: item.coverImage,
+      coverImage: item.coverImage, // Fix: use coverImage instead of image
       isNew: item.isNew,
       isBestSeller: item.isBestSeller,
       isMadetoOrder: item.isMadetoOrder,
       description: item.description,
       discount: item.discount,
-      inStock: item.inStock,
+      inStock: item.inStock !== false, // Default to true if undefined, false only if explicitly false
       category: item.category,
       tags: item.tags,
       gender: item.gender,
@@ -913,6 +916,7 @@ const CartPage = () => {
   };
 
   const [updatedCart, setUpdatedCart] = useState<CartItem[]>([]);
+  const [previousCartIds, setPreviousCartIds] = useState<string[]>([]);
   const activeCart = updatedCart.length > 0 ? updatedCart : cart;
 
   const rate = currencyRates[selectedCountry.currency] || 1;
@@ -973,7 +977,9 @@ const CartPage = () => {
     }
 
     if (activeCart.length === 0) {
-      alert("Your cart is empty");
+      import('@/utils/toast').then(({ showWarningToast }) => {
+        showWarningToast("Your cart is empty");
+      });
       return;
     }
 
@@ -1025,13 +1031,17 @@ const CartPage = () => {
         (error) => {
           // Payment failed
           console.error("Payment failed:", error);
-          alert(`Payment failed: ${error}`);
+          import('@/utils/toast').then(({ showErrorToast }) => {
+            showErrorToast(`Payment failed: ${error}`);
+          });
           setPaymentProcessing(false);
         },
       );
     } catch (error: any) {
       console.error("Order placement error:", error);
-      alert(error.message || "Failed to place order");
+      import('@/utils/toast').then(({ showErrorToast }) => {
+        showErrorToast(error.message || "Failed to place order");
+      });
       setPaymentProcessing(false);
     }
   };
@@ -1066,6 +1076,18 @@ const CartPage = () => {
       fetchUserDetails();
     }
   }, [currentStep]);
+
+  // Initial loading effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (cart.length === 0) {
+        setIsLoading(false);
+        setDataFetched(true);
+      }
+    }, 200); // Reduced minimum loading time for faster UX
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // useEffect(() => {
   //   const fetchLatestPrices = async () => {
@@ -1114,6 +1136,27 @@ const CartPage = () => {
 
   useEffect(() => {
     const fetchLatestPrices = async () => {
+      if (cart.length === 0) {
+        setIsLoading(false);
+        setDataFetched(true);
+        setPreviousCartIds([]);
+        return;
+      }
+
+      // Get current cart product IDs
+      const currentCartIds = cart.map(item => item._id).sort();
+      
+      // Check if this is just a quantity update (same products, different quantities)
+      const isQuantityOnlyUpdate = 
+        previousCartIds.length > 0 && 
+        currentCartIds.length === previousCartIds.length &&
+        currentCartIds.every((id, index) => id === previousCartIds[index]);
+
+      // Only show loader for initial load or when products are added/removed
+      if (!isQuantityOnlyUpdate) {
+        setIsLoading(true);
+      }
+
       try {
         const updatedItems: CartItem[] = await Promise.all(
           cart.map(async (item) => {
@@ -1147,14 +1190,21 @@ const CartPage = () => {
         );
 
         setUpdatedCart(updatedItems);
+        setDataFetched(true);
+        setPreviousCartIds(currentCartIds);
       } catch (err) {
         console.error("Failed to refresh cart prices", err);
+        setDataFetched(true);
+        setPreviousCartIds(currentCartIds);
+      } finally {
+        // Only hide loader if we showed it
+        if (!isQuantityOnlyUpdate) {
+          setIsLoading(false);
+        }
       }
     };
 
-    if (cart.length > 0) {
-      fetchLatestPrices();
-    }
+    fetchLatestPrices();
   }, [cart, selectedCountry.currency]);
 
   const CartItemComponent = ({ item }: { item: CartItem }) => (
@@ -1418,6 +1468,11 @@ const CartPage = () => {
         </div>
       </div>
     );
+  }
+
+  // Show loader while fetching data
+  if (isLoading || !dataFetched) {
+    return <PageLoader message="Loading your cart..." />;
   }
 
   return (
