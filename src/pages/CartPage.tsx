@@ -768,8 +768,8 @@ import { useEffect } from "react";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTracking } from "@/contexts/TrackingContext";
 import axios from "axios";
-import PageLoader from "@/components/ui/PageLoader";
 import { useRazorpay } from "@/hooks/useRazorpay";
+import ProductLoader from "@/components/ui/ProductLoader";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -1536,7 +1536,7 @@ const CartPage = () => {
 
   // Show loader while fetching data (only show loader if we're actually loading and haven't fetched data yet)
   if (isLoading && !dataFetched) {
-    return <PageLoader message="Loading latest prices..." />;
+    return <ProductLoader />;
   }
 
   return (

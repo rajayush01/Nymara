@@ -16,15 +16,15 @@ export default function JewelryCollage() {
       description: "Classic pieces that never go out of style",
       image: img1,
       span: "col-span-2 row-span-2",
-      filterType: "gender",
-      filterValue: "Men"
+      filterType: "/necklaces",
+      filterValue: "necklaces"
     },
     {
       title: "Rings",
       description: "Sparkle with our finest diamonds",
       image: img2,
       span: "col-span-1 row-span-1",
-      filterType: "category",
+      filterType: "/rings",
       filterValue: "rings"
     },
     {
@@ -32,15 +32,15 @@ export default function JewelryCollage() {
       description: "Luxurious gold collections",
       image: img4,
       span: "col-span-1 row-span-2",
-      filterType: "gender",
-      filterValue: "Women"
+      filterType: "/necklaces",
+      filterValue: ""
     },
     {
       title: "Rings",
       description: "Contemporary designs for today",
       image: img3,
       span: "col-span-1 row-span-1",
-      filterType: "category",
+      filterType: "/rings",
       filterValue: "rings"
     },
   ];

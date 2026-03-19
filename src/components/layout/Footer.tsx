@@ -1,5 +1,6 @@
 import { Phone, Mail, Clock, Shield, MapPin, Award, Heart } from "lucide-react";
 import logo from "../../assets/logo_main1.png";
+import elitelogo from "../../assets/elite8digital-nav-cropped.png";
 import { Link } from "react-router-dom";
 export default function Footer() {
   return (
@@ -330,19 +331,19 @@ export default function Footer() {
               <p>&copy; 2025 Nymara Jewels. All rights reserved.</p>
               <div className="flex flex-wrap justify-center space-x-3 sm:space-x-4">
                 <a
-                  href="#privacy-policy"
+                  href="/privacy-policy"
                   className="hover:text-[#9a8457] text-gray-400 transition-colors"
                 >
                   Privacy Policy
                 </a>
                 <a
-                  href="#terms-conditions"
+                  href="/termsandconditions"
                   className="hover:text-[#9a8457] text-gray-400 transition-colors"
                 >
                   Terms & Conditions
                 </a>
                 <a
-                  href="#accessibility"
+                  href="/education#4cs"
                   className="hover:text-[#9a8457] text-gray-400 transition-colors"
                 >
                   Accessibility
@@ -441,7 +442,7 @@ export default function Footer() {
           </div>
           <div className="border-t border-gray-400 mx-4 sm:mx-8 lg:mx-[400px] mt-10"></div>
           <div className="text-center text-slate-500 py-4">
-							<p className="text-xs sm:text-sm md:text-base lg:text-lg flex flex-col sm:flex-row items-center justify-center gap-1">
+							<p className="text-xs sm:text-sm md:text-base lg:text-xl flex flex-col sm:flex-row items-center justify-center gap-1">
 								<span>Built with ❤️ by</span>
 								<Link
 									to="https://elite8digital.in"
@@ -451,9 +452,9 @@ export default function Footer() {
 								>
 									Elite8 Digital
 									<img
-										src="/elite8digital-nav.png"
+										src={elitelogo}
 										alt="Elite8 Digital Logo"
-										className="h-8 sm:h-10 md:h-12 ml-1 sm:ml-2"
+										className="h-8 sm:h-12 md:h-12 ml-1 sm:ml-2"
 									/>
 								</Link>
 							</p>
