@@ -69,7 +69,7 @@ const CustomizeJewelryModal: React.FC<CustomizeJewelryModalProps> = ({
   // Handle submit → send to backend
   const handleSubmit = async () => {
     try {
-      const API_URL = import.meta.env.VITE_API_URL || "";
+    
       const endpoint = "https://lets-taxify.onrender.com/api/nymara/contact/custom";
 
       const payload = {
