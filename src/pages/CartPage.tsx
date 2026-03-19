@@ -795,9 +795,26 @@ interface ShippingInfo {
   country: string;
 }
 
+// const isLoggedIn = () => {
+//   const token = localStorage.getItem("token");
+//   return !!token;
+// };
+
 const isLoggedIn = () => {
   const token = localStorage.getItem("token");
-  return !!token;
+  if (!token) return false;
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    if (payload.exp && payload.exp * 1000 < Date.now()) {
+      // Token expired — clean up
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      return false;
+    }
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 const getSymbol = (currency: string): string => {
