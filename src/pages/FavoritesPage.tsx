@@ -58,7 +58,9 @@ const FavoritesPage = () => {
   };
 
   const handleAddToCart = (item: WishlistItem) => {
-    addToCart(item, 1);
+    addToCart(item, 1, {}, false); // Disable global toast
+    removeFromWishlist(item._id); // Remove from wishlist when added to cart
+    setLocalToasts(prev => ({ ...prev, [item._id]: true })); // Show local toast
     console.log("Added to cart:", item.name);
     logAddToCart(item._id, {
     name: item.name,
