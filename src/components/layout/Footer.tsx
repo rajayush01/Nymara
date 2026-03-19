@@ -442,7 +442,7 @@ export default function Footer() {
           </div>
           <div className="border-t border-gray-400 mx-4 sm:mx-8 lg:mx-[400px] mt-10"></div>
           <div className="text-center text-slate-500 py-4">
-							<p className="text-xs sm:text-sm md:text-base lg:text-xl flex flex-col sm:flex-row items-center justify-center gap-1">
+							<p className="text-xs sm:text-sm md:text-base lg:text-xl flex  sm:flex-row items-center justify-center gap-1">
 								<span>Built with ❤️ by</span>
 								<Link
 									to="https://elite8digital.in"

@@ -1,10 +1,10 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useProducts } from '@/contexts/AppContext';
-import img1 from '@/assets/1.png';
-import img2 from '@/assets/2.png';
-import img3 from '@/assets/3.png';
-import img4 from '@/assets/4.png';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useProducts } from "@/contexts/AppContext";
+import img1 from "@/assets/1.png";
+import img2 from "@/assets/2.png";
+import img3 from "@/assets/3.png";
+import img4 from "@/assets/4.png";
 
 export default function JewelryCollage() {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ export default function JewelryCollage() {
       image: img1,
       span: "col-span-2 row-span-2",
       filterType: "/necklaces",
-      filterValue: "necklaces"
+      filterValue: "necklaces",
     },
     {
       title: "Rings",
@@ -25,7 +25,7 @@ export default function JewelryCollage() {
       image: img2,
       span: "col-span-1 row-span-1",
       filterType: "/rings",
-      filterValue: "rings"
+      filterValue: "rings",
     },
     {
       title: "Her",
@@ -33,7 +33,7 @@ export default function JewelryCollage() {
       image: img4,
       span: "col-span-1 row-span-2",
       filterType: "/necklaces",
-      filterValue: ""
+      filterValue: "",
     },
     {
       title: "Rings",
@@ -41,17 +41,17 @@ export default function JewelryCollage() {
       image: img3,
       span: "col-span-1 row-span-1",
       filterType: "/rings",
-      filterValue: "rings"
+      filterValue: "rings",
     },
   ];
 
   const handleCollectionClick = (filterType: string, filterValue: string) => {
     if (filterType === "gender") {
       // For gender filters, go to products page with gender filter
-      navigate('/products');
+      navigate("/products");
       // Set filter after navigation
       setTimeout(() => {
-        setFilters({ 
+        setFilters({
           gender: [filterValue],
           category: [],
           metalType: [],
@@ -60,7 +60,7 @@ export default function JewelryCollage() {
           size: [],
           color: [],
           subCategory: [],
-          sortBy: 'best-seller'
+          sortBy: "best-seller",
         });
       }, 100);
     } else {
@@ -77,7 +77,8 @@ export default function JewelryCollage() {
             Exclusive Collections
           </h2>
           <p className="text-base sm:text-lg text-neutral-600 max-w-2xl mx-auto px-4">
-            Discover exquisite pieces crafted with passion and precision. Each design tells a story of elegance and luxury.
+            Discover exquisite pieces crafted with passion and precision. Each
+            design tells a story of elegance and luxury.
           </p>
         </div>
 
@@ -106,36 +107,55 @@ export default function JewelryCollage() {
         </div> */}
 
         <div className="grid grid-cols-2 gap-4">
-  {collections.map((collection, index) => (
-    <div
-      key={index}
-      onClick={() => handleCollectionClick(collection.filterType, collection.filterValue)}
-      className="group relative overflow-hidden rounded-lg cursor-pointer h-[300px] sm:h-[350px] lg:h-[400px]"
-    >
-      <img
-        src={collection.image}
-        alt={collection.title}
-        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
-      <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 lg:p-6 text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-        <h3 className="text-xl sm:text-2xl font-serif mb-1 sm:mb-2">{collection.title}</h3>
-        <p className="text-xs sm:text-sm text-neutral-200 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
-          {collection.description}
-        </p>
-      </div>
-    </div>
-  ))}
-</div>
+          {collections.map((collection, index) => (
+            <div
+              key={index}
+              onClick={() =>
+                handleCollectionClick(
+                  collection.filterType,
+                  collection.filterValue,
+                )
+              }
+              className="group relative overflow-hidden rounded-lg cursor-pointer h-[300px] sm:h-[350px] lg:h-[400px]"
+            >
+              <img
+                src={collection.image}
+                alt={collection.title}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
+              <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 lg:p-6 text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                <h3 className="text-xl sm:text-2xl font-serif mb-1 sm:mb-2">
+                  {collection.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-neutral-200 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+                  {collection.description}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
 
         <div className="text-center mt-8 sm:mt-10 lg:mt-12">
-          <button 
-            onClick={() => navigate('/products')}
+          {/* <button
+            onClick={() => navigate("/")}
             className="px-6 sm:px-8 py-2.5 sm:py-3 bg-neutral-900 text-white text-sm sm:text-base rounded-full hover:bg-neutral-800 transition-colors duration-300"
           >
-            Explore All Collections
+           
+          </button> */}
+
+         <button
+            onClick={() => navigate("/products")}
+            className="group relative overflow-hidden px-8 py-4 bottom-3 border rounded-xl border-white text-white bg-black font-light text-md tracking-[0.2em] transition-all duration-300 hover:bg-white hover:text-black uppercase"
+          >
+            <span className="relative z-10"> Explore All Collections</span>
+            <div className="absolute inset-0 bg-gray-300 text-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
           </button>
-        </div>
+
+       </div>
+
+
+
       </div>
     </section>
   );

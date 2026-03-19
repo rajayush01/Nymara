@@ -967,7 +967,15 @@ export interface AppState {
 // Actions
 export type AppAction =
   | { type: 'SET_PRODUCTS'; payload: Product[] }
-  | { type: 'ADD_TO_CART'; payload: { product: Product; quantity: number; options?: any } }
+  | { 
+  type: 'ADD_TO_CART'; 
+  payload: { 
+    product: Product; 
+    quantity: number; 
+    options?: any; 
+    showToast?: boolean; 
+  } 
+}
   | { type: 'REMOVE_FROM_CART'; payload: string }
   | { type: 'UPDATE_CART_QUANTITY'; payload: { _id: string; quantity: number } }
   | { type: 'CLEAR_CART' }
@@ -1202,8 +1210,13 @@ export const useAppContext = () => {
 export const useCart = () => {
   const { state, dispatch, setCartToast } = useAppContext();
 
-  const addToCart = (product: Product, quantity: number = 1, options?: any) => {
-    dispatch({ type: 'ADD_TO_CART', payload: { product, quantity, options } });
+  const addToCart = (
+  product: any,
+  quantity: number = 1,
+  options: any = {},
+  showToast: boolean = true
+) => {
+    dispatch({ type: 'ADD_TO_CART', payload: { product, quantity, options , showToast} });
     
     // Show toast notification
     if (setCartToast) {

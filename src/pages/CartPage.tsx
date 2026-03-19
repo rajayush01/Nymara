@@ -767,6 +767,7 @@ import { useCart, useWishlist, CartItem } from "@/contexts/AppContext";
 import { useEffect } from "react";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTracking } from "@/contexts/TrackingContext";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { useRazorpay } from "@/hooks/useRazorpay";
 import ProductLoader from "@/components/ui/ProductLoader";
@@ -840,9 +841,12 @@ const getSymbol = (currency: string): string => {
 
 const CartPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const stepParam = searchParams.get('step');
+  
   const [currentStep, setCurrentStep] = useState<
     "cart" | "shipping" | "payment" | "confirmation"
-  >("cart");
+  >(stepParam === 'shipping' ? 'shipping' : "cart");
   const [promoCode, setPromoCode] = useState<string>("");
   const [promoApplied, setPromoApplied] = useState<boolean>(false);
   const [promoDiscount, setPromoDiscount] = useState<number>(0);
@@ -850,6 +854,7 @@ const CartPage = () => {
   const [orderId, setOrderId] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [dataFetched, setDataFetched] = useState(false);
+  const [shippingLoading, setShippingLoading] = useState(false);
   const [removingItems, setRemovingItems] = useState<Set<string>>(new Set());
   const { selectedCountry } = useCurrency();
   const symbol = getSymbol(selectedCountry.currency);
@@ -998,11 +1003,18 @@ const CartPage = () => {
   const handleCheckout = () => {
     if (activeCart.length === 0) return;
     if (!isLoggedIn()) {
-      navigate("/login");
+      navigate("/login?redirect=checkout");
       return;
     }
+    
+    // Show shipping loader for 2 seconds
+    setShippingLoading(true);
     logCheckout(cart);
-    setCurrentStep("shipping");
+    
+    setTimeout(() => {
+      setCurrentStep("shipping");
+      setShippingLoading(false);
+    }, 2000);
   };
 
   const handlePlaceOrder = async () => {
@@ -1111,6 +1123,23 @@ const CartPage = () => {
       fetchUserDetails();
     }
   }, [currentStep]);
+
+  // Handle step parameter from URL (for post-login redirect)
+  useEffect(() => {
+    if (stepParam === 'shipping') {
+      // Show loader when coming from login redirect
+      setShippingLoading(true);
+      
+      // Clear the step parameter from URL after setting the state
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+      
+      // Hide loader after 2 seconds
+      setTimeout(() => {
+        setShippingLoading(false);
+      }, 2000);
+    }
+  }, [stepParam]);
 
   // Initial loading effect
   useEffect(() => {
@@ -1653,11 +1682,17 @@ const CartPage = () => {
         )}
 
         {currentStep === "shipping" && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-            <div className="lg:col-span-2">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
-                Shipping Information
-              </h2>
+          <>
+            {shippingLoading ? (
+              <div className="flex justify-center items-center min-h-[400px]">
+                <ProductLoader />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+                <div className="lg:col-span-2">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
+                    Shipping Information
+                  </h2>
               <form
                 onSubmit={handleShippingSubmit}
                 className="space-y-4 sm:space-y-6"
@@ -1858,6 +1893,8 @@ const CartPage = () => {
               </div>
             </div>
           </div>
+            )}
+          </>
         )}
       </div>
 

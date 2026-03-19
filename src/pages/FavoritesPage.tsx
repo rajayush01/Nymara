@@ -16,13 +16,15 @@ import { useWishlist, useCart, WishlistItem } from "@/contexts/AppContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTracking } from "@/contexts/TrackingContext";
 
-
 const FavoritesPage = () => {
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const [showClearModal, setShowClearModal] = useState(false);
+  const [localToasts, setLocalToasts] = useState<{ [key: string]: boolean }>(
+    {},
+  );
 
   const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
   const { addToCart } = useCart();
@@ -31,18 +33,19 @@ const FavoritesPage = () => {
   const { selectedCountry } = useCurrency();
 
   const categories = [
-  "all",
-  ...Array.from(
-    new Set(
-      wishlist
-        .map((item) =>
-          Array.isArray(item.category) ? item.category.join(", ") : item.category
-        )
-        .filter(Boolean)
-    )
-  ),
-] as string[];
-
+    "all",
+    ...Array.from(
+      new Set(
+        wishlist
+          .map((item) =>
+            Array.isArray(item.category)
+              ? item.category.join(", ")
+              : item.category,
+          )
+          .filter(Boolean),
+      ),
+    ),
+  ] as string[];
 
   // ✅ Helper (same as in CartPage)
   const getDisplayPrice = (item: WishlistItem) => {
@@ -60,22 +63,24 @@ const FavoritesPage = () => {
   const handleAddToCart = (item: WishlistItem) => {
     addToCart(item, 1, {}, false); // Disable global toast
     removeFromWishlist(item._id); // Remove from wishlist when added to cart
-    setLocalToasts(prev => ({ ...prev, [item._id]: true })); // Show local toast
+    setLocalToasts((prev: { [key: string]: boolean }) => ({
+      ...prev,
+      [item._id]: true,
+    }));
     console.log("Added to cart:", item.name);
     logAddToCart(item._id, {
-    name: item.name,
-    category: item.category,
-    price: item.price,
-    page: window.location.pathname,
-  });
-
+      name: item.name,
+      category: item.category,
+      price: item.price,
+      page: window.location.pathname,
+    });
   };
 
   const handleClearWishlist = () => {
     clearWishlist();
     setShowClearModal(false);
     // Show success toast
-    import('@/utils/toast').then(({ showSuccessToast }) => {
+    import("@/utils/toast").then(({ showSuccessToast }) => {
       showSuccessToast("Wishlist cleared successfully");
     });
   };
@@ -83,20 +88,20 @@ const FavoritesPage = () => {
   // Handle ESC key to close modal
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && showClearModal) {
+      if (event.key === "Escape" && showClearModal) {
         setShowClearModal(false);
       }
     };
 
     if (showClearModal) {
-      document.addEventListener('keydown', handleEscKey);
+      document.addEventListener("keydown", handleEscKey);
       // Prevent body scroll when modal is open
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscKey);
-      document.body.style.overflow = 'unset';
+      document.removeEventListener("keydown", handleEscKey);
+      document.body.style.overflow = "unset";
     };
   }, [showClearModal]);
 
@@ -113,22 +118,24 @@ const FavoritesPage = () => {
     }
   };
 
-  const filteredItems = wishlist.filter(
-(item) => {
-  const itemCategory = Array.isArray(item.category)
-    ? item.category.join(", ")
-    : item.category || "";
+  const filteredItems = wishlist.filter((item) => {
+    const itemCategory = Array.isArray(item.category)
+      ? item.category.join(", ")
+      : item.category || "";
 
-  return selectedCategory === "all" || itemCategory === selectedCategory;
-}
-  );
+    return selectedCategory === "all" || itemCategory === selectedCategory;
+  });
 
   const sortedItems = [...filteredItems].sort((a, b) => {
     switch (sortBy) {
       case "newest":
-        return new Date(b.addedDate).getTime() - new Date(a.addedDate).getTime();
+        return (
+          new Date(b.addedDate).getTime() - new Date(a.addedDate).getTime()
+        );
       case "oldest":
-        return new Date(a.addedDate).getTime() - new Date(b.addedDate).getTime();
+        return (
+          new Date(a.addedDate).getTime() - new Date(b.addedDate).getTime()
+        );
       case "price-low":
         return a.price - b.price;
       case "price-high":
@@ -210,19 +217,19 @@ const FavoritesPage = () => {
           </h3>
 
           <div className="flex items-center space-x-2 mb-3">
-  <span className="text-lg font-semibold text-gray-900">
-    {selectedCountry.flag} {symbol}
-    {amount.toLocaleString()}
-  </span>
+            <span className="text-lg font-semibold text-gray-900">
+              {selectedCountry.flag} {symbol}
+              {amount.toLocaleString()}
+            </span>
 
-  {selectedCountry.currency === "INR" &&
-    item.originalPrice !== undefined && item.originalPrice > item.price && (
-      <span className="text-sm text-gray-500 line-through">
-        ₹{item.originalPrice?.toLocaleString()}
-      </span>
-    )}
-</div>
-
+            {selectedCountry.currency === "INR" &&
+              item.originalPrice !== undefined &&
+              item.originalPrice > item.price && (
+                <span className="text-sm text-gray-500 line-through">
+                  ₹{item.originalPrice?.toLocaleString()}
+                </span>
+              )}
+          </div>
 
           <div className="flex items-center space-x-2 mb-4 text-xs text-gray-600">
             <span>{item.metalType}</span>
@@ -331,7 +338,8 @@ const FavoritesPage = () => {
             <div>
               <h1 className="text-3xl font-bold text-gray-900">My Favorites</h1>
               <p className="text-gray-600 mt-1">
-                {wishlist.length} {wishlist.length === 1 ? "item" : "items"} saved
+                {wishlist.length} {wishlist.length === 1 ? "item" : "items"}{" "}
+                saved
               </p>
             </div>
             <div className="flex items-center space-x-4">
@@ -367,7 +375,8 @@ const FavoritesPage = () => {
               Your wishlist is empty
             </h2>
             <p className="text-gray-600 mb-6">
-              Start adding items to your favorites by clicking the heart icon on any product.
+              Start adding items to your favorites by clicking the heart icon on
+              any product.
             </p>
             <button
               onClick={() => navigate("/products")}
@@ -450,7 +459,7 @@ const FavoritesPage = () => {
 
       {/* Beautiful Clear Wishlist Confirmation Modal */}
       {showClearModal && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-300"
           onClick={(e) => {
             if (e.target === e.currentTarget) {
@@ -467,21 +476,24 @@ const FavoritesPage = () => {
               >
                 <X className="w-5 h-5" />
               </button>
-              
+
               {/* Warning Icon */}
               <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full animate-pulse">
                 <AlertTriangle className="w-8 h-8 text-red-600" />
               </div>
-              
+
               {/* Title */}
               <h3 className="text-xl font-bold text-gray-900 text-center mb-2">
                 Clear Entire Wishlist?
               </h3>
-              
+
               {/* Description */}
               <p className="text-gray-600 text-center leading-relaxed">
-                Are you sure you want to remove all <span className="font-semibold text-red-600">{wishlist.length}</span> items from your wishlist? 
-                This action cannot be undone.
+                Are you sure you want to remove all{" "}
+                <span className="font-semibold text-red-600">
+                  {wishlist.length}
+                </span>{" "}
+                items from your wishlist? This action cannot be undone.
               </p>
             </div>
 
