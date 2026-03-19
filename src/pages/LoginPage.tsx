@@ -240,35 +240,97 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToSignup }) => {
   const [forgotEmail, setForgotEmail] = useState("");
   const [isSendingReset, setIsSendingReset] = useState(false);
 
+  // const handleForgotPassword = async () => {
+  //   if (!forgotEmail) {
+  //     setToast({ message: "Please enter your email address", type: "error" });
+  //     return;
+  //   }
+
+  //   // Basic email validation
+  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //   if (!emailRegex.test(forgotEmail)) {
+  //     setToast({ message: "Please enter a valid email address", type: "error" });
+  //     return;
+  //   }
+
+  //   setIsSendingReset(true);
+  //   try {
+  //     await axios.post(`${API_URL}/api/user/forgetpassword`, {
+  //       email: forgotEmail,
+  //     });
+  //     setToast({ message: "Password reset link sent to your email!", type: "success" });
+  //     setShowForgotModal(false);
+  //     setForgotEmail(""); // Clear the email field
+  //   } catch (err: any) {
+  //     console.error("❌ Forgot Password Error:", err.response?.data || err.message);
+  //     const errorMessage = err.response?.data?.message || "Failed to send reset link. Please try again.";
+  //     setToast({ message: errorMessage, type: "error" });
+  //   } finally {
+  //     setIsSendingReset(false);
+  //   }
+  // };
+
   const handleForgotPassword = async () => {
-    if (!forgotEmail) {
-      setToast({ message: "Please enter your email address", type: "error" });
-      return;
+  console.log("📩 [FORGOT PASSWORD] Button clicked");
+
+  if (!forgotEmail) {
+    console.warn("⚠️ Email empty");
+    setToast({ message: "Please enter your email address", type: "error" });
+    return;
+  }
+
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(forgotEmail)) {
+    console.warn("⚠️ Invalid email format:", forgotEmail);
+    setToast({ message: "Please enter a valid email address", type: "error" });
+    return;
+  }
+
+  console.log("📧 Sending reset request for:", forgotEmail);
+  console.log("🌐 API URL:", `${API_URL}/api/user/forgetpassword`);
+
+  setIsSendingReset(true);
+
+  try {
+    const response = await axios.post(
+      `${API_URL}/api/user/forgetpassword`,
+      { email: forgotEmail }
+    );
+
+    console.log("✅ API Response:", response.data);
+
+    setToast({
+      message: "Password reset link sent to your email!",
+      type: "success",
+    });
+
+    setShowForgotModal(false);
+    setForgotEmail("");
+
+  } catch (err: any) {
+    console.error("❌ Forgot Password Error FULL:", err);
+
+    if (err.response) {
+      console.error("❌ Backend Error:", err.response.data);
+      console.error("❌ Status:", err.response.status);
+    } else if (err.request) {
+      console.error("❌ No response received:", err.request);
+    } else {
+      console.error("❌ Axios config error:", err.message);
     }
 
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(forgotEmail)) {
-      setToast({ message: "Please enter a valid email address", type: "error" });
-      return;
-    }
+    const errorMessage =
+      err.response?.data?.message ||
+      "Failed to send reset link. Please try again.";
 
-    setIsSendingReset(true);
-    try {
-      await axios.post(`${API_URL}/api/user/forgetpassword`, {
-        email: forgotEmail,
-      });
-      setToast({ message: "Password reset link sent to your email!", type: "success" });
-      setShowForgotModal(false);
-      setForgotEmail(""); // Clear the email field
-    } catch (err: any) {
-      console.error("❌ Forgot Password Error:", err.response?.data || err.message);
-      const errorMessage = err.response?.data?.message || "Failed to send reset link. Please try again.";
-      setToast({ message: errorMessage, type: "error" });
-    } finally {
-      setIsSendingReset(false);
-    }
-  };
+    setToast({ message: errorMessage, type: "error" });
+
+  } finally {
+    console.log("🔚 Request finished");
+    setIsSendingReset(false);
+  }
+};
 
   const handleClick = (
     e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>,
