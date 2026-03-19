@@ -67,32 +67,57 @@ const CustomizeJewelryModal: React.FC<CustomizeJewelryModalProps> = ({
   };
 
   // Handle submit → send to backend
-  const handleSubmit = async () => {
-    try {
-    
-      const endpoint = "https://lets-taxify.onrender.com/api/nymara/contact/custom";
+ const handleSubmit = async () => {
+  console.log("🚀 Submit clicked");
 
-      const payload = {
-        name: customOptions.name,
-        email: customOptions.email,
-        phone: customOptions.phone,
-        inspiration: customOptions.inspiration,
-        specialRequests: customOptions.specialRequests,
-        images: customOptions.images,
-      };
+  // 🔴 validation
+  if (!customOptions.name || !customOptions.email || !customOptions.phone) {
+    alert("Please fill all required fields");
+    return;
+  }
 
-      const res = await axios.post(endpoint, payload);
+  try {
+    const endpoint =
+      "https://lets-taxify.onrender.com/api/nymara/contact/custom";
 
-      if (res.data.success) {
-        setShowThankYou(true);
-      } else {
-        alert("Something went wrong, please try again.");
-      }
-    } catch (error) {
-      console.error("❌ Error sending request:", error);
-      alert("Failed to submit. Please check your network or try again later.");
+    const payload = {
+      name: customOptions.name,
+      email: customOptions.email,
+      phone: customOptions.phone,
+      inspiration: customOptions.inspiration,
+      specialRequests: customOptions.specialRequests,
+      images: customOptions.images,
+    };
+
+    console.log("📤 Sending payload:", payload);
+    console.log("🌐 Endpoint:", endpoint);
+
+    const res = await axios.post(endpoint, payload, {
+      timeout: 10000,
+    });
+
+    console.log("✅ Response:", res.data);
+
+    if (res.data?.success) {
+      setShowThankYou(true);
+    } else {
+      alert(res.data?.message || "Something went wrong");
     }
-  };
+
+  } catch (error: any) {
+    console.error("❌ FULL ERROR:", error);
+
+    if (error.response) {
+      console.error("❌ Backend Error:", error.response.data);
+      alert(error.response.data?.message || "Server error");
+    } else if (error.request) {
+      console.error("❌ No response received");
+      alert("Server not reachable");
+    } else {
+      alert("Unexpected error");
+    }
+  }
+};
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && currentStep === 2) {
