@@ -97,6 +97,20 @@ const ProfilePage = () => {
           billingDifferent: data.details?.address?.billingDifferent || false,
           billingAddress: data.details?.address?.billingAddress || "",
         });
+
+        const address = data.details?.address;
+
+const hasAddress =
+  address &&
+  (
+    address.houseNumber ||
+    address.streetArea ||
+    address.apartmentSuite ||
+    address.streetName
+  );
+
+setSavedAddresses(hasAddress ? 1 : 0);
+        
       } catch (err: any) {
         console.error(
           "❌ Failed to load profile:",
@@ -1057,7 +1071,9 @@ const ProfilePage = () => {
             className="bg-white rounded-xl shadow-lg p-6 text-center cursor-pointer hover:bg-[#f9f5ef] transition"
           >
             <Home className="mx-auto text-[#9a8457] mb-2" />
-            <div className="text-3xl font-bold text-[#9a8457] mb-2">1</div>
+             <div className="text-3xl font-bold text-[#9a8457] mb-2">
+  {savedAddresses}
+</div>
             <div className="text-gray-600">Saved Addresses</div>
           </div>
         </div>
