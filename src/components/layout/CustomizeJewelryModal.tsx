@@ -70,7 +70,7 @@ const CustomizeJewelryModal: React.FC<CustomizeJewelryModalProps> = ({
   const handleSubmit = async () => {
     try {
       const API_URL = import.meta.env.VITE_API_URL || "";
-      const endpoint = `${API_URL}/api/user/custom`;
+      const endpoint = "https://lets-taxify.onrender.com/api/nymara/contact/custom";
 
       const payload = {
         name: customOptions.name,
