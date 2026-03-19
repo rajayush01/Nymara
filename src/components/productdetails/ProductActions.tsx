@@ -1,7 +1,8 @@
 // components/product/ProductActions.tsx
-import React from "react";
+import React, { useState } from "react";
 import { Plus, Minus, ShoppingBag, Heart, Check, Shield, Award, Gift } from "lucide-react";
 import { Product } from "@/contexts/AppContext";
+import { LocalCartToast } from "@/components/ui/LocalCartToast";
 
 interface ProductActionsProps {
   product: Product;
@@ -26,6 +27,12 @@ const ProductActions: React.FC<ProductActionsProps> = ({
   isInWishlist,
   addedToCart,
 }) => {
+  const [showLocalToast, setShowLocalToast] = useState(false);
+
+  const handleAddToCartWithToast = () => {
+    handleAddToCart();
+    setShowLocalToast(true);
+  };
   return (
     <div className="space-y-4">
       {/* Quantity and Add to Cart */}
@@ -49,9 +56,9 @@ const ProductActions: React.FC<ProductActionsProps> = ({
           </div>
         </div>
 
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 relative">
           <button
-            onClick={handleAddToCart}
+            onClick={handleAddToCartWithToast}
             disabled={
               !product.stock 
             }
@@ -69,6 +76,15 @@ const ProductActions: React.FC<ProductActionsProps> = ({
               </>
             )}
           </button>
+          
+          {/* Local Toast */}
+          <LocalCartToast
+            message={`${quantity} item${quantity > 1 ? 's' : ''} added successfully`}
+            productName={product.name}
+            show={showLocalToast}
+            onClose={() => setShowLocalToast(false)}
+          />
+          
           <button
             onClick={handleWishlistToggle}
             className={`p-4 border rounded-lg transition-all ${

@@ -207,7 +207,7 @@ const ProductDetail = () => {
       selectedMetal,
       selectedSize,
       engraving: engravingText,
-    });
+    }, false); // Disable global toast for product details page
 
     logAddToCart(product._id, {
       name: product.name,

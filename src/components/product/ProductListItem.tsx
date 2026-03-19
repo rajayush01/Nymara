@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Star, Heart, ShoppingBag, Eye } from "lucide-react";
 import { Product, useCart, useWishlist } from "@/contexts/AppContext";
 import { useTracking } from "@/contexts/TrackingContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
+import { LocalCartToast } from "@/components/ui/LocalCartToast";
 
 interface ProductListItemProps {
   product: Product;
@@ -68,6 +69,7 @@ const ProductListItem: React.FC<ProductListItemProps> = ({ product, index, isLoa
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { logAddToCart } = useTracking();
   const { selectedCountry } = useCurrency();
+  const [showLocalToast, setShowLocalToast] = useState(false);
 
   // Show skeleton if loading
   if (isLoading) {
@@ -76,7 +78,8 @@ const ProductListItem: React.FC<ProductListItemProps> = ({ product, index, isLoa
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    addToCart(product, 1);
+    addToCart(product, 1, {}, false); // Disable global toast
+    setShowLocalToast(true); // Show local toast
 
     logAddToCart(product._id, {
       name: product.name,
@@ -256,14 +259,24 @@ const ProductListItem: React.FC<ProductListItemProps> = ({ product, index, isLoa
             )}
           </div>
 
-          <button
-            onClick={handleAddToCart}
-            disabled={product.stock === 0}
-            className="bg-[#9a8457] text-white px-8 py-3 rounded-xl hover:bg-[#8a7547] disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-300 flex items-center group/btn"
-          >
-            <ShoppingBag className="w-4 h-4 mr-2 group-hover/btn:rotate-12 transition-transform" />
-            {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
-          </button>
+          <div className="relative">
+            <button
+              onClick={handleAddToCart}
+              disabled={product.stock === 0}
+              className="bg-[#9a8457] text-white px-8 py-3 rounded-xl hover:bg-[#8a7547] disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-300 flex items-center group/btn"
+            >
+              <ShoppingBag className="w-4 h-4 mr-2 group-hover/btn:rotate-12 transition-transform" />
+              {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+            </button>
+            
+            {/* Local Toast */}
+            <LocalCartToast
+              message="Added to cart!"
+              productName={product.name}
+              show={showLocalToast}
+              onClose={() => setShowLocalToast(false)}
+            />
+          </div>
         </div>
       </div>
     </div>
