@@ -33,7 +33,7 @@ export default function JewelryCollage() {
       image: img4,
       span: "col-span-1 row-span-2",
       filterType: "/necklaces",
-      filterValue: "",
+      filterValue: "necklaces",
     },
     {
       title: "Rings",
@@ -145,11 +145,26 @@ export default function JewelryCollage() {
           </button> */}
 
          <button
-            onClick={() => navigate("/products")}
-            className="group relative overflow-hidden px-8 py-4 bottom-3 border rounded-xl border-white text-white bg-black font-light text-md tracking-[0.2em] transition-all duration-300 hover:bg-white hover:text-black uppercase"
+            onClick={() => {
+  navigate("/products");
+  setTimeout(() => {
+    setFilters({
+      gender: [],
+      category: [],
+      metalType: ["18K Gold"],
+      stoneType: [],
+      style: [],
+      size: [],
+      color: [],
+      subCategory: [],
+      sortBy: "best-seller",
+    });
+  }, 100);
+}}
+            className="group relative overflow-hidden px-8 py-4 bottom-3 border rounded-xl border-black text-black bg-white/90 font-light text-md tracking-[0.2em] transition-all duration-300 hover:bg-black hover:text-white uppercase"
           >
             <span className="relative z-10"> Explore All Collections</span>
-            <div className="absolute inset-0 bg-gray-300 text-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+            <div className="absolute inset-0 bg-black text-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
           </button>
 
        </div>

@@ -1013,13 +1013,13 @@ const CartPage = () => {
     }
 
     // Show shipping loader for 2 seconds
-    setShippingLoading(true);
-    logCheckout(cart);
+   logCheckout(cart);
+setCurrentStep("shipping");   // switch step immediately so the loader renders
+setShippingLoading(true);     // show loader inside shipping block
 
-    setTimeout(() => {
-      setCurrentStep("shipping");
-      setShippingLoading(false);
-    }, 2000);
+setTimeout(() => {
+  setShippingLoading(false);  // hide loader after data has time to fetch
+}, 2000);
   };
 
   const handlePlaceOrder = async () => {
