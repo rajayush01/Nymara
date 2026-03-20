@@ -52,7 +52,7 @@ const ChatbotButton = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
-      text: "Hello! 👋 I'm your AI assistant. How can I help you today?",
+      text: "Hi there 👋  How can we help ?",
       isBot: true,
       time: "now",
     },
@@ -240,7 +240,7 @@ const ChatbotButton = () => {
                 </svg>
               </div>
               <div>
-                <h3 className="font-bold text-lg">AI Assistant</h3>
+                <h3 className="font-bold text-lg">Assistant</h3>
                 <p className="text-white/80 text-xs flex items-center">
                   <span className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
                   Online & Ready to Help

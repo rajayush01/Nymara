@@ -1013,13 +1013,13 @@ const CartPage = () => {
     }
 
     // Show shipping loader for 2 seconds
-   logCheckout(cart);
-setCurrentStep("shipping");   // switch step immediately so the loader renders
-setShippingLoading(true);     // show loader inside shipping block
+    logCheckout(cart);
+    setCurrentStep("shipping"); // switch step immediately so the loader renders
+    setShippingLoading(true); // show loader inside shipping block
 
-setTimeout(() => {
-  setShippingLoading(false);  // hide loader after data has time to fetch
-}, 2000);
+    setTimeout(() => {
+      setShippingLoading(false); // hide loader after data has time to fetch
+    }, 2000);
   };
 
   const handlePlaceOrder = async () => {
@@ -1318,7 +1318,7 @@ setTimeout(() => {
         })()}
 
         {/*  Making Charges Display */}
-        {item.makingChargesByCountry?.[selectedCountry.currency] && (
+        {/* {item.makingChargesByCountry?.[selectedCountry.currency] && (
           <div className="text-xs sm:text-sm text-gray-600 mt-1">
             <span className="font-medium">Making Charges:</span>{" "}
             {item.makingChargesByCountry[selectedCountry.currency].symbol}
@@ -1326,24 +1326,37 @@ setTimeout(() => {
               selectedCountry.currency
             ].amount.toLocaleString()}
           </div>
-        )}
+        )} */}
+        {/*  Making Charges Display */}
+        {selectedCountry.currency === "INR" &&
+          item.makingChargesByCountry?.[selectedCountry.currency] && (
+            <div className="text-xs sm:text-sm text-gray-600 mt-1">
+              <span className="font-medium">Making Charges:</span>{" "}
+              {item.makingChargesByCountry[selectedCountry.currency].symbol}
+              {item.makingChargesByCountry[
+                selectedCountry.currency
+              ].amount.toLocaleString()}
+            </div>
+          )}
 
         {/* Total Price (Price + Making Charges) */}
-        {(() => {
-          const { amount, symbol } = getDisplayPrice(item);
-          const makingCharge =
-            item.makingChargesByCountry?.[selectedCountry.currency]?.amount ||
-            0;
-          const totalPrice = amount + makingCharge;
+        {/* Total Price (Price + Making Charges) - only show for INR */}
+        {selectedCountry.currency === "INR" &&
+          (() => {
+            const { amount, symbol } = getDisplayPrice(item);
+            const makingCharge =
+              item.makingChargesByCountry?.[selectedCountry.currency]?.amount ||
+              0;
+            const totalPrice = amount + makingCharge;
 
-          return (
-            <div className="text-xs sm:text-sm text-gray-900 mt-1 pt-1 border-t border-gray-200 w-[200px]">
-              <span className="font-semibold">Total Price:</span>{" "}
-              {selectedCountry.flag} {symbol}
-              {totalPrice.toLocaleString()}
-            </div>
-          );
-        })()}
+            return (
+              <div className="text-xs sm:text-sm text-gray-900 mt-1 pt-1 border-t border-gray-200 w-[200px]">
+                <span className="font-semibold">Total Price:</span>{" "}
+                {selectedCountry.flag} {symbol}
+                {totalPrice.toLocaleString()}
+              </div>
+            );
+          })()}
       </div>
       <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto space-x-4 sm:space-x-3">
         <div className="flex items-center space-x-3">
@@ -1396,10 +1409,17 @@ setTimeout(() => {
     };
     const subtotal = activeCart.reduce((sum, item) => {
       const { amount } = getCurrencyData(item);
+      // const makingCharge =
+      //   item.makingChargesByCountry?.[selectedCountry.currency]?.amount ||
+      //   item.makingCharges ||
+      //   0;
       const makingCharge =
-        item.makingChargesByCountry?.[selectedCountry.currency]?.amount ||
-        item.makingCharges ||
-        0;
+  selectedCountry.currency === "INR"
+    ? item.makingChargesByCountry?.[selectedCountry.currency]?.amount ||
+      item.makingCharges ||
+      0
+    : 0;
+        
       return sum + (amount + makingCharge) * item.quantity;
     }, 0);
 
