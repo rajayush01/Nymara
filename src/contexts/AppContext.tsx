@@ -1132,6 +1132,7 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
     case 'LOGOUT':
       try {
         localStorage.removeItem('user');
+         localStorage.removeItem('token');
       } catch (error) {
         console.error('Error removing user from storage:', error);
       }

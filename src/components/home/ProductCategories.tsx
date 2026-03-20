@@ -5,9 +5,12 @@ import img1 from "@/assets/5.png";
 import img2 from "@/assets/6.png";
 import img3 from "@/assets/7.png";
 import img4 from "@/assets/8.png";
+import { useProducts } from "@/contexts/AppContext";
+
 const ProductCategories = () => {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { setFilters } = useProducts();
 
   const categories = [
     {
@@ -59,11 +62,25 @@ const ProductCategories = () => {
       count: "95+ Designs",
     },
   ];
-
-  const handleSeeMore = (categoryId: string) => {
-    window.scrollTo(0, 0);
-    navigate(`/products/${categoryId}`);
-  };
+const handleSeeMore = (categoryId: string, metalFilter?: string) => {
+  window.scrollTo(0, 0);
+  navigate(`/products/${categoryId}`);
+  if (metalFilter) {
+    setTimeout(() => {
+      setFilters({
+        gender: [],
+        category: [],
+        metalType: [metalFilter],
+        stoneType: [],
+        style: [],
+        size: [],
+        color: [],
+        subCategory: [],
+        sortBy: "best-seller",
+      });
+    }, 100);
+  }
+};
 
   return (
     <section className="relative min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-stone-50 overflow-hidden">
@@ -230,7 +247,7 @@ const ProductCategories = () => {
               </div>
 
               <button
-                onClick={() => handleSeeMore("mens")}
+               onClick={() => handleSeeMore("bracelets", "18K Gold")}
                 className="inline-flex items-center space-x-3 bg-gray-900 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-1"
               >
                 <span>Explore Men's Collection</span>
