@@ -1155,16 +1155,16 @@ const CartPage = () => {
     const timer = setTimeout(() => {
       // Always set dataFetched to true after initial delay, regardless of cart length
       // The fetchLatestPrices effect will handle cart-specific logic
-      setDataFetched(true);
+      // setDataFetched(true);
       if (cart.length === 0) {
-        setIsLoading(false);
+        // setIsLoading(false);
       }
     }, 1500); // Increased to 1.5 seconds to ensure actual prices are loaded, not cache
 
     // Fallback: ensure page loads even if something goes wrong
     const fallbackTimer = setTimeout(() => {
-      setIsLoading(false);
-      setDataFetched(true);
+      // setIsLoading(false);
+      // setDataFetched(true);
     }, 5000); // Increased fallback to 5 seconds to allow more time for API calls
 
     return () => {
@@ -1218,58 +1218,58 @@ const CartPage = () => {
   //   }
   // }, [cart, selectedCountry.currency]);
 
- useEffect(() => {
-  const fetchLatestPrices = async () => {
-    setIsFetchingCart(true);
+  useEffect(() => {
+    const fetchLatestPrices = async () => {
+      setIsFetchingCart(true);
 
-    try {
-      if (cart.length === 0) {
-        setUpdatedCart([]);
+      try {
+        if (cart.length === 0) {
+          setUpdatedCart([]);
+          setIsFetchingCart(false);
+          return;
+        }
+
+        const updatedItems: CartItem[] = await Promise.all(
+          cart.map(async (item) => {
+            const { data } = await axios.get(
+              `${API_URL}/api/user/ornaments/${item._id}`,
+              {
+                params: { currency: selectedCountry.currency },
+              },
+            );
+
+            const ornament = data.ornament;
+
+            return {
+              ...item,
+              price: Number(ornament.displayPrice),
+              originalPrice: Number(ornament.displayPrice),
+              prices: {
+                [selectedCountry.currency]: {
+                  amount: Number(ornament.displayPrice),
+                  symbol: ornament.currency,
+                },
+              },
+              makingChargesByCountry: {
+                [selectedCountry.currency]: {
+                  amount: Number(ornament.convertedMakingCharge),
+                  symbol: ornament.currency,
+                },
+              },
+            } as CartItem;
+          }),
+        );
+
+        setUpdatedCart(updatedItems);
+      } catch (err) {
+        console.error("Failed to refresh cart prices", err);
+      } finally {
         setIsFetchingCart(false);
-        return;
       }
+    };
 
-      const updatedItems: CartItem[] = await Promise.all(
-        cart.map(async (item) => {
-          const { data } = await axios.get(
-            `${API_URL}/api/user/ornaments/${item._id}`,
-            {
-              params: { currency: selectedCountry.currency },
-            }
-          );
-
-          const ornament = data.ornament;
-
-          return {
-            ...item,
-            price: Number(ornament.displayPrice),
-            originalPrice: Number(ornament.displayPrice),
-            prices: {
-              [selectedCountry.currency]: {
-                amount: Number(ornament.displayPrice),
-                symbol: ornament.currency,
-              },
-            },
-            makingChargesByCountry: {
-              [selectedCountry.currency]: {
-                amount: Number(ornament.convertedMakingCharge),
-                symbol: ornament.currency,
-              },
-            },
-          } as CartItem;
-        })
-      );
-
-      setUpdatedCart(updatedItems);
-    } catch (err) {
-      console.error("Failed to refresh cart prices", err);
-    } finally {
-      setIsFetchingCart(false);
-    }
-  };
-
-  fetchLatestPrices();
-}, [cart, selectedCountry.currency]);
+    fetchLatestPrices();
+  }, [cart, selectedCountry.currency]);
 
   const CartItemComponent = ({ item }: { item: CartItem }) => (
     <div
@@ -1539,8 +1539,8 @@ const CartPage = () => {
 
   // Show loader while fetching data (only show loader if we're actually loading and haven't fetched data yet)
   if (isFetchingCart) {
-  return <ProductLoader />;
-}
+    return <ProductLoader />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20 lg:pb-0">
