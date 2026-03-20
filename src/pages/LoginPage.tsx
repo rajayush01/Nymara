@@ -363,9 +363,15 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSwitchToSignup }) => {
 
       setToast({ message: "You've been logged in successfully.", type: "success" });
 
+      // setTimeout(() => {
+      //   window.location.href = "/profile";
+      // }, 1500); 
       setTimeout(() => {
-        window.location.href = "/profile";
-      }, 1500); // slight delay so user sees the success toast
+  const params = new URLSearchParams(window.location.search);
+  const redirect = params.get("redirect");
+  window.location.href = redirect ? decodeURIComponent(redirect) : "/profile";
+}, 1500);
+      // slight delay so user sees the success toast
 
     } catch (err: any) {
       const message = err.response?.data?.message || "Something went wrong. Please try again.";

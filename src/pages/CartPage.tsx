@@ -1007,7 +1007,8 @@ const CartPage = () => {
   const handleCheckout = () => {
     if (activeCart.length === 0) return;
     if (!isLoggedIn()) {
-      navigate("/login?redirect=checkout");
+      // navigate("/login?redirect=checkout");
+      navigate("/login?redirect=/cart?step=shipping");
       return;
     }
 
