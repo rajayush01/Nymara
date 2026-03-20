@@ -12,6 +12,9 @@ import {
   Home,
   AlertCircle,
   CheckCircle,
+  Package,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { useAuth, useWishlist } from "@/contexts/AppContext";
 import axios from "axios";
@@ -24,6 +27,11 @@ const ProfilePage = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  // Order history state
+  const [orders, setOrders] = useState<any[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
 
   const [isEditing, setIsEditing] = useState(false);
   const [addressType, setAddressType] = useState<"domestic" | "international">(
@@ -121,6 +129,27 @@ setSavedAddresses(hasAddress ? 1 : 0);
 
     if (user && user.isLoggedIn) {
       fetchUserDetails();
+    }
+  }, [user]);
+
+  // Fetch order history
+  useEffect(() => {
+    const fetchOrders = async () => {
+      setOrdersLoading(true);
+      try {
+        const res = await axios.get(`${API_URL}/api/orders/my`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+        setOrders(res.data.orders || []);
+      } catch (err: any) {
+        console.error("❌ Failed to load orders:", err.response?.data || err.message);
+      } finally {
+        setOrdersLoading(false);
+      }
+    };
+
+    if (user && user.isLoggedIn) {
+      fetchOrders();
     }
   }, [user]);
 
@@ -893,6 +922,147 @@ setSavedAddresses(hasAddress ? 1 : 0);
         </div>
         
 
+        {/* Order History Section */}
+        <div className="bg-white rounded-2xl shadow-lg p-8 mt-6">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-3">
+            <Package className="text-[#9a8457]" />
+            Order History
+          </h2>
+
+          {ordersLoading ? (
+            <div className="flex justify-center py-12">
+              <div className="w-8 h-8 border-4 border-[#9a8457] border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : orders.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <ShoppingCart className="mx-auto mb-3 text-gray-300 w-12 h-12" />
+              <p className="text-lg font-medium">No orders yet</p>
+              <p className="text-sm mt-1">Your past orders will appear here once you make a purchase.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {orders.map((order) => {
+                const isExpanded = expandedOrder === order.oId;
+                const statusColors: Record<string, string> = {
+                  pending: "bg-yellow-100 text-yellow-700",
+                  processing: "bg-blue-100 text-blue-700",
+                  shipped: "bg-purple-100 text-purple-700",
+                  delivered: "bg-green-100 text-green-700",
+                  cancelled: "bg-red-100 text-red-700",
+                  returned: "bg-gray-100 text-gray-700",
+                };
+                const paymentColors: Record<string, string> = {
+                  Paid: "bg-green-100 text-green-700",
+                  Pending: "bg-yellow-100 text-yellow-700",
+                  Failed: "bg-red-100 text-red-700",
+                  Refunded: "bg-gray-100 text-gray-700",
+                };
+
+                return (
+                  <div key={order.oId} className="border border-gray-200 rounded-xl overflow-hidden">
+                    {/* Order Header */}
+                    <button
+                      onClick={() => setExpandedOrder(isExpanded ? null : order.oId)}
+                      className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors text-left"
+                    >
+                      <div className="flex flex-wrap gap-4 items-center">
+                        <div>
+                          <span className="text-xs text-gray-500">Order ID</span>
+                          <p className="font-semibold text-gray-800">{order.oId}</p>
+                        </div>
+                        <div>
+                          <span className="text-xs text-gray-500">Date</span>
+                          <p className="text-sm text-gray-700">
+                            {new Date(order.orderDate || order.createdAt).toLocaleDateString("en-IN", {
+                              day: "numeric", month: "short", year: "numeric",
+                            })}
+                          </p>
+                        </div>
+                        <div>
+                          <span className="text-xs text-gray-500">Total</span>
+                          <p className="text-sm font-medium text-gray-800">
+                            {order.totalAmount?.symbol}{order.totalAmount?.amount?.toLocaleString()}
+                          </p>
+                        </div>
+                        <span className={`text-xs px-2 py-1 rounded-full font-medium capitalize ${statusColors[order.status] || "bg-gray-100 text-gray-600"}`}>
+                          {order.status}
+                        </span>
+                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${paymentColors[order.paymentStatus] || "bg-gray-100 text-gray-600"}`}>
+                          {order.paymentStatus}
+                        </span>
+                      </div>
+                      {isExpanded ? <ChevronUp className="w-5 h-5 text-gray-400 shrink-0" /> : <ChevronDown className="w-5 h-5 text-gray-400 shrink-0" />}
+                    </button>
+
+                    {/* Order Details */}
+                    {isExpanded && (
+                      <div className="border-t border-gray-100 p-4 bg-gray-50 space-y-4">
+                        {/* Products */}
+                        <div>
+                          <h4 className="text-sm font-semibold text-gray-700 mb-2">Items Ordered</h4>
+                          <div className="space-y-2">
+                            {order.products?.map((item: any, idx: number) => (
+                              <div key={idx} className="flex items-center gap-3 bg-white rounded-lg p-3 border border-gray-100">
+                                {item.productId?.coverImage && (
+                                  <img
+                                    src={item.productId.coverImage}
+                                    alt={item.productId?.name || "Product"}
+                                    className="w-12 h-12 object-cover rounded-lg"
+                                  />
+                                )}
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-gray-800 truncate">
+                                    {item.productId?.name || "Product"}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    {item.variant && `${item.variant} · `}Qty: {item.quantity}
+                                  </p>
+                                </div>
+                                {item.price?.amount > 0 && (
+                                  <p className="text-sm font-medium text-gray-700 shrink-0">
+                                    {item.price.symbol}{item.price.amount?.toLocaleString()}
+                                  </p>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Delivery Address */}
+                        {order.deliveryAddress && (
+                          <div>
+                            <h4 className="text-sm font-semibold text-gray-700 mb-1">Delivery Address</h4>
+                            <p className="text-sm text-gray-600">
+                              {order.deliveryAddress.name} · {order.deliveryAddress.phone}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {order.deliveryAddress.addressLine1}
+                              {order.deliveryAddress.addressLine2 && `, ${order.deliveryAddress.addressLine2}`}
+                              , {order.deliveryAddress.city}, {order.deliveryAddress.state} - {order.deliveryAddress.pincode}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Tracking link */}
+                        {order.deliveryLink && (
+                          <a
+                            href={order.deliveryLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 text-sm text-[#9a8457] hover:underline font-medium"
+                          >
+                            Track your order →
+                          </a>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
         {/* Terms & Conditions Section */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mt-6">
           <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
@@ -1051,7 +1221,7 @@ setSavedAddresses(hasAddress ? 1 : 0);
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
           <div className="bg-white rounded-xl shadow-lg p-6 text-center">
             <ShoppingCart className="mx-auto text-[#9a8457] mb-2" />
-            <div className="text-3xl font-bold text-[#9a8457]  mb-2">0</div>
+            <div className="text-3xl font-bold text-[#9a8457]  mb-2">{orders.length}</div>
             <div className="text-gray-600">Total Orders</div>
           </div>
 
