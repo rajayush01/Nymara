@@ -842,18 +842,21 @@ const getSymbol = (currency: string): string => {
 const CartPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const stepParam = searchParams.get('step');
-  
+  const stepParam = searchParams.get("step");
+
   const [currentStep, setCurrentStep] = useState<
     "cart" | "shipping" | "payment" | "confirmation"
-  >(stepParam === 'shipping' ? 'shipping' : "cart");
+  >(stepParam === "shipping" ? "shipping" : "cart");
   const [promoCode, setPromoCode] = useState<string>("");
   const [promoApplied, setPromoApplied] = useState<boolean>(false);
   const [promoDiscount, setPromoDiscount] = useState<number>(0);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [orderId, setOrderId] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [dataFetched, setDataFetched] = useState(false);
+
+  // const [isLoading, setIsLoading] = useState(true);
+  // const [dataFetched, setDataFetched] = useState(false);
+  const [isFetchingCart, setIsFetchingCart] = useState(true);
+
   const [shippingLoading, setShippingLoading] = useState(false);
   const [removingItems, setRemovingItems] = useState<Set<string>>(new Set());
   const { selectedCountry } = useCurrency();
@@ -927,14 +930,14 @@ const CartPage = () => {
 
   const handleRemoveItem = (itemId: string) => {
     // Add to removing items set for visual feedback
-    setRemovingItems(prev => new Set(prev).add(itemId));
-    
+    setRemovingItems((prev) => new Set(prev).add(itemId));
+
     // Remove from cart
     removeFromCart(itemId);
-    
+
     // Remove from removing items set after a short delay
     setTimeout(() => {
-      setRemovingItems(prev => {
+      setRemovingItems((prev) => {
         const newSet = new Set(prev);
         newSet.delete(itemId);
         return newSet;
@@ -957,7 +960,8 @@ const CartPage = () => {
 
   const [updatedCart, setUpdatedCart] = useState<CartItem[]>([]);
   const [previousCartIds, setPreviousCartIds] = useState<string[]>([]);
-  const activeCart = updatedCart.length > 0 ? updatedCart : cart;
+  // const activeCart = updatedCart.length > 0 ? updatedCart : cart;
+  const activeCart = updatedCart;
 
   const rate = currencyRates[selectedCountry.currency] || 1;
   // const subtotalINR = cart.reduce((sum, item) => sum + (item.price ?? 0) * item.quantity, 0);
@@ -986,7 +990,7 @@ const CartPage = () => {
       item.price ??
       0;
 
-    return sum + original * item.quantity ;
+    return sum + original * item.quantity;
   }, 0);
 
   const productSavings =
@@ -1006,11 +1010,11 @@ const CartPage = () => {
       navigate("/login?redirect=checkout");
       return;
     }
-    
+
     // Show shipping loader for 2 seconds
     setShippingLoading(true);
     logCheckout(cart);
-    
+
     setTimeout(() => {
       setCurrentStep("shipping");
       setShippingLoading(false);
@@ -1024,7 +1028,7 @@ const CartPage = () => {
     }
 
     if (activeCart.length === 0) {
-      import('@/utils/toast').then(({ showWarningToast }) => {
+      import("@/utils/toast").then(({ showWarningToast }) => {
         showWarningToast("Your cart is empty");
       });
       return;
@@ -1040,7 +1044,7 @@ const CartPage = () => {
       console.log("   Total (rounded):", Math.round(total));
       console.log("   Currency:", selectedCountry.currency);
       console.log("   Symbol:", symbol);
-      
+
       // Prepare order payload with frontend-calculated total
       const orderPayload = {
         products: activeCart.map((item) => ({
@@ -1061,8 +1065,11 @@ const CartPage = () => {
         symbol: symbol,
         totalAmount: Math.round(total), // Ensure it's a whole number
       };
-      
-      console.log("📦 [FRONTEND] Order Payload:", JSON.stringify(orderPayload, null, 2));
+
+      console.log(
+        "📦 [FRONTEND] Order Payload:",
+        JSON.stringify(orderPayload, null, 2),
+      );
 
       // Initiate Razorpay payment
       await initiatePayment(
@@ -1078,7 +1085,7 @@ const CartPage = () => {
         (error) => {
           // Payment failed
           console.error("Payment failed:", error);
-          import('@/utils/toast').then(({ showErrorToast }) => {
+          import("@/utils/toast").then(({ showErrorToast }) => {
             showErrorToast(`Payment failed: ${error}`);
           });
           setPaymentProcessing(false);
@@ -1086,7 +1093,7 @@ const CartPage = () => {
       );
     } catch (error: any) {
       console.error("Order placement error:", error);
-      import('@/utils/toast').then(({ showErrorToast }) => {
+      import("@/utils/toast").then(({ showErrorToast }) => {
         showErrorToast(error.message || "Failed to place order");
       });
       setPaymentProcessing(false);
@@ -1108,7 +1115,8 @@ const CartPage = () => {
             lastName: user.name?.split(" ")[1] || "",
             email: user.email || "",
             phone: user.phoneNumber || "",
-            address: `${details?.address?.houseNumber || ""} ${details?.address?.streetArea || ""}`.trim(),
+            address:
+              `${details?.address?.houseNumber || ""} ${details?.address?.streetArea || ""}`.trim(),
             zipCode: details?.address?.pinCode || "",
             city: details?.address?.city || "",
             state: details?.address?.state || "",
@@ -1126,14 +1134,14 @@ const CartPage = () => {
 
   // Handle step parameter from URL (for post-login redirect)
   useEffect(() => {
-    if (stepParam === 'shipping') {
+    if (stepParam === "shipping") {
       // Show loader when coming from login redirect
       setShippingLoading(true);
-      
+
       // Clear the step parameter from URL after setting the state
       const newUrl = window.location.pathname;
-      window.history.replaceState({}, '', newUrl);
-      
+      window.history.replaceState({}, "", newUrl);
+
       // Hide loader after 2 seconds
       setTimeout(() => {
         setShippingLoading(false);
@@ -1209,98 +1217,65 @@ const CartPage = () => {
   //   }
   // }, [cart, selectedCountry.currency]);
 
-  useEffect(() => {
-    const fetchLatestPrices = async () => {
+ useEffect(() => {
+  const fetchLatestPrices = async () => {
+    setIsFetchingCart(true);
+
+    try {
       if (cart.length === 0) {
-        setUpdatedCart([]); // Clear updated cart immediately
-        setIsLoading(false);
-        setDataFetched(true);
-        setPreviousCartIds([]);
+        setUpdatedCart([]);
+        setIsFetchingCart(false);
         return;
       }
 
-      // Get current cart product IDs
-      const currentCartIds = cart.map(item => item._id).sort();
-      
-      // Check if this is just a quantity update (same products, different quantities)
-      const isQuantityOnlyUpdate = 
-        previousCartIds.length > 0 && 
-        currentCartIds.length === previousCartIds.length &&
-        currentCartIds.every((id, index) => id === previousCartIds[index]);
+      const updatedItems: CartItem[] = await Promise.all(
+        cart.map(async (item) => {
+          const { data } = await axios.get(
+            `${API_URL}/api/user/ornaments/${item._id}`,
+            {
+              params: { currency: selectedCountry.currency },
+            }
+          );
 
-      // Check if items were removed (fewer items than before)
-      const itemsRemoved = previousCartIds.length > currentCartIds.length;
+          const ornament = data.ornament;
 
-      // Check if this is the initial load (no previous cart IDs)
-      const isInitialLoad = previousCartIds.length === 0;
-
-      // Show loader for initial load or when products are added (not removed or quantity updates)
-      if (isInitialLoad || (!isQuantityOnlyUpdate && !itemsRemoved && previousCartIds.length > 0)) {
-        setIsLoading(true);
-      }
-
-      try {
-        const updatedItems: CartItem[] = await Promise.all(
-          cart.map(async (item) => {
-            const { data } = await axios.get(
-              `${API_URL}/api/user/ornaments/${item._id}`,
-              {
-                params: { currency: selectedCountry.currency },
+          return {
+            ...item,
+            price: Number(ornament.displayPrice),
+            originalPrice: Number(ornament.displayPrice),
+            prices: {
+              [selectedCountry.currency]: {
+                amount: Number(ornament.displayPrice),
+                symbol: ornament.currency,
               },
-            );
-
-            const ornament = data.ornament;
-
-            return {
-              ...item,
-              price: Number(ornament.displayPrice),
-              originalPrice: Number(ornament.displayPrice),
-              prices: {
-                [selectedCountry.currency]: {
-                  amount: Number(ornament.displayPrice),
-                  symbol: ornament.currency,
-                },
+            },
+            makingChargesByCountry: {
+              [selectedCountry.currency]: {
+                amount: Number(ornament.convertedMakingCharge),
+                symbol: ornament.currency,
               },
-              makingChargesByCountry: {
-                [selectedCountry.currency]: {
-                  amount: Number(ornament.convertedMakingCharge),
-                  symbol: ornament.currency,
-                },
-              },
-            } as CartItem;
-          }),
-        );
+            },
+          } as CartItem;
+        })
+      );
 
-        setUpdatedCart(updatedItems);
-        
-        // For initial load, ensure minimum loading time has passed before showing content
-        if (isInitialLoad) {
-          // Wait a bit more to ensure smooth transition and avoid cache flash
-          setTimeout(() => {
-            setDataFetched(true);
-            setIsLoading(false);
-          }, 500);
-        } else {
-          setDataFetched(true);
-          setIsLoading(false);
-        }
-        
-        setPreviousCartIds(currentCartIds);
-      } catch (err) {
-        console.error("Failed to refresh cart prices", err);
-        setDataFetched(true);
-        setIsLoading(false);
-        setPreviousCartIds(currentCartIds);
-      }
-    };
+      setUpdatedCart(updatedItems);
+    } catch (err) {
+      console.error("Failed to refresh cart prices", err);
+    } finally {
+      setIsFetchingCart(false);
+    }
+  };
 
-    fetchLatestPrices();
-  }, [cart, selectedCountry.currency]);
+  fetchLatestPrices();
+}, [cart, selectedCountry.currency]);
 
   const CartItemComponent = ({ item }: { item: CartItem }) => (
-    <div className={`flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 p-4 sm:p-6 bg-white rounded-lg border border-gray-200 transition-all duration-300 ${
-      removingItems.has(item._id) ? 'opacity-50 scale-95' : ''
-    }`}>
+    <div
+      className={`flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 p-4 sm:p-6 bg-white rounded-lg border border-gray-200 transition-all duration-300 ${
+        removingItems.has(item._id) ? "opacity-50 scale-95" : ""
+      }`}
+    >
       <img
         src={item.coverImage}
         alt={item.name}
@@ -1355,9 +1330,11 @@ const CartPage = () => {
         {/* Total Price (Price + Making Charges) */}
         {(() => {
           const { amount, symbol } = getDisplayPrice(item);
-          const makingCharge = item.makingChargesByCountry?.[selectedCountry.currency]?.amount || 0;
+          const makingCharge =
+            item.makingChargesByCountry?.[selectedCountry.currency]?.amount ||
+            0;
           const totalPrice = amount + makingCharge;
-          
+
           return (
             <div className="text-xs sm:text-sm text-gray-900 mt-1 pt-1 border-t border-gray-200 w-[200px]">
               <span className="font-semibold">Total Price:</span>{" "}
@@ -1366,8 +1343,6 @@ const CartPage = () => {
             </div>
           );
         })()}
-        
-        
       </div>
       <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto space-x-4 sm:space-x-3">
         <div className="flex items-center space-x-3">
@@ -1400,7 +1375,7 @@ const CartPage = () => {
           >
             <X className="w-4 h-4" />
             <span className="hidden sm:inline">
-              {removingItems.has(item._id) ? 'Removing...' : 'Remove'}
+              {removingItems.has(item._id) ? "Removing..." : "Remove"}
             </span>
           </button>
         </div>
@@ -1478,9 +1453,7 @@ const CartPage = () => {
           )}
           <div className="flex justify-between text-sm sm:text-base">
             <span className="text-gray-600">Shipping</span>
-            <span className="text-green-600">
-              Free
-            </span>
+            <span className="text-green-600">Free</span>
           </div>
         </div>
         <div className="mt-4 pt-4 border-t border-gray-200">
@@ -1564,9 +1537,9 @@ const CartPage = () => {
   }
 
   // Show loader while fetching data (only show loader if we're actually loading and haven't fetched data yet)
-  if (isLoading && !dataFetched) {
-    return <ProductLoader />;
-  }
+  if (isFetchingCart) {
+  return <ProductLoader />;
+}
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20 lg:pb-0">
@@ -1693,206 +1666,206 @@ const CartPage = () => {
                   <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
                     Shipping Information
                   </h2>
-              <form
-                onSubmit={handleShippingSubmit}
-                className="space-y-4 sm:space-y-6"
-              >
-                <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
-                  <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-4">
-                    Contact Information
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        First Name *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={shippingInfo.firstName}
-                        onChange={(e) =>
-                          setShippingInfo({
-                            ...shippingInfo,
-                            firstName: e.target.value,
-                          })
-                        }
-                        className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Last Name *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={shippingInfo.lastName}
-                        onChange={(e) =>
-                          setShippingInfo({
-                            ...shippingInfo,
-                            lastName: e.target.value,
-                          })
-                        }
-                        className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Email *
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={shippingInfo.email}
-                        onChange={(e) =>
-                          setShippingInfo({
-                            ...shippingInfo,
-                            email: e.target.value,
-                          })
-                        }
-                        className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Phone *
-                      </label>
-                      <input
-                        type="tel"
-                        required
-                        value={shippingInfo.phone}
-                        onChange={(e) =>
-                          setShippingInfo({
-                            ...shippingInfo,
-                            phone: e.target.value,
-                          })
-                        }
-                        className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457]"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
-                  <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-4">
-                    Shipping Address
-                  </h3>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Address *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={shippingInfo.address}
-                        onChange={(e) =>
-                          setShippingInfo({
-                            ...shippingInfo,
-                            address: e.target.value,
-                          })
-                        }
-                        className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457]"
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          City *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={shippingInfo.city}
-                          onChange={(e) =>
-                            setShippingInfo({
-                              ...shippingInfo,
-                              city: e.target.value,
-                            })
-                          }
-                          className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          State *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={shippingInfo.state}
-                          onChange={(e) =>
-                            setShippingInfo({
-                              ...shippingInfo,
-                              state: e.target.value,
-                            })
-                          }
-                          className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          ZIP Code *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={shippingInfo.zipCode}
-                          onChange={(e) =>
-                            setShippingInfo({
-                              ...shippingInfo,
-                              zipCode: e.target.value,
-                            })
-                          }
-                          className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457]"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
-                  <button
-                    type="button"
-                    onClick={() => setCurrentStep("cart")}
-                    className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
+                  <form
+                    onSubmit={handleShippingSubmit}
+                    className="space-y-4 sm:space-y-6"
                   >
-                    Back to Cart
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handlePlaceOrder}
-                    disabled={paymentProcessing || razorpayLoading}
-                    className="flex-1 bg-[#9a8457] text-white py-3 rounded-lg font-medium hover:bg-[#8a7547] transition-colors text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {paymentProcessing || razorpayLoading
-                      ? "Processing..."
-                      : `Place Order • ${selectedCountry.flag} ${symbol}${total.toLocaleString()}`}
-                  </button>
+                    <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
+                      <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-4">
+                        Contact Information
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            First Name *
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={shippingInfo.firstName}
+                            onChange={(e) =>
+                              setShippingInfo({
+                                ...shippingInfo,
+                                firstName: e.target.value,
+                              })
+                            }
+                            className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457]"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Last Name *
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={shippingInfo.lastName}
+                            onChange={(e) =>
+                              setShippingInfo({
+                                ...shippingInfo,
+                                lastName: e.target.value,
+                              })
+                            }
+                            className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457]"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Email *
+                          </label>
+                          <input
+                            type="email"
+                            required
+                            value={shippingInfo.email}
+                            onChange={(e) =>
+                              setShippingInfo({
+                                ...shippingInfo,
+                                email: e.target.value,
+                              })
+                            }
+                            className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457]"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Phone *
+                          </label>
+                          <input
+                            type="tel"
+                            required
+                            value={shippingInfo.phone}
+                            onChange={(e) =>
+                              setShippingInfo({
+                                ...shippingInfo,
+                                phone: e.target.value,
+                              })
+                            }
+                            className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457]"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
+                      <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-4">
+                        Shipping Address
+                      </h3>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Address *
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={shippingInfo.address}
+                            onChange={(e) =>
+                              setShippingInfo({
+                                ...shippingInfo,
+                                address: e.target.value,
+                              })
+                            }
+                            className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457]"
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              City *
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              value={shippingInfo.city}
+                              onChange={(e) =>
+                                setShippingInfo({
+                                  ...shippingInfo,
+                                  city: e.target.value,
+                                })
+                              }
+                              className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457]"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              State *
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              value={shippingInfo.state}
+                              onChange={(e) =>
+                                setShippingInfo({
+                                  ...shippingInfo,
+                                  state: e.target.value,
+                                })
+                              }
+                              className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457]"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              ZIP Code *
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              value={shippingInfo.zipCode}
+                              onChange={(e) =>
+                                setShippingInfo({
+                                  ...shippingInfo,
+                                  zipCode: e.target.value,
+                                })
+                              }
+                              className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457] focus:border-[#9a8457]"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                      <button
+                        type="button"
+                        onClick={() => setCurrentStep("cart")}
+                        className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
+                      >
+                        Back to Cart
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handlePlaceOrder}
+                        disabled={paymentProcessing || razorpayLoading}
+                        className="flex-1 bg-[#9a8457] text-white py-3 rounded-lg font-medium hover:bg-[#8a7547] transition-colors text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {paymentProcessing || razorpayLoading
+                          ? "Processing..."
+                          : `Place Order • ${selectedCountry.flag} ${symbol}${total.toLocaleString()}`}
+                      </button>
+                    </div>
+                  </form>
                 </div>
-              </form>
-            </div>
-            <div>
-              <OrderSummary showPromo={false} />
-              <div className="mt-6 bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
-                <h4 className="font-medium text-gray-900 mb-3 text-sm sm:text-base">
-                  Your order is secure
-                </h4>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-3 text-xs sm:text-sm text-gray-600">
-                    <Shield className="w-4 h-4 text-green-600 flex-shrink-0" />
-                    <span>SSL encrypted checkout</span>
-                  </div>
-                  <div className="flex items-center space-x-3 text-xs sm:text-sm text-gray-600">
-                    <Truck className="w-4 h-4 text-green-600 flex-shrink-0" />
-                    <span>Insured shipping</span>
-                  </div>
-                  <div className="flex items-center space-x-3 text-xs sm:text-sm text-gray-600">
-                    <Gift className="w-4 h-4 text-green-600 flex-shrink-0" />
-                    <span>30-day return policy</span>
+                <div>
+                  <OrderSummary showPromo={false} />
+                  <div className="mt-6 bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
+                    <h4 className="font-medium text-gray-900 mb-3 text-sm sm:text-base">
+                      Your order is secure
+                    </h4>
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-3 text-xs sm:text-sm text-gray-600">
+                        <Shield className="w-4 h-4 text-green-600 flex-shrink-0" />
+                        <span>SSL encrypted checkout</span>
+                      </div>
+                      <div className="flex items-center space-x-3 text-xs sm:text-sm text-gray-600">
+                        <Truck className="w-4 h-4 text-green-600 flex-shrink-0" />
+                        <span>Insured shipping</span>
+                      </div>
+                      <div className="flex items-center space-x-3 text-xs sm:text-sm text-gray-600">
+                        <Gift className="w-4 h-4 text-green-600 flex-shrink-0" />
+                        <span>30-day return policy</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
             )}
           </>
         )}
