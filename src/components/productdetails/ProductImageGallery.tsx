@@ -1,6 +1,6 @@
 // components/product/ProductImageGallery.tsx
 import React from "react";
-import { Eye, Share2 } from "lucide-react";
+import { Eye, Share2,ChevronLeft, ChevronRight } from "lucide-react";
 import { Product } from "@/contexts/AppContext";
 import axios from "axios";
 
@@ -119,61 +119,79 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
   return (
     <div className="space-y-4">
       {/* Main Image */}
-      <div className="relative">
-        <div
-          className={`aspect-square bg-white rounded-xl overflow-hidden border border-gray-200 ${
-            hasVideoInFamily ? '' : 'cursor-zoom-in'
-          } ${
-            isZoomed ? "fixed inset-4 z-50 aspect-auto" : ""
-          }`}
-          onClick={() => {
-            // Only allow zoom for images, not videos
-            if (!hasVideoInFamily) {
-              setIsZoomed(!isZoomed);
-            }
-          }}
-        >
-          {/* Check if current image is a video (for specific SKUs and their variants) */}
-          {hasVideoInFamily && activeImageIndex === 0 ? (
-            <video
-              src={hasVideoInFamily}
-              className="w-full h-full object-cover"
-              autoPlay
-              loop
-              muted
-              playsInline
-              controls
-            />
-          ) : (
-            <img
-              src={productImages[activeImageIndex]}
-              alt={product.name}
-              className={`w-full h-full object-cover transition-transform duration-300 ${
-                isZoomed ? "scale-150" : "hover:scale-105"
-              }`}
-            />
-          )}
-        </div>
+<div className="relative">
+  <div
+    className={`aspect-square bg-white rounded-xl overflow-hidden border border-gray-200 ${
+      hasVideoInFamily ? '' : 'cursor-zoom-in'
+    } ${isZoomed ? "fixed inset-4 z-50 aspect-auto" : ""}`}
+    onClick={() => {
+      if (!hasVideoInFamily) {
+        setIsZoomed(!isZoomed);
+      }
+    }}
+  >
+    {hasVideoInFamily && activeImageIndex === 0 ? (
+      <video
+        src={hasVideoInFamily}
+        className="w-full h-full object-cover"
+        autoPlay
+        loop
+        muted
+        playsInline
+        controls
+      />
+    ) : (
+      <img
+        src={productImages[activeImageIndex]}
+        alt={product.name}
+        className={`w-full h-full object-cover transition-transform duration-300 ${
+          isZoomed ? "scale-150" : "hover:scale-105"
+        }`}
+      />
+    )}
+  </div>
 
-        {/* Product badges */}
-        <div className="absolute top-4 left-4 flex flex-col space-y-2">
-          {product.isNew && (
-            <span className="px-3 py-1 bg-emerald-500 text-white text-xs font-medium rounded-full">
-              New
-            </span>
-          )}
-          {product.isBestSeller && (
-            <span className="px-3 py-1 bg-[#9a8457] text-white text-xs font-medium rounded-full">
-              Best Seller
-            </span>
-          )}
-          {(product.discount ?? 0) > 0 && (
-            <span className="px-3 py-1 bg-red-500 text-white text-xs font-medium rounded-full">
-              -{product.discount}% OFF
-            </span>
-          )}
-        </div>
-      </div>
+  {/* ← Left Arrow */}
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      setActiveImageIndex(
+        activeImageIndex === 0 ? productImages.length - 1 : activeImageIndex - 1
+      );
+    }}
+    className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white shadow-md rounded-full p-2 transition-all"
+  >
+    <ChevronLeft className="w-5 h-5 text-gray-700" />
+  </button>
+
+  {/* → Right Arrow */}
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      setActiveImageIndex(
+        activeImageIndex === productImages.length - 1 ? 0 : activeImageIndex + 1
+      );
+    }}
+    className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white shadow-md rounded-full p-2 transition-all"
+  >
+    <ChevronRight className="w-5 h-5 text-gray-700" />
+  </button>
+
+  {/* Product badges — keep unchanged */}
+  <div className="absolute top-4 left-4 flex flex-col space-y-2">
+    {product.isNew && (
+      <span className="px-3 py-1 bg-emerald-500 text-white text-xs font-medium rounded-full">New</span>
+    )}
+    {product.isBestSeller && (
+      <span className="px-3 py-1 bg-[#9a8457] text-white text-xs font-medium rounded-full">Best Seller</span>
+    )}
+    {(product.discount ?? 0) > 0 && (
+      <span className="px-3 py-1 bg-red-500 text-white text-xs font-medium rounded-full">
+        -{product.discount}% OFF
+      </span>
+    )}
+  </div>
+</div>
 
       {/* Metal Variants */}
       {product.variants && Array.isArray(product.variants) && product.variants.length > 0 && (

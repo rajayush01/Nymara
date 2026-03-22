@@ -219,7 +219,7 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 pt-28 pb-16 px-4">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-6 items-start mt-32">
+      <div className="max-w-6xl sm:mt-32 mx-auto flex flex-col md:flex-row gap-6 items-start">
 
         {/* ── Sidebar ── */}
         <aside className="w-full md:w-56 shrink-0">
@@ -260,7 +260,7 @@ const ProfilePage = () => {
 
         {/* ── Main content ── */}
         <main className="flex-1 min-w-0">
-          <h1 className="text-2xl font-semibold text-gray-800 mb-4">{formData.firstName} {formData.lastName}</h1>
+          {/* <h1 className="text-2xl font-semibold text-gray-800 mb-4">{formData.firstName} {formData.lastName}</h1> */}
 
           {/* ── PROFILE TAB ── */}
           {activeTab === "profile" && (

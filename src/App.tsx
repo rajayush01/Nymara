@@ -141,7 +141,7 @@ const ChatbotButton = () => {
         // fallback demo bot response
         setTimeout(() => {
           const botResponse = {
-            text: "Thanks for your message! I'm here to help. This is a demo response.",
+            text: "Thanks for your message! I'm here to help.",
             isBot: true,
             time: "now",
           };
