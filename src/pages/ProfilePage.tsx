@@ -219,7 +219,7 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 pt-28 pb-16 px-4">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-6 items-start">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-6 items-start mt-32">
 
         {/* ── Sidebar ── */}
         <aside className="w-full md:w-56 shrink-0">
