@@ -457,7 +457,7 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -466,67 +466,67 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
     }));
   };
 
-const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  console.log("🔥 SUBMIT TRIGGERED");
-  console.log("📦 Form Data:", formData);
+    console.log("🔥 SUBMIT TRIGGERED");
+    console.log("📦 Form Data:", formData);
 
-  try {
-    setLoading(true);
-    console.log("⏳ Sending request...");
+    try {
+      setLoading(true);
+      console.log("⏳ Sending request...");
 
-    const response = await fetch(
-      "https://lets-taxify.onrender.com/api/nymara/contact/book",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "https://lets-taxify.onrender.com/api/nymara/contact/book",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
         },
-        body: JSON.stringify(formData),
+      );
+
+      console.log("📡 Response received:", response);
+
+      const result = await response.json();
+      console.log("✅ Parsed JSON:", result);
+
+      if (result.success) {
+        console.log("🎉 Success response received");
+
+        setCurrentStep(3);
+
+        setTimeout(() => {
+          console.log("🔄 Resetting form");
+
+          setFormData({
+            name: "",
+            email: "",
+            phone: "",
+            preferredDate: "",
+            preferredTime: "",
+            appointmentType: "consultation",
+            message: "",
+          });
+
+          setCurrentStep(1);
+          onClose();
+        }, 3000);
+      } else {
+        console.log("⚠️ Backend returned failure:", result);
+        alert(result.message || "Failed to book appointment");
       }
-    );
-
-    console.log("📡 Response received:", response);
-
-    const result = await response.json();
-    console.log("✅ Parsed JSON:", result);
-
-    if (result.success) {
-      console.log("🎉 Success response received");
-
-      setCurrentStep(3);
-
-      setTimeout(() => {
-        console.log("🔄 Resetting form");
-
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          preferredDate: "",
-          preferredTime: "",
-          appointmentType: "consultation",
-          message: "",
-        });
-
-        setCurrentStep(1);
-        onClose();
-      }, 3000);
-    } else {
-      console.log("⚠️ Backend returned failure:", result);
-      alert(result.message || "Failed to book appointment");
+    } catch (error) {
+      console.error("❌ Fetch error:", error);
+      alert("Something went wrong. Please try again later.");
+    } finally {
+      console.log("✅ Request finished");
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("❌ Fetch error:", error);
-    alert("Something went wrong. Please try again later.");
-  } finally {
-    console.log("✅ Request finished");
-    setLoading(false);
-  }
-};
+  };
 
   const nextStep = () => currentStep < 2 && setCurrentStep(currentStep + 1);
   const prevStep = () => currentStep > 1 && setCurrentStep(currentStep - 1);
@@ -689,7 +689,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
             {/* Step 2 */}
             {currentStep === 2 && (
-              <div className="space-y-4 pb-24 sm:pb-0">
+              <div className="space-y-4 ">
                 <div>
                   <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-2">
                     <Video className="w-4 h-4" />
@@ -713,7 +713,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                   </select>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   <div>
                     <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-2">
                       <Calendar className="w-4 h-4" />
@@ -743,14 +743,22 @@ const handleSubmit = async (e: React.FormEvent) => {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9a8457] outline-none text-sm sm:text-base"
                     >
                       <option value="">Select a time</option>
-                      {["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"].map(
-                        (time) => (
-                          <option key={time} value={time}>
-                            {parseInt(time) % 12 || 12}:00{" "}
-                            {parseInt(time) >= 12 ? "PM" : "AM"}
-                          </option>
-                        )
-                      )}
+                      {[
+                        "09:00",
+                        "10:00",
+                        "11:00",
+                        "12:00",
+                        "13:00",
+                        "14:00",
+                        "15:00",
+                        "16:00",
+                        "17:00",
+                      ].map((time) => (
+                        <option key={time} value={time}>
+                          {parseInt(time) % 12 || 12}:00{" "}
+                          {parseInt(time) >= 12 ? "PM" : "AM"}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -800,39 +808,37 @@ const handleSubmit = async (e: React.FormEvent) => {
                   soon to confirm the details.
                 </p>
               </div>
-
-              
             )}
 
-                    {currentStep < 3 && (
-          <div className="sticky bottom-0 left-0 right-0 flex items-center justify-between p-4 sm:p-6 border-t border-gray-200 bg-white z-20">
-            <button
-              type="button"
-              onClick={currentStep === 1 ? onClose : prevStep}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium text-sm sm:text-base"
-            >
-              {currentStep === 1 ? "Cancel" : "Back"}
-            </button>
+            {currentStep < 3 && (
+              <div className="sticky bottom-0 left-0 right-0 flex items-center justify-between p-4 sm:p-6 border-t border-gray-200 bg-white z-20">
+                <button
+                  type="button"
+                  onClick={currentStep === 1 ? onClose : prevStep}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium text-sm sm:text-base"
+                >
+                  {currentStep === 1 ? "Cancel" : "Back"}
+                </button>
 
-            <button
-              type={currentStep === 2 ? "submit" : "button"}
-              onClick={currentStep === 1 ? nextStep : undefined}
-              disabled={
-                (currentStep === 1 && (!formData.name || !formData.email)) ||
-                (currentStep === 2 &&
-                  (!formData.preferredDate || !formData.preferredTime))
-              }
-              className="px-5 sm:px-6 py-2 bg-[#9a8457] text-white rounded-lg font-medium hover:bg-[#8a7547] disabled:bg-gray-300 disabled:cursor-not-allowed text-sm sm:text-base"
-            >
-              {currentStep === 1 ? "Next Step" : "Book Appointment"}
-            </button>
-          </div>
-        )}
+                <button
+                  type={currentStep === 2 ? "submit" : "button"}
+                  onClick={currentStep === 1 ? nextStep : undefined}
+                  disabled={
+                    (currentStep === 1 &&
+                      (!formData.name || !formData.email)) ||
+                    (currentStep === 2 &&
+                      (!formData.preferredDate || !formData.preferredTime))
+                  }
+                  className="px-5 sm:px-6 py-2 bg-[#9a8457] text-white rounded-lg font-medium hover:bg-[#8a7547] disabled:bg-gray-300 disabled:cursor-not-allowed text-sm sm:text-base transition-all duration-150 active:scale-95 active:bg-[#7a6537] active:shadow-inner"
+                >
+                  {currentStep === 1 ? "Next Step" : "Book Appointment"}
+                </button>
+              </div>
+            )}
           </form>
         </div>
 
         {/* Sticky Footer */}
-
       </div>
     </div>
   );
