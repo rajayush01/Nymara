@@ -539,6 +539,20 @@ const CustomizeJewelryModal: React.FC<CustomizeJewelryModalProps> = ({
   }
 };
 
+  const handleChatWithExpert = () => {
+    const { name, email, phone, inspiration, specialRequests } = customOptions;
+
+    const lines: string[] = ["Hi, I'd like to discuss a custom jewelry piece:"];
+    if (name)            lines.push(`👤 Name: ${name}`);
+    if (email)           lines.push(`📧 Email: ${email}`);
+    if (phone)           lines.push(`📞 Phone: ${phone}`);
+    if (inspiration)     lines.push(`💡 Vision: ${inspiration}`);
+    if (specialRequests) lines.push(`✨ Special Requests: ${specialRequests}`);
+
+    const message = encodeURIComponent(lines.join("\n"));
+    window.open(`https://wa.me/447867089659?text=${message}`, "_blank");
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && currentStep === 2) {
       handleSubmit();
@@ -827,7 +841,9 @@ const CustomizeJewelryModal: React.FC<CustomizeJewelryModalProps> = ({
                 </button>
               ) : (
                 <div className="flex flex-col sm:flex-row w-full sm:w-auto space-y-2 sm:space-y-0 sm:space-x-3">
-                  <button className="flex items-center justify-center space-x-2 border border-[#9a8457] text-[#9a8457] px-4 sm:px-6 py-3 rounded-lg hover:bg-[#9a8457]/5 transition-colors text-sm sm:text-base">
+                  <button
+                    onClick={handleChatWithExpert}
+                    className="flex items-center justify-center space-x-2 border border-[#9a8457] text-[#9a8457] px-4 sm:px-6 py-3 rounded-lg hover:bg-[#9a8457]/5 transition-colors text-sm sm:text-base">
                     <MessageCircle className="w-4 h-4" />
                     <span>Chat with Expert</span>
                   </button>
