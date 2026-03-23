@@ -521,7 +521,9 @@ console.log("========================================");
   </div>
 
   <span className="text-sm text-slate-600 ml-1">
-    {Number(product.rating) || 0} ({product.reviews ?? 0})
+    {Number(product.rating) || 0} 
+    {/* ({product.reviews ?? 0}) */}
+    
   </span>
 </div>
           </div>

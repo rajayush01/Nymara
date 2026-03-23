@@ -368,7 +368,8 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({ products }) => {
                   <div className="flex items-center space-x-1">
                     <Star className="w-3 h-3 text-yellow-400 fill-current" />
                     <span className="text-xs text-gray-600">
-                      {product.rating || 0} ({product.reviews || 0})
+                      {product.rating || 0}
+                       {/* ({product.reviews || 0}) */}
                     </span>
                   </div>
                   {product.style && (
