@@ -1131,6 +1131,21 @@ const ProfilePage = () => {
                                     <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${pc.bg} ${pc.color}`}>
                                       {order.paymentStatus}
                                     </span>
+                                       {order.deliveryLink && (
+                                      <p>
+                                        <span className="font-medium">
+                                          Delivery Link:
+                                        </span>{" "}
+                                        <a
+                                          href={order.deliveryLink}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                          className="text-blue-600 underline"
+                                        >
+                                          Track Package
+                                        </a>
+                                      </p>
+                                    )}
                                   </div>
                                   <p className="text-xs text-gray-400 flex items-center gap-1">
                                     <Clock className="w-3 h-3" />
