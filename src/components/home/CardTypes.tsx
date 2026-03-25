@@ -8,12 +8,13 @@ import {
   AnimatePresence,
 } from "framer-motion";
 
-import p1 from "@/assets/ring1.jpg";
-import p2 from "@/assets/ring2.jpg";
-import p3 from "@/assets/ring3.jpg";
-import p5 from "@/assets/ring4.jpg";
+import p1 from "@/assets/home-img.png";
+//import p2 from "@/assets/ring2.jpg";
+//import p3 from "@/assets/home.png";
+import p5 from "@/assets/necklace.jpeg";
 import p4 from "@/assets/roundbrillint.png";
-
+import p6 from "@/assets/brace.png";
+import p7 from "@/assets/neck.png";
 interface Product {
   _id: string;
   name: string;
@@ -78,22 +79,22 @@ const HARDCODED_PRODUCTS: Product[] = [
     originalPrice: 15999,
     onSale: true,
     isOutOfStock: false,
-    coverImage: p2,
+    coverImage: p6,
     category: "Bracelets",
     rating: 4.7,
     url: "/products/bracelets",
   },
   {
     _id: "3",
-    name: "Sterling Silver Wheat Chain",
+    name: "Sterling Gold Neclace",
     productId: "CHAIN001",
     description:
       "Classic elegance meets modern craftsmanship. This versatile chain complements any pendant or stands beautifully alone.",
     price: 8999,
     originalPrice: 11999,
     isOutOfStock: false,
-    coverImage: p3,
-    category: "Chains",
+    coverImage: p7,
+    category: "Necklaces",
     rating: 4.5,
     url: "/products/necklaces",
   },
@@ -114,7 +115,7 @@ const HARDCODED_PRODUCTS: Product[] = [
   },
   {
     _id: "5",
-    name: "Minimalist Bangle Set",
+    name: "Minimalist Necklace Set",
     productId: "BRAC002",
     description:
       "Understated luxury for the modern woman. Three sleek bangles in mixed metals that stack beautifully together.",
@@ -122,9 +123,9 @@ const HARDCODED_PRODUCTS: Product[] = [
     originalPrice: 9499,
     isOutOfStock: false,
     coverImage: p5,
-    category: "Bracelets",
+    category: "Necklaces",
     rating: 4.6,
-    url: "/products/bracelets",
+    url: "/products/necklaces",
   },
 ];
 
