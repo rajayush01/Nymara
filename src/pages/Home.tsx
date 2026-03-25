@@ -6,7 +6,7 @@ import ProductCategories from "@/components/home/ProductCategories";
 //import DiamondShowcase from "@/components/home/DiamondShowcase";
 import Model from "@/components/home/Model";
 import RingDesigner from "@/components/home/RingDesigner";
-//import ImageFanDynamic from "@/components/home/CardTypes";
+import ImageFanDynamic from "@/components/home/CardTypes";
 import JewelryCollage from "@/components/home/JewelleryCollage";
 import { Mail, MessageCircle, Phone, X } from "lucide-react";
 import img1 from "@/assets/9.png";
@@ -281,9 +281,9 @@ const Home = () => {
           <HeroSection />
         </motion.div>
 
-        {/* <SectionWrapper>
+        <SectionWrapper>
           <ImageFanDynamic />
-        </SectionWrapper> */}
+        </SectionWrapper>
 
         <SectionWrapper>
           <RingDesigner />
