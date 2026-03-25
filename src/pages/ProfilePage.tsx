@@ -1074,7 +1074,7 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 pt-28 pb-16 px-4 overflow-x-hidden">
-      <div className="max-w-6xl sm:mt-32 mx-auto flex flex-col md:flex-row gap-6 items-start">
+      <div className="max-w-6xl sm:mt-32 mx-auto flex flex-col md:flex-row gap-6 items-start w-full min-w-0">
         {/* ── Sidebar ── */}
         <aside className="w-full md:w-56 shrink-0">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -1130,7 +1130,7 @@ const ProfilePage = () => {
         </aside>
 
         {/* ── Main content ── */}
-        <main className="flex-1 min-w-0">
+        <main className="flex-1 min-w-0 overflow-x-hidden w-full">
           {/* <h1 className="text-2xl font-semibold text-gray-800 mb-4">{formData.firstName} {formData.lastName}</h1> */}
 
           {/* ── PROFILE TAB ── */}
@@ -1183,12 +1183,12 @@ const ProfilePage = () => {
                       </p>
                     )}
                   </div>
-                  <div className="border border-gray-100 rounded-xl p-4">
+                  {/* <div className="border border-gray-100 rounded-xl p-4">
                     <p className="text-xs text-gray-400 mb-1">Customer ID</p>
                     <p className="text-sm font-medium text-gray-800">
                       {(user as any)?.uId || "—"}
                     </p>
-                  </div>
+                  </div> */}
                   <div className="border border-gray-100 rounded-xl p-4">
                     <p className="text-xs text-gray-400 mb-1">
                       {addressType === "domestic"
@@ -1595,14 +1595,14 @@ const ProfilePage = () => {
                                     </span>
                                     {order.deliveryLink && (
                                       <p>
-                                        <span className="font-medium">
-                                          Delivery Link:
+                                        <span className="font-medium text-sm text-gray-800">
+                                          Delivery Link :
                                         </span>{" "}
                                         <a
                                           href={order.deliveryLink}
                                           target="_blank"
                                           rel="noreferrer"
-                                          className="text-blue-600 underline"
+                                          className="text-blue-400 text-sm underline"
                                         >
                                           Track Package
                                         </a>
