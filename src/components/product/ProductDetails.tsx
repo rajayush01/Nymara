@@ -231,15 +231,64 @@ const ProductDetail = () => {
     }
   };
 
-  const relatedProducts = products
-    .filter(
-      (p) =>
-        p._id !== product._id &&
-        (p.category === product.category ||
-          p.style === product.style ||
-          p.stoneType === product.stoneType),
-    )
-    .slice(0, 4);
+  // Get related products with diverse categories (excluding bracelets)
+  const getRelatedProducts = () => {
+    // Filter out current product and bracelets (due to image sizing issues)
+    const otherProducts = products.filter((p) => {
+      if (p._id === product._id) return false;
+      
+      // Exclude bracelets and bangles
+      const category = Array.isArray(p.category) ? p.category[0] : p.category || '';
+      const categoryLower = category.toLowerCase();
+      return !categoryLower.includes('bracelet') && !categoryLower.includes('bangle');
+    });
+    
+    if (otherProducts.length === 0) return [];
+    
+    // Group products by category
+    const productsByCategory = otherProducts.reduce((acc, p) => {
+      const category = Array.isArray(p.category) ? p.category[0] : p.category || 'Other';
+      if (!acc[category]) acc[category] = [];
+      acc[category].push(p);
+      return acc;
+    }, {} as Record<string, typeof products>);
+    
+    // Get diverse selection: 1-2 products from each category
+    const relatedProducts: typeof products = [];
+    const categories = Object.keys(productsByCategory);
+    
+    // First, try to get one product from each category
+    categories.forEach(category => {
+      if (relatedProducts.length < 4 && productsByCategory[category].length > 0) {
+        const randomProduct = productsByCategory[category][Math.floor(Math.random() * productsByCategory[category].length)];
+        relatedProducts.push(randomProduct);
+      }
+    });
+    
+    // If we still need more products, add a second from each category
+    categories.forEach(category => {
+      if (relatedProducts.length < 4 && productsByCategory[category].length > 1) {
+        const availableProducts = productsByCategory[category].filter(p => !relatedProducts.includes(p));
+        if (availableProducts.length > 0) {
+          const randomProduct = availableProducts[Math.floor(Math.random() * availableProducts.length)];
+          relatedProducts.push(randomProduct);
+        }
+      }
+    });
+    
+    // If still not enough, fill with any remaining products
+    if (relatedProducts.length < 4) {
+      const remainingProducts = otherProducts.filter(p => !relatedProducts.includes(p));
+      while (relatedProducts.length < 4 && remainingProducts.length > 0) {
+        const randomIndex = Math.floor(Math.random() * remainingProducts.length);
+        relatedProducts.push(remainingProducts.splice(randomIndex, 1)[0]);
+      }
+    }
+    
+    return relatedProducts.slice(0, 4);
+  };
+
+  const relatedProducts = getRelatedProducts();
 
   const { amount, symbol } = calculatePrice();
 
