@@ -11,10 +11,15 @@ import {
 import p1 from "@/assets/home-img.png";
 //import p2 from "@/assets/ring2.jpg";
 //import p3 from "@/assets/home.png";
-import p5 from "@/assets/necklace.jpeg";
+//import p5 from "@/assets/necklace.jpeg";
 import p4 from "@/assets/roundbrillint.png";
-import p6 from "@/assets/brace.png";
+//import p6 from "@/assets/brace.png";
 import p7 from "@/assets/neck.png";
+import p8 from "@/assets/peerbracelet.png";
+import p9 from "@/assets/heranecklace.png";
+import p10 from "@/assets/ovalring.png";
+import p11 from "@/assets/petal.png";
+import p12 from "@/assets/diamondlink.png";
 interface Product {
   _id: string;
   name: string;
@@ -52,11 +57,21 @@ interface ImageDimensions {
   height: number;
 }
 
+const categoryToUrl: Record<string, string> = {
+  rings: "/products/rings",
+  bracelets: "/products/bracelets",
+  necklaces: "/products/necklaces",
+  earrings: "/products/earrings",
+  bangles: "/products/bangles",
+  pendants: "/products/pendants",
+  chains: "/products/chains",
+};
+
 // Hardcoded product data
 const HARDCODED_PRODUCTS: Product[] = [
   {
     _id: "1",
-    name: "Elegant Diamond Solitaire Ring",
+    name: "Oval Halo Diamond Ring",
     productId: "RING001",
     description:
       "A timeless symbol of love and elegance. This stunning solitaire features a brilliant-cut diamond set in 18K white gold.",
@@ -64,14 +79,14 @@ const HARDCODED_PRODUCTS: Product[] = [
     originalPrice: 52999,
     onSale: true,
     isOutOfStock: false,
-    coverImage: p1,
+    coverImage: p10,
     category: "Rings",
     rating: 4.8,
     url: "/products/rings",
   },
   {
     _id: "2",
-    name: "Rose Gold Tennis Bracelet",
+    name: "Peer Diamond Bracelet",
     productId: "BRAC001",
     description:
       "Sophisticated sparkle for every occasion. Adorned with precision-set cubic zirconia stones in lustrous rose gold.",
@@ -79,7 +94,7 @@ const HARDCODED_PRODUCTS: Product[] = [
     originalPrice: 15999,
     onSale: true,
     isOutOfStock: false,
-    coverImage: p6,
+    coverImage: p8,
     category: "Bracelets",
     rating: 4.7,
     url: "/products/bracelets",
@@ -115,17 +130,46 @@ const HARDCODED_PRODUCTS: Product[] = [
   },
   {
     _id: "5",
-    name: "Minimalist Necklace Set",
-    productId: "BRAC002",
+    name: "Hera Divine Diamond Necklace",
+    productId: "CHAIN001",
     description:
-      "Understated luxury for the modern woman. Three sleek bangles in mixed metals that stack beautifully together.",
+      "Timeless elegance for everyday wear. These classic diamond studs add sparkle to any outfit.",
     price: 6999,
     originalPrice: 9499,
     isOutOfStock: false,
-    coverImage: p5,
+    coverImage: p9,
     category: "Necklaces",
     rating: 4.6,
     url: "/products/necklaces",
+  },
+   {
+    _id: "6",
+    name: "Petal Carousel Diamond Studs",
+    productId: "CHAIN001",
+    description:
+      "Timeless elegance for everyday wear. These classic diamond studs add sparkle to any outfit.",
+    price: 6999,
+    originalPrice: 9499,
+    isOutOfStock: false,
+    coverImage: p11,
+    category: "Earrings",
+    rating: 4.6,
+    url: "/products/earrings",
+  },
+  {
+    _id: "7",
+    name: "Diamond Link Bracelet",
+    productId: "BRAC001",
+    description:
+      "Sophisticated sparkle for every occasion. Adorned with precision-set cubic zirconia stones in lustrous rose gold.",
+    price: 12999,
+    originalPrice: 15999,
+    onSale: true,
+    isOutOfStock: false,
+    coverImage: p12,
+    category: "Bracelets",
+    rating: 4.7,
+    url: "/products/bracelets",
   },
 ];
 
@@ -518,8 +562,11 @@ export default function ImageFanDynamic() {
                   showWhiteBg ? "" : ""
                 }`}
                 onClick={() => {
-                  console.log("Navigating to:", product.url);
-                  navigate(product.url || "/products");
+                  // Create navigation path: /products/{category} with 18K filter
+                  const categoryName = product.category.toLowerCase();
+                  const navigationPath = `/products/${categoryName}?metalType=18K%20Gold`;
+                  console.log("Navigating to:", navigationPath);
+                  navigate(navigationPath);
                 }}
                 style={{
                   zIndex: currentSlotConfig.zIndex,
