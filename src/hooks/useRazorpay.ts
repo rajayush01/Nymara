@@ -187,12 +187,13 @@ export const useRazorpay = () => {
       console.log("💳 [RAZORPAY] Amount received:", orderData.amount);
       console.log("💳 [RAZORPAY] Amount type:", typeof orderData.amount);
       console.log("💳 [RAZORPAY] Amount in paise (x100):", orderData.amount * 100);
+      console.log("💳 [RAZORPAY] Amount in paise (rounded):", Math.round(orderData.amount * 100));
       console.log("💳 [RAZORPAY] Currency:", orderData.currency);
 
       // Razorpay options
       const options: RazorpayOptions = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: Math.round(orderData.amount * 100), // Convert to paise and ensure integer
+        amount: Math.round(orderData.amount * 100), // Convert to paise (smallest unit) and round to nearest integer
         currency: orderData.currency,
         name: "Nymara Jewelry",
         description: "Purchase from Nymara",

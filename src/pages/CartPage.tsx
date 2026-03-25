@@ -1042,7 +1042,7 @@ const CartPage = () => {
       console.log("   Subtotal:", subtotal);
       console.log("   Shipping:", shippingCost);
       console.log("   Total:", total);
-      console.log("   Total (rounded):", Math.round(total));
+      console.log("   Total (exact):", total.toFixed(2));
       console.log("   Currency:", selectedCountry.currency);
       console.log("   Symbol:", symbol);
 
@@ -1064,7 +1064,7 @@ const CartPage = () => {
         },
         currency: selectedCountry.currency,
         symbol: symbol,
-        totalAmount: Math.round(total), // Ensure it's a whole number
+        totalAmount: total, // Keep exact decimal amount
       };
 
       console.log(
@@ -1353,7 +1353,7 @@ const CartPage = () => {
               <div className="text-xs sm:text-sm text-gray-900 mt-1 pt-1 border-t border-gray-200 w-[200px]">
                 <span className="font-semibold">Total Price:</span>{" "}
                 {selectedCountry.flag} {symbol}
-                {totalPrice.toLocaleString()}
+                {totalPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
             );
           })()}
@@ -1451,7 +1451,7 @@ const CartPage = () => {
             <span className="text-gray-600">Subtotal ({cartCount} items)</span>
             <span className="font-medium">
               {selectedCountry.flag} {currencySymbol}
-              {subtotal.toLocaleString()}
+              {subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
           </div>
           {selectedCountry.currency === "INR" && productSavings > 0 && (
@@ -1482,7 +1482,7 @@ const CartPage = () => {
             <span>Total</span>
             <span>
               {selectedCountry.flag} {currencySymbol}
-              {total.toLocaleString()}
+              {total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
           </div>
         </div>
@@ -1896,7 +1896,7 @@ const CartPage = () => {
         <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg z-50">
           <div className="flex items-center justify-between mb-2">
             <span className="font-medium text-sm sm:text-base">
-              Total: ₹{total.toLocaleString()}
+              Total: ₹{total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
             <span className="text-xs sm:text-sm text-gray-600">
               {cartCount} items
