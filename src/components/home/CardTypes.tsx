@@ -66,7 +66,7 @@ const HARDCODED_PRODUCTS: Product[] = [
     coverImage: p1,
     category: "Rings",
     rating: 4.8,
-    url: "/",
+    url: "/products/rings",
   },
   {
     _id: "2",
@@ -81,7 +81,7 @@ const HARDCODED_PRODUCTS: Product[] = [
     coverImage: p2,
     category: "Bracelets",
     rating: 4.7,
-    url: "/",
+    url: "/products/bracelets",
   },
   {
     _id: "3",
@@ -95,7 +95,7 @@ const HARDCODED_PRODUCTS: Product[] = [
     coverImage: p3,
     category: "Chains",
     rating: 4.5,
-    url: "/",
+    url: "/products/necklaces",
   },
   {
     _id: "4",
@@ -110,7 +110,7 @@ const HARDCODED_PRODUCTS: Product[] = [
     coverImage: p4,
     category: "Rings",
     rating: 4.9,
-    url: "/",
+    url: "/products/rings",
   },
   {
     _id: "5",
@@ -124,7 +124,7 @@ const HARDCODED_PRODUCTS: Product[] = [
     coverImage: p5,
     category: "Bracelets",
     rating: 4.6,
-    url: "/",
+    url: "/products/bracelets",
   },
 ];
 
