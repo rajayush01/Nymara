@@ -713,7 +713,7 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
                   </select>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-1 gap-4">
                   <div>
                     <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-2">
                       <Calendar className="w-4 h-4" />

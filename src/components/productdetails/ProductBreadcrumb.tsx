@@ -12,7 +12,7 @@ const ProductBreadcrumb: React.FC<ProductBreadcrumbProps> = ({
   navigate,
 }) => {
   return (
-    <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6 mt-32">
+    <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-6 sm:mt-32">
       <button
         onClick={() => navigate("/")}
         className="hover:text-gray-900 transition-colors"

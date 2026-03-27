@@ -11,7 +11,7 @@ interface HeroSectionProps {
 
 const ProductHeroSection: React.FC<HeroSectionProps> = ({ title, subtitle, productCount, isLoaded }) => {
   return (
-    <div className={`relative pt-32 pb-16 ${isLoaded ? 'elegant-fade-in' : 'opacity-0'}`}>
+    <div className={`relative sm:pt-32 pt-8 pb-16 ${isLoaded ? 'elegant-fade-in' : 'opacity-0'}`}>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         {[...Array(20)].map((_, i) => (

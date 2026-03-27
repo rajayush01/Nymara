@@ -327,7 +327,7 @@ const actualCategory = category || (pathCategory && pathCategory !== "products" 
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 mt-20 overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 sm:mt-20 overflow-x-hidden">
       <ProductStyles />
 
       <ProductHeroSection
