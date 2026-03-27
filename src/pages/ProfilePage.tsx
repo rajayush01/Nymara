@@ -683,6 +683,7 @@ import {
 } from "lucide-react";
 import { useAuth, useWishlist } from "@/contexts/AppContext";
 import axios from "axios";
+import ProductLoader from "@/components/ui/ProductLoader";
 const API_URL = import.meta.env.VITE_API_URL;
 
 type Tab = "profile" | "orders" | "favorites" | "shipping";
@@ -697,6 +698,7 @@ const ProfilePage = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [orders, setOrders] = useState<any[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(true);
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [addressType, setAddressType] = useState<"domestic" | "international">(
@@ -727,6 +729,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     const fetchUserDetails = async () => {
+      setProfileLoading(true);
       try {
         const res = await axios.get(`${API_URL}/api/user/details`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -774,6 +777,8 @@ const ProfilePage = () => {
           "❌ Failed to load profile:",
           err.response?.data || err.message,
         );
+      } finally {
+        setProfileLoading(false);
       }
     };
     if (user && user.isLoggedIn) fetchUserDetails();
@@ -960,6 +965,10 @@ const ProfilePage = () => {
       document.body.style.overflow = "unset";
     };
   }, [showErrorModal, showSuccessModal]);
+
+  if (profileLoading) {
+    return <ProductLoader />;
+  }
 
   if (!user || !user.isLoggedIn) {
     return (
