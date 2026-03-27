@@ -440,6 +440,23 @@ const CustomizeJewelryModal: React.FC<CustomizeJewelryModalProps> = ({
     images: [] as string[],
   });
 
+  // Reset form when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentStep(1);
+      setShowThankYou(false);
+      setErrorMessage("");
+      setCustomOptions({
+        name: "",
+        email: "",
+        phone: "",
+        inspiration: "",
+        specialRequests: "",
+        images: [],
+      });
+    }
+  }, [isOpen]);
+
   // Close modal on escape
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {

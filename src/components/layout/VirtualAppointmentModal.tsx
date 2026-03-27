@@ -431,6 +431,7 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
     phone: "",
     preferredDate: "",
     preferredTime: "",
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     appointmentType: "consultation",
     message: "",
   });
@@ -508,6 +509,7 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
             phone: "",
             preferredDate: "",
             preferredTime: "",
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
             appointmentType: "consultation",
             message: "",
           });
@@ -763,6 +765,40 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
                   </div>
                 </div>
 
+                <div>
+                  <label className="flex items-center space-x-2 text-sm font-medium text-gray-700 mb-2">
+                    <Clock className="w-4 h-4" />
+                    <span>Your Timezone *</span>
+                  </label>
+                  <select
+                    name="timezone"
+                    value={formData.timezone}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#9a8457] outline-none text-sm sm:text-base"
+                  >
+                    <option value="America/New_York">Eastern Time (ET)</option>
+                    <option value="America/Chicago">Central Time (CT)</option>
+                    <option value="America/Denver">Mountain Time (MT)</option>
+                    <option value="America/Los_Angeles">Pacific Time (PT)</option>
+                    <option value="Europe/London">London (GMT/BST)</option>
+                    <option value="Europe/Paris">Paris (CET/CEST)</option>
+                    <option value="Europe/Berlin">Berlin (CET/CEST)</option>
+                    <option value="Europe/Rome">Rome (CET/CEST)</option>
+                    <option value="Europe/Madrid">Madrid (CET/CEST)</option>
+                    <option value="Asia/Dubai">Dubai (GST)</option>
+                    <option value="Asia/Kolkata">India (IST)</option>
+                    <option value="Asia/Singapore">Singapore (SGT)</option>
+                    <option value="Asia/Hong_Kong">Hong Kong (HKT)</option>
+                    <option value="Asia/Tokyo">Tokyo (JST)</option>
+                    <option value="Australia/Sydney">Sydney (AEDT/AEST)</option>
+                    <option value="Pacific/Auckland">Auckland (NZDT/NZST)</option>
+                  </select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Your detected timezone: {Intl.DateTimeFormat().resolvedOptions().timeZone}
+                  </p>
+                </div>
+
                 <div className="bg-[#9a8457]/5 border border-[#9a8457]/20 rounded-lg p-3 sm:p-4">
                   <div className="flex items-start space-x-3">
                     <div className="p-1 bg-[#9a8457]/10 rounded">
@@ -827,7 +863,7 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
                     (currentStep === 1 &&
                       (!formData.name || !formData.email)) ||
                     (currentStep === 2 &&
-                      (!formData.preferredDate || !formData.preferredTime))
+                      (!formData.preferredDate || !formData.preferredTime || !formData.timezone))
                   }
                   className="px-5 sm:px-6 py-2 bg-[#9a8457] text-white rounded-lg font-medium hover:bg-[#8a7547] disabled:bg-gray-300 disabled:cursor-not-allowed text-sm sm:text-base transition-all duration-150 active:scale-95 active:bg-[#7a6537] active:shadow-inner"
                 >

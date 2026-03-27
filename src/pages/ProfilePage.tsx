@@ -1583,24 +1583,26 @@ const ProfilePage = () => {
                                 </div> */}
                                 <div className="min-w-0">
                                   <div className="flex flex-wrap items-center gap-2 mb-1">
-                                     <div
-                                  className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 border ${sc.bg}`}
-                                >
-                                  <span className={sc.color}>{sc.icon}</span>
-                                </div>
+                                    <div
+                                      className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 border ${sc.bg}`}
+                                    >
+                                      <span className={sc.color}>
+                                        {sc.icon}
+                                      </span>
+                                    </div>
                                     <span className="text-sm font-semibold text-gray-800">
                                       {order.oId}
                                     </span>
                                     <span
                                       className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border ${sc.bg} ${sc.color}`}
                                     >
-                                      {sc.icon}
-                                      <span>{sc.label}</span>
+                                      {/* {sc.icon} */}
+                                      <span>Product Status : {sc.label}</span>
                                     </span>
                                     <span
                                       className={`text-xs font-medium px-2 py-0.5 rounded-full border ${pc.bg} ${pc.color}`}
                                     >
-                                      {order.paymentStatus}
+                                      Payment : {order.paymentStatus}
                                     </span>
                                     {order.deliveryLink && (
                                       <p>
