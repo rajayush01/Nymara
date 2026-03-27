@@ -455,32 +455,105 @@ const CustomizeJewelryModal: React.FC<CustomizeJewelryModalProps> = ({
     };
   }, [isOpen, onClose]);
 
-  // Handle image uploads and convert to base64
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
+  // // Handle image uploads and convert to base64
+  // const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const files = e.target.files;
+  //   if (!files) return;
 
-    setUploading(true);
+  //   setUploading(true);
 
-    const base64Promises = Array.from(files).map(
-      (file) =>
-        new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = reject;
-          reader.readAsDataURL(file); // convert to base64
-        })
+  //   const base64Promises = Array.from(files).map(
+  //     (file) =>
+  //       new Promise<string>((resolve, reject) => {
+  //         const reader = new FileReader();
+  //         reader.onload = () => resolve(reader.result as string);
+  //         reader.onerror = reject;
+  //         reader.readAsDataURL(file); // convert to base64
+  //       })
+  //   );
+
+  //   const base64Images = await Promise.all(base64Promises);
+
+  //   setCustomOptions((prev) => ({
+  //     ...prev,
+  //     images: [...prev.images, ...base64Images],
+  //   }));
+
+  //   setUploading(false);
+  // };
+
+  const compressImage = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        const MAX_WIDTH = 800; // 🔥 resize width
+        const scale = MAX_WIDTH / img.width;
+
+        canvas.width = MAX_WIDTH;
+        canvas.height = img.height * scale;
+
+        ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // 🔥 compress (0.6–0.8 ideal)
+        const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+
+        resolve(compressedBase64);
+      };
+
+      img.onerror = reject;
+    };
+
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+};
+
+const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const files = e.target.files;
+  if (!files) return;
+
+  setUploading(true);
+  setErrorMessage("");
+
+  try {
+    // 🚨 Limit number of images
+    const totalImages = customOptions.images.length + files.length;
+    if (totalImages > 4) {
+      setErrorMessage("You can upload maximum 4 images");
+      setUploading(false);
+      return;
+    }
+
+    // 🚨 Validate + compress
+    const compressedImages = await Promise.all(
+      Array.from(files).map(async (file) => {
+        // limit size (before compression)
+        if (file.size > 5 * 1024 * 1024) {
+          throw new Error("Each image must be less than 5MB");
+        }
+
+        return await compressImage(file);
+      })
     );
-
-    const base64Images = await Promise.all(base64Promises);
 
     setCustomOptions((prev) => ({
       ...prev,
-      images: [...prev.images, ...base64Images],
+      images: [...prev.images, ...compressedImages],
     }));
+  } catch (error: any) {
+    setErrorMessage(error.message || "Image upload failed");
+  }
 
-    setUploading(false);
-  };
+  setUploading(false);
+};
 
   // Handle submit → send to backend
  const handleSubmit = async () => {
