@@ -494,16 +494,18 @@ const CustomizeJewelryModal: React.FC<CustomizeJewelryModalProps> = ({
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
 
-        const MAX_WIDTH = 800; // 🔥 resize width
-        const scale = MAX_WIDTH / img.width;
+        const MAX_WIDTH = 500; //  reduced from 800
 
-        canvas.width = MAX_WIDTH;
+        //  prevent upscaling
+        const scale = Math.min(1, MAX_WIDTH / img.width);
+
+        canvas.width = img.width * scale;
         canvas.height = img.height * scale;
 
         ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-        // 🔥 compress (0.6–0.8 ideal)
-        const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+        //  strong compression
+        const compressedBase64 = canvas.toDataURL("image/jpeg", 0.4);
 
         resolve(compressedBase64);
       };
