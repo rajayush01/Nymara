@@ -381,30 +381,76 @@ const handleCategorySearchClick = (category: string, searchTerm: string) => {
 
         {/* Account Dropdown Menu */}
         {isLoggedIn && isAccountMenuOpen && (
-          <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-xl z-50">
-            <div className="p-4 border-b border-gray-100">
-              <div className="font-medium text-gray-800 truncate">
-                {user.firstName} {user.lastName}
+          <>
+            {/* Desktop Dropdown */}
+            <div className="hidden lg:block absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-xl z-[9999]">
+              <div className="p-4 border-b border-gray-100">
+                <div className="font-medium text-gray-800 truncate">
+                  {user.firstName} {user.lastName}
+                </div>
+                <div className="text-sm text-gray-500 truncate">{user.email}</div>
               </div>
-              <div className="text-sm text-gray-500 truncate">{user.email}</div>
+              <div className="py-2">
+                <button
+                  onClick={handleProfileClick}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200 flex items-center space-x-2"
+                >
+                  <User className="w-4 h-4" />
+                  <span>My Profile</span>
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200 flex items-center space-x-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
+                </button>
+              </div>
             </div>
-            <div className="py-2">
-              <button
-                onClick={handleProfileClick}
-                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200 flex items-center space-x-2"
-              >
-                <User className="w-4 h-4" />
-                <span>My Profile</span>
-              </button>
-              <button
-                onClick={handleLogout}
-                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200 flex items-center space-x-2"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Logout</span>
-              </button>
-            </div>
-          </div>
+            
+            {/* Mobile Modal - Using Portal */}
+            {createPortal(
+              <div className="lg:hidden fixed inset-0 z-[99999] flex items-end justify-center bg-black/50 backdrop-blur-sm">
+                <div 
+                  className="absolute inset-0"
+                  onClick={() => setIsAccountMenuOpen(false)}
+                />
+                <div className="relative bg-white rounded-t-2xl shadow-2xl w-full max-w-md animate-in slide-in-from-bottom duration-300">
+                  <div className="p-6 border-b border-gray-100">
+                    <div className="font-semibold text-gray-800 text-lg truncate">
+                      {user.firstName} {user.lastName}
+                    </div>
+                    <div className="text-sm text-gray-500 truncate mt-1">{user.email}</div>
+                  </div>
+                  <div className="py-2">
+                    <button
+                      onClick={handleProfileClick}
+                      className="w-full text-left px-6 py-4 text-base text-gray-700 hover:bg-gray-50 transition-colors duration-200 flex items-center space-x-3"
+                    >
+                      <User className="w-5 h-5" />
+                      <span>My Profile</span>
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-6 py-4 text-base text-red-600 hover:bg-red-50 transition-colors duration-200 flex items-center space-x-3"
+                    >
+                      <LogOut className="w-5 h-5" />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                  <div className="p-4 border-t border-gray-100">
+                    <button
+                      onClick={() => setIsAccountMenuOpen(false)}
+                      className="w-full py-3 text-center text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>,
+              document.body
+            )}
+          </>
         )}
       </div>
 

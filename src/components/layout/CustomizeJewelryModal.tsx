@@ -430,6 +430,7 @@ const CustomizeJewelryModal: React.FC<CustomizeJewelryModalProps> = ({
   const [showThankYou, setShowThankYou] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [customOptions, setCustomOptions] = useState({
     name: "",
@@ -578,13 +579,15 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
  const handleSubmit = async () => {
   console.log("🚀 Submit clicked");
 
-  // 🔴 validation
- if (!customOptions.name || !customOptions.email || !customOptions.phone) {
+  // 🔴 validation - now including inspiration and specialRequests
+ if (!customOptions.name || !customOptions.email || !customOptions.phone || !customOptions.inspiration || !customOptions.specialRequests) {
   setErrorMessage("Please fill all required fields");
   return;
 }
 
   try {
+    setIsSubmitting(true);
+    
     const endpoint =
       "https://lets-taxify.onrender.com/api/nymara/contact/custom";
 
@@ -609,7 +612,6 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (res.data?.success) {
       setShowThankYou(true);
     } else {
-     ;
       setErrorMessage(res.data?.message || "Something went wrong");
     }
 
@@ -618,16 +620,15 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
     if (error.response) {
       console.error("❌ Backend Error:", error.response.data);
-     
       setErrorMessage(error.response.data?.message || "Server error");
     } else if (error.request) {
       console.error("❌ No response received");
       setErrorMessage("Server not rechable");
-    
     } else {
-     
       setErrorMessage("unexpected error");
     }
+  } finally {
+    setIsSubmitting(false);
   }
 };
 
@@ -643,6 +644,15 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
     const message = encodeURIComponent(lines.join("\n"));
     window.open(`https://wa.me/447867089659?text=${message}`, "_blank");
+  };
+
+  const handleNextStep = () => {
+    // Validate step 1 required fields
+    if (!customOptions.inspiration.trim() || !customOptions.specialRequests.trim()) {
+      setErrorMessage("Please fill in both Inspiration & Vision and Special Requests fields");
+      return;
+    }
+    setCurrentStep(2);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -722,7 +732,7 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
               <div className="space-y-4 sm:space-y-6">
                 <div>
                   <h4 className="font-medium text-gray-900 mb-2 sm:mb-3 text-sm sm:text-base">
-                    Inspiration & Vision
+                    Inspiration & Vision <span className="text-red-500">*</span>
                   </h4>
                   <textarea
                     value={customOptions.inspiration}
@@ -734,13 +744,14 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
                     }
                     placeholder="Describe your vision..."
                     rows={4}
+                    required
                     className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457]"
                   />
                 </div>
 
                 <div>
                   <h4 className="font-medium text-gray-900 mb-2 sm:mb-3 text-sm sm:text-base">
-                    Special Requests
+                    Special Requests <span className="text-red-500">*</span>
                   </h4>
                   <textarea
                     value={customOptions.specialRequests}
@@ -752,6 +763,7 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
                     }
                     placeholder="Any engravings or specific requirements..."
                     rows={3}
+                    required
                     className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9a8457]"
                   />
                 </div>
@@ -925,8 +937,9 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
               {currentStep === 1 ? (
                 <button
-                  onClick={() => setCurrentStep(2)}
-                  className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-[#9a8457] text-white px-6 py-3 rounded-lg hover:bg-[#8a7547] transition-colors text-sm sm:text-base"
+                  onClick={handleNextStep}
+                  disabled={!customOptions.inspiration.trim() || !customOptions.specialRequests.trim()}
+                  className="w-full sm:w-auto flex items-center justify-center space-x-2 bg-[#9a8457] text-white px-6 py-3 rounded-lg hover:bg-[#8a7547] transition-colors text-sm sm:text-base disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
                   <span>Next Step</span>
                   <ArrowRight className="w-4 h-4" />
@@ -941,10 +954,23 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
                   </button>
                   <button
                     onClick={handleSubmit}
-                    className="flex items-center justify-center space-x-2 bg-[#9a8457] text-white px-4 sm:px-6 py-3 rounded-lg hover:bg-[#8a7547] transition-colors text-sm sm:text-base"
+                    disabled={isSubmitting}
+                    className="flex items-center justify-center space-x-2 bg-[#9a8457] text-white px-4 sm:px-6 py-3 rounded-lg hover:bg-[#8a7547] transition-colors text-sm sm:text-base disabled:bg-gray-400 disabled:cursor-not-allowed relative"
                   >
-                    <Diamond className="w-4 h-4" />
-                    <span>Submit Request</span>
+                    {isSubmitting ? (
+                      <>
+                        <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span>Submitting...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Diamond className="w-4 h-4" />
+                        <span>Submit Request</span>
+                      </>
+                    )}
                   </button>
                 </div>
               )}

@@ -860,14 +860,25 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
                   type={currentStep === 2 ? "submit" : "button"}
                   onClick={currentStep === 1 ? nextStep : undefined}
                   disabled={
+                    loading ||
                     (currentStep === 1 &&
                       (!formData.name || !formData.email)) ||
                     (currentStep === 2 &&
                       (!formData.preferredDate || !formData.preferredTime || !formData.timezone))
                   }
-                  className="px-5 sm:px-6 py-2 bg-[#9a8457] text-white rounded-lg font-medium hover:bg-[#8a7547] disabled:bg-gray-300 disabled:cursor-not-allowed text-sm sm:text-base transition-all duration-150 active:scale-95 active:bg-[#7a6537] active:shadow-inner"
+                  className="px-5 sm:px-6 py-2 bg-[#9a8457] text-white rounded-lg font-medium hover:bg-[#8a7547] disabled:bg-gray-300 disabled:cursor-not-allowed text-sm sm:text-base transition-all duration-150 active:scale-95 active:bg-[#7a6537] active:shadow-inner flex items-center justify-center space-x-2"
                 >
-                  {currentStep === 1 ? "Next Step" : "Book Appointment"}
+                  {loading ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>Booking...</span>
+                    </>
+                  ) : (
+                    <span>{currentStep === 1 ? "Next Step" : "Book Appointment"}</span>
+                  )}
                 </button>
               </div>
             )}
