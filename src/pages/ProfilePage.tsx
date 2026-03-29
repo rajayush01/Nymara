@@ -1619,6 +1619,22 @@ const ProfilePage = () => {
                                         </a>
                                       </p>
                                     )}
+
+                                       {order.receiptLink && (
+                                      <p>
+                                        <span className="font-medium">
+                                          Receipt Link:
+                                        </span>{" "}
+                                        <a
+                                          href={order.receiptLink}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                          className="text-blue-600 underline"
+                                        >
+                                          Track Package
+                                        </a>
+                                      </p>
+                                    )}
                                   </div>
                                   <p className="text-xs text-gray-400 flex items-center gap-1">
                                     <Clock className="w-3 h-3" />
