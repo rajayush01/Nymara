@@ -1582,7 +1582,9 @@ const ProfilePage = () => {
                                   <span className={sc.color}>{sc.icon}</span>
                                 </div> */}
                                 <div className="min-w-0">
-                                  <div className="flex flex-wrap items-center gap-2 mb-1">
+                                  <div className="flex flex-wrap my-2 sm:my-0 items-center gap-2 mb-1">
+                                      
+                                    
                                     <div
                                       className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 border ${sc.bg}`}
                                     >
@@ -1590,51 +1592,58 @@ const ProfilePage = () => {
                                         {sc.icon}
                                       </span>
                                     </div>
+
                                     <span className="text-sm font-semibold text-gray-800">
                                       {order.oId}
                                     </span>
+
                                     <span
                                       className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border ${sc.bg} ${sc.color}`}
                                     >
                                       {/* {sc.icon} */}
                                       <span>Product Status : {sc.label}</span>
                                     </span>
+
                                     <span
                                       className={`text-xs font-medium px-2 py-0.5 rounded-full border ${pc.bg} ${pc.color}`}
                                     >
                                       Payment : {order.paymentStatus}
                                     </span>
-                                    {order.deliveryLink && (
-                                      <p>
-                                        <span className="font-medium text-sm text-gray-800">
-                                          Delivery Link :
-                                        </span>{" "}
-                                        <a
-                                          href={order.deliveryLink}
-                                          target="_blank"
-                                          rel="noreferrer"
-                                          className="text-blue-400 text-sm underline"
-                                        >
-                                          Track Package
-                                        </a>
-                                      </p>
-                                    )}
 
-                                       {order.receiptLink && (
-                                      <p>
-                                        <span className="font-medium">
-                                          Receipt Link:
-                                        </span>{" "}
-                                        <a
-                                          href={order.receiptLink}
-                                          target="_blank"
-                                          rel="noreferrer"
-                                          className="text-blue-600 underline"
-                                        >
-                                          Track Package
-                                        </a>
-                                      </p>
-                                    )}
+                                    {/* Delivery and Receipt Links - Same row on web, stacked on mobile */}
+                                    <div className="flex flex-col md:flex-row md:items-center gap-2 mt-2">
+                                      {order.deliveryLink && (
+                                        <p className={`text-xs font-medium px-2 py-0.5 rounded-full border ${pc.bg} ${pc.color}`}>
+                                          <span className="font-medium text-sm text-gray-800">
+                                            Delivery Link :
+                                          </span>{" "}
+                                          <a
+                                            href={order.deliveryLink}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="text-purple-600 text-sm underline"
+                                          >
+                                            Track Package
+                                          </a>
+                                        </p>
+                                      )}
+
+                                      {order.receiptLink && (
+                                        <p className={`text-xs font-medium px-2 py-0.5 rounded-full border ${pc.bg} ${pc.color}`}>
+                                          <span className="font-medium text-sm text-gray-800">
+                                            Receipt Link :
+                                          </span>{" "}
+                                          <a
+                                            href={order.receiptLink}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="text-purple-600 text-sm underline"
+                                          >
+                                            Track Package
+                                          </a>
+                                        </p>
+                                      )}
+                                    </div>
                                   </div>
                                   <p className="text-xs text-gray-400 flex items-center gap-1">
                                     <Clock className="w-3 h-3" />
@@ -1644,20 +1653,17 @@ const ProfilePage = () => {
                                       year: "numeric",
                                     })}
                                   </p>
-                                  {/* Product names preview */}
-                                  <p className="text-xs text-gray-500 mt-1 truncate max-w-xs">
-                                    {order.products
-                                      ?.slice(0, 2)
-                                      .map(
-                                        (p: any) =>
-                                          p.productId?.name ||
+                                  
+                                  {/* Product names preview - All items in column */}
+                                  <div className="text-xs text-gray-500 mt-1 space-y-0.5">
+                                    {order.products?.map((p: any, idx: number) => (
+                                      <p key={idx} className="truncate">
+                                        • {p.productId?.name ||
                                           p.productId?.toString?.() ||
-                                          "Product",
-                                      )
-                                      .join(", ")}
-                                    {order.products?.length > 2 &&
-                                      ` +${order.products.length - 2} more`}
-                                  </p>
+                                          "Product"}
+                                      </p>
+                                    ))}
+                                  </div>
                                 </div>
                               </div>
                               {/* Right: total + chevron */}

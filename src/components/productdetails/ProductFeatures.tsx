@@ -120,7 +120,7 @@ const ProductFeatures: React.FC<ProductFeaturesProps> = ({
       icon: Mail,
       title: "Email Expert",
       description: "Get personalized advice",
-      action: () => window.open("mailto:business@nymarajewels.com"),
+      action: () => window.open("https://mail.google.com/mail/?view=cm&fs=1&to=business@nymarajewels.com", "_blank"),
     },
    {
       icon: MessageCircle,
