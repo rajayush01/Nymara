@@ -45,7 +45,7 @@ const QueryModal: React.FC<QueryModalProps> = ({
 
     try {
       setIsSubmitting(true);
-      await axios.post(`${VITE_API_URL}/api/contact/query`, {
+      await axios.post("https://lets-taxify.onrender.com/api/nymara/contact/send-query", {
         name: name,
         email: email,
         phone: contact,
