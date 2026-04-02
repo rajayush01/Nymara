@@ -201,7 +201,7 @@ const FavoritesPage = () => {
             <div className="flex items-center">
               <Star className="w-4 h-4 text-yellow-400 fill-current" />
               <span className="text-sm text-gray-600 ml-1">
-                {item.rating} ({item.reviews})
+                {item.rating} 
               </span>
             </div>
             <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
