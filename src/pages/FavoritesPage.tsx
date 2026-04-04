@@ -1,3 +1,4 @@
+
 // import React, { useState, useEffect } from "react";
 // import { useNavigate } from "react-router-dom";
 // import {
@@ -26,11 +27,15 @@
 //     {},
 //   );
 
-//   const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
+//   const { wishlist, removeFromWishlist, clearWishlist, fetchWishlist } = useWishlist();
 //   const { addToCart } = useCart();
 //   const { logAddToCart } = useTracking();
 
 //   const { selectedCountry } = useCurrency();
+
+//   useEffect(() => {
+//     fetchWishlist();
+//   }, []);
 
 //   const categories = [
 //     "all",
@@ -575,16 +580,35 @@ const FavoritesPage = () => {
     ),
   ] as string[];
 
-  // ✅ Helper (same as in CartPage)
+  // ✅ Helper — mirrors ProductCard price logic so both show the same value
   const getDisplayPrice = (item: WishlistItem) => {
     const currency = selectedCountry.currency;
 
-    if (item.prices && item.prices[currency]) {
-      const { amount, symbol } = item.prices[currency];
-      return { amount, symbol };
+    // 1. Use backend-computed converted price (set at fetch time in ProductCard)
+    if (item.totalConvertedPrice != null) {
+      return {
+        amount: Number(item.totalConvertedPrice),
+        symbol: item.currency || "₹",
+      };
     }
 
-    // fallback to INR
+    // 2. Use displayPrice if available
+    if (item.displayPrice != null) {
+      return {
+        amount: Number(item.displayPrice),
+        symbol: item.currency || "₹",
+      };
+    }
+
+    // 3. Use prices map (currency-keyed)
+    if (item.prices?.[currency]) {
+      return {
+        amount: item.prices[currency].amount,
+        symbol: item.prices[currency].symbol,
+      };
+    }
+
+    // 4. Raw INR fallback
     return { amount: item.price || 0, symbol: "₹" };
   };
 
@@ -1049,4 +1073,5 @@ const FavoritesPage = () => {
 };
 
 export default FavoritesPage;
+
 
