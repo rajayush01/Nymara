@@ -106,17 +106,28 @@ const SectionWrapper = ({
 const EmailPopup = ({ onClose }: { onClose: () => void }) => {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = () => {
-    if (email) {
-      // Handle email submission here
-      console.log("Email submitted:", email);
-      setSubmitted(true);
-      setTimeout(() => {
-        onClose();
-      }, 2000);
-    }
-  };
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!email) {
+    setError("Email is required");
+    return;
+  }
+
+  if (!regex.test(email)) {
+    setError("Enter a valid email");
+    return;
+  }
+
+  setError("");
+  setSubmitted(true);
+
+  setTimeout(() => {
+    onClose();
+  }, 2000);
+};
 
   const handleCall = () => {
     window.location.href = "tel:+447867089659"; // Replace with your phone number
@@ -246,6 +257,7 @@ const EmailPopup = ({ onClose }: { onClose: () => void }) => {
             )}
           </div>
         </div>
+        {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
       </motion.div>
     </motion.div>
   );

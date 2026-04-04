@@ -32,6 +32,15 @@ export default function BespokeService() {
   };
 
   const handleSubmit = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(formData.email)) {
+      setToast({
+        message: "Please enter a valid email address",
+        type: "error",
+      });
+      return;
+    }
     try {
       const submitData = {
         ...formData,

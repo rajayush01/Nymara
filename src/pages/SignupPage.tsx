@@ -365,6 +365,16 @@ const SignupPage: React.FC<SignupPageProps> = ({ onSwitchToLogin }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(formData.email)) {
+      setToast({
+        message: "Please enter a valid email address",
+        type: "error",
+      });
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setToast({
         message: "Passwords do not match. Please try again.",

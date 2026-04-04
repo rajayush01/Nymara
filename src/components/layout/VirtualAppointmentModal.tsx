@@ -472,6 +472,16 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(formData.email)) {
+      setToast({
+        message: "Please enter a valid email address",
+        type: "error",
+      });
+      return;
+    }
+
     console.log("🔥 SUBMIT TRIGGERED");
     console.log("📦 Form Data:", formData);
 

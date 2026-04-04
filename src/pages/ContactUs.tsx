@@ -78,6 +78,13 @@ const ContactUs: React.FC = () => {
       return;
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+if (!emailRegex.test(email)) {
+  setFeedback("⚠️ Please enter a valid email address");
+  return;
+}
+
     setIsSubmitting(true);
     try {
       const res = await fetch("https://lets-taxify.onrender.com/api/nymara/contact/contactus", {

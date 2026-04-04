@@ -2,7 +2,31 @@ import { Phone, Mail, Clock, Shield, MapPin, Award, Heart } from "lucide-react";
 import logo from "../../assets/logo_main1.png";
 import elitelogo from "../../assets/elite8digital-nav-cropped.png";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 export default function Footer() {
+  const [email, setEmail] = useState("");
+const [error, setError] = useState("");
+
+const validateEmail = (email: string) => {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+};
+
+const handleSubscribe = () => {
+  if (!email) {
+    setError("Email is required");
+    return;
+  }
+
+  if (!validateEmail(email)) {
+    setError("Enter a valid email");
+    return;
+  }
+
+  setError("");
+  // 👉 call API or show toast here
+  console.log("Subscribed:", email);
+};
   return (
     <footer className="bg-gradient-to-b from-gray-900 to-black text-gray-300">
       {/* Main Footer Content */}
@@ -312,10 +336,15 @@ export default function Footer() {
             <div className="flex flex-col sm:flex-row max-w-md mx-auto space-y-3 sm:space-y-0 sm:space-x-3">
               <input
                 type="email"
+                value={email}
+  onChange={(e) => {
+    setEmail(e.target.value);
+    setError("");
+  }}
                 placeholder="Enter your email address"
                 className="flex-1 px-4 py-2.5 sm:py-3 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm placeholder-gray-400 focus:border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-400/20"
               />
-              <button className="px-6 py-2.5 sm:py-3 bg-gradient-to-r from-[#9a8457] to-[#726140] text-white text-sm font-medium rounded-lg hover:from-[#726140] hover:to-[#9a8457] transition-all duration-200 transform hover:scale-105 whitespace-nowrap">
+              <button onClick={handleSubscribe} className="px-6 py-2.5 sm:py-3 bg-gradient-to-r from-[#9a8457] to-[#726140] text-white text-sm font-medium rounded-lg hover:from-[#726140] hover:to-[#9a8457] transition-all duration-200 transform hover:scale-105 whitespace-nowrap">
                 Subscribe
               </button>
             </div>
@@ -461,6 +490,9 @@ export default function Footer() {
 						</div>  
         </div>
       </div>
+      {error && (
+  <p className="text-red-400 text-xs mt-1">{error}</p>
+)}
     </footer>
   );
 }
