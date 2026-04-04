@@ -1,8 +1,11 @@
+
+
 // // contexts/AppContext.tsx
-// import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
+// import React, { createContext, useContext, useReducer, ReactNode, useEffect, useState } from 'react';
 // import axios from 'axios';
 // const API_URL = import.meta.env.VITE_API_URL;
 // import { useCurrency } from "@/contexts/CurrencyContext";
+// import { CartToast } from "@/components/ui/CartToast";
 
 // // Types
 // export interface Product {
@@ -187,7 +190,15 @@
 // // Actions
 // export type AppAction =
 //   | { type: 'SET_PRODUCTS'; payload: Product[] }
-//   | { type: 'ADD_TO_CART'; payload: { product: Product; quantity: number; options?: any } }
+//   | { 
+//   type: 'ADD_TO_CART'; 
+//   payload: { 
+//     product: Product; 
+//     quantity: number; 
+//     options?: any; 
+//     showToast?: boolean; 
+//   } 
+// }
 //   | { type: 'REMOVE_FROM_CART'; payload: string }
 //   | { type: 'UPDATE_CART_QUANTITY'; payload: { _id: string; quantity: number } }
 //   | { type: 'CLEAR_CART' }
@@ -214,10 +225,30 @@
 //   return { isLoggedIn: false };
 // };
 
+// const loadCartFromStorage = (): CartItem[] => {
+//   try {
+//     const stored = localStorage.getItem('cart');
+//     if (stored) return JSON.parse(stored);
+//   } catch (error) {
+//     console.error('Error loading cart from storage:', error);
+//   }
+//   return [];
+// };
+
+// const loadWishlistFromStorage = (): WishlistItem[] => {
+//   try {
+//     const stored = localStorage.getItem('wishlist');
+//     if (stored) return JSON.parse(stored);
+//   } catch (error) {
+//     console.error('Error loading wishlist from storage:', error);
+//   }
+//   return [];
+// };
+
 // const initialState: AppState = {
 //   products: [],
-//   cart: [],
-//   wishlist: [],
+//   cart: loadCartFromStorage(),
+//   wishlist: loadWishlistFromStorage(),
 //   user: loadUserFromStorage(),
 //   selectedCurrency: 'INR',
 //   searchQuery: '',
@@ -244,46 +275,46 @@
 //     case 'SET_PRODUCTS':
 //       return { ...state, products: action.payload };
 
-//     case 'ADD_TO_CART':
+//     case 'ADD_TO_CART': {
 //       const existingItem = state.cart.find(item => item._id === action.payload.product._id);
+//       let newCart: CartItem[];
 //       if (existingItem) {
-//         return {
-//           ...state,
-//           cart: state.cart.map(item =>
-//             item._id === action.payload.product._id
-//               ? { ...item, quantity: item.quantity + action.payload.quantity }
-//               : item
-//           )
-//         };
-//       }
-//       return {
-//         ...state,
-//         cart: [...state.cart, { 
-//           ...action.payload.product, 
+//         newCart = state.cart.map(item =>
+//           item._id === action.payload.product._id
+//             ? { ...item, quantity: item.quantity + action.payload.quantity }
+//             : item
+//         );
+//       } else {
+//         newCart = [...state.cart, {
+//           ...action.payload.product,
 //           quantity: action.payload.quantity,
-//           ...action.payload.options 
-//         }]
-//       };
+//           ...action.payload.options
+//         }];
+//       }
+//       try { localStorage.setItem('cart', JSON.stringify(newCart)); } catch {}
+//       return { ...state, cart: newCart };
+//     }
 
-//     case 'REMOVE_FROM_CART':
-//       return {
-//         ...state,
-//         cart: state.cart.filter(item => item._id !== action.payload)
-//       };
+//     case 'REMOVE_FROM_CART': {
+//       const newCart = state.cart.filter(item => item._id !== action.payload);
+//       try { localStorage.setItem('cart', JSON.stringify(newCart)); } catch {}
+//       return { ...state, cart: newCart };
+//     }
 
-//     case 'UPDATE_CART_QUANTITY':
-//       return {
-//         ...state,
-//         cart: state.cart
-//           .map(item =>
-//             item._id === action.payload._id
-//               ? { ...item, quantity: Math.max(0, action.payload.quantity) }
-//               : item
-//           )
-//           .filter(item => item.quantity > 0),
-//       };
+//     case 'UPDATE_CART_QUANTITY': {
+//       const newCart = state.cart
+//         .map(item =>
+//           item._id === action.payload._id
+//             ? { ...item, quantity: Math.max(0, action.payload.quantity) }
+//             : item
+//         )
+//         .filter(item => item.quantity > 0);
+//       try { localStorage.setItem('cart', JSON.stringify(newCart)); } catch {}
+//       return { ...state, cart: newCart };
+//     }
 
 //     case 'CLEAR_CART':
+//       try { localStorage.removeItem('cart'); } catch {}
 //       return { ...state, cart: [] };
 
 //     case 'ADD_TO_WISHLIST': {
@@ -292,25 +323,25 @@
 //       );
 //       if (isAlreadyInWishlist) return state;
 
-//       return {
-//         ...state,
-//         wishlist: [
-//           ...state.wishlist,
-//           { 
-//             ...action.payload, 
-//             addedDate: new Date().toISOString().split('T')[0] 
-//           }
-//         ]
-//       };
+//       const newWishlist = [
+//         ...state.wishlist,
+//         {
+//           ...action.payload,
+//           addedDate: new Date().toISOString().split('T')[0]
+//         }
+//       ];
+//       try { localStorage.setItem('wishlist', JSON.stringify(newWishlist)); } catch {}
+//       return { ...state, wishlist: newWishlist };
 //     }
 
-//     case 'REMOVE_FROM_WISHLIST':
-//       return {
-//         ...state,
-//         wishlist: state.wishlist.filter(item => item._id !== action.payload)
-//       };
+//     case 'REMOVE_FROM_WISHLIST': {
+//       const newWishlist = state.wishlist.filter(item => item._id !== action.payload);
+//       try { localStorage.setItem('wishlist', JSON.stringify(newWishlist)); } catch {}
+//       return { ...state, wishlist: newWishlist };
+//     }
 
 //     case 'CLEAR_WISHLIST':
+//       try { localStorage.removeItem('wishlist'); } catch {}
 //       return { ...state, wishlist: [] };
 
 //     case 'SET_USER':
@@ -324,6 +355,7 @@
 //     case 'LOGOUT':
 //       try {
 //         localStorage.removeItem('user');
+//          localStorage.removeItem('token');
 //       } catch (error) {
 //         console.error('Error removing user from storage:', error);
 //       }
@@ -370,14 +402,23 @@
 // const AppContext = createContext<{
 //   state: AppState;
 //   dispatch: React.Dispatch<AppAction>;
+//   setCartToast?: (toast: { message: string; productName?: string } | null) => void;
 // } | null>(null);
 
 // export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 //   const [state, dispatch] = useReducer(appReducer, initialState);
+//   const [cartToast, setCartToast] = useState<{ message: string; productName?: string } | null>(null);
 
 //   return (
-//     <AppContext.Provider value={{ state, dispatch }}>
+//     <AppContext.Provider value={{ state, dispatch, setCartToast }}>
 //       {children}
+//       {cartToast && (
+//         <CartToast
+//           message={cartToast.message}
+//           productName={cartToast.productName}
+//           onClose={() => setCartToast(null)}
+//         />
+//       )}
 //     </AppContext.Provider>
 //   );
 // };
@@ -391,10 +432,23 @@
 // };
 
 // export const useCart = () => {
-//   const { state, dispatch } = useAppContext();
+//   const { state, dispatch, setCartToast } = useAppContext();
 
-//   const addToCart = (product: Product, quantity: number = 1, options?: any) => {
-//     dispatch({ type: 'ADD_TO_CART', payload: { product, quantity, options } });
+//   const addToCart = (
+//   product: any,
+//   quantity: number = 1,
+//   options: any = {},
+//   showToast: boolean = true
+// ) => {
+//     dispatch({ type: 'ADD_TO_CART', payload: { product, quantity, options , showToast} });
+    
+//     // Show toast notification
+//     if (setCartToast) {
+//       setCartToast({
+//         message: `${quantity} item${quantity > 1 ? 's' : ''} added successfully`,
+//         productName: product.name,
+//       });
+//     }
 //   };
 
 //   const removeFromCart = (id: string) => {
@@ -777,6 +831,12 @@
 // };
 
 
+
+
+
+
+
+
 // contexts/AppContext.tsx
 import React, { createContext, useContext, useReducer, ReactNode, useEffect, useState } from 'react';
 import axios from 'axios';
@@ -982,6 +1042,7 @@ export type AppAction =
   | { type: 'ADD_TO_WISHLIST'; payload: Product }
   | { type: 'REMOVE_FROM_WISHLIST'; payload: string }
   | { type: 'CLEAR_WISHLIST' }
+  | { type: 'SET_WISHLIST'; payload: WishlistItem[] }
   | { type: 'SET_USER'; payload: User }
   | { type: 'LOGOUT' }
   | { type: 'SET_CURRENCY'; payload: string }
@@ -1013,9 +1074,14 @@ const loadCartFromStorage = (): CartItem[] => {
 };
 
 const loadWishlistFromStorage = (): WishlistItem[] => {
+  // Only IDs are persisted; full objects are fetched from backend for logged-in users
   try {
-    const stored = localStorage.getItem('wishlist');
-    if (stored) return JSON.parse(stored);
+    const stored = localStorage.getItem('wishlist_ids');
+    if (stored) {
+      const ids: string[] = JSON.parse(stored);
+      // Return minimal placeholder objects — will be replaced by backend fetch for logged-in users
+      return ids.map(id => ({ _id: id } as WishlistItem));
+    }
   } catch (error) {
     console.error('Error loading wishlist from storage:', error);
   }
@@ -1107,19 +1173,26 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
           addedDate: new Date().toISOString().split('T')[0]
         }
       ];
-      try { localStorage.setItem('wishlist', JSON.stringify(newWishlist)); } catch {}
+      try {
+        localStorage.setItem('wishlist_ids', JSON.stringify(newWishlist.map(i => i._id)));
+      } catch {}
       return { ...state, wishlist: newWishlist };
     }
 
     case 'REMOVE_FROM_WISHLIST': {
       const newWishlist = state.wishlist.filter(item => item._id !== action.payload);
-      try { localStorage.setItem('wishlist', JSON.stringify(newWishlist)); } catch {}
+      try {
+        localStorage.setItem('wishlist_ids', JSON.stringify(newWishlist.map(i => i._id)));
+      } catch {}
       return { ...state, wishlist: newWishlist };
     }
 
     case 'CLEAR_WISHLIST':
-      try { localStorage.removeItem('wishlist'); } catch {}
+      try { localStorage.removeItem('wishlist_ids'); } catch {}
       return { ...state, wishlist: [] };
+
+    case 'SET_WISHLIST':
+      return { ...state, wishlist: action.payload };
 
     case 'SET_USER':
       try {
@@ -1256,17 +1329,78 @@ export const useCart = () => {
 
 export const useWishlist = () => {
   const { state, dispatch } = useAppContext();
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  const addToWishlist = (product: Product) => {
+  const getAuthHeader = () => {
+    const token = localStorage.getItem("token");
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
+  // Fetch fresh wishlist from backend (logged-in users only)
+  const fetchWishlist = async () => {
+    const token = localStorage.getItem("token");
+    if (!token || !state.user.isLoggedIn) return;
+    try {
+      const res = await axios.get(`${API_URL}/api/wishlist`, {
+        headers: getAuthHeader(),
+      });
+      // res.data.items is an array of product IDs (ObjectId strings)
+      const ids: string[] = res.data.items.map((id: any) => id.toString());
+      // Build WishlistItem list — merge with existing full product data if available
+      const merged: WishlistItem[] = ids.map(id => {
+        const existing = state.wishlist.find(w => w._id === id);
+        return existing ?? ({ _id: id } as WishlistItem);
+      });
+      // Also persist IDs locally
+      try { localStorage.setItem('wishlist_ids', JSON.stringify(ids)); } catch {}
+      dispatch({ type: 'SET_WISHLIST', payload: merged });
+    } catch (err) {
+      console.error('Failed to fetch wishlist from backend', err);
+    }
+  };
+
+  const addToWishlist = async (product: Product) => {
     dispatch({ type: 'ADD_TO_WISHLIST', payload: product });
+    const token = localStorage.getItem("token");
+    if (token && state.user.isLoggedIn) {
+      try {
+        await axios.post(
+          `${API_URL}/api/wishlist/add`,
+          { productId: product._id },
+          { headers: getAuthHeader() }
+        );
+      } catch (err) {
+        console.error('Failed to sync wishlist add to backend', err);
+      }
+    }
   };
 
-  const removeFromWishlist = (_id: string) => {
+  const removeFromWishlist = async (_id: string) => {
     dispatch({ type: 'REMOVE_FROM_WISHLIST', payload: _id });
+    const token = localStorage.getItem("token");
+    if (token && state.user.isLoggedIn) {
+      try {
+        await axios.delete(`${API_URL}/api/wishlist/remove/${_id}`, {
+          headers: getAuthHeader(),
+        });
+      } catch (err) {
+        console.error('Failed to sync wishlist remove to backend', err);
+      }
+    }
   };
 
-  const clearWishlist = () => {
+  const clearWishlist = async () => {
     dispatch({ type: 'CLEAR_WISHLIST' });
+    const token = localStorage.getItem("token");
+    if (token && state.user.isLoggedIn) {
+      try {
+        await axios.delete(`${API_URL}/api/wishlist/clear`, {
+          headers: getAuthHeader(),
+        });
+      } catch (err) {
+        console.error('Failed to sync wishlist clear to backend', err);
+      }
+    }
   };
 
   const isInWishlist = (_id: string) => {
@@ -1279,6 +1413,7 @@ export const useWishlist = () => {
     removeFromWishlist,
     clearWishlist,
     isInWishlist,
+    fetchWishlist,
     wishlistCount: state.wishlist.length
   };
 };
@@ -1606,6 +1741,13 @@ export const useAuth = () => {
     isLoggedIn: state.user.isLoggedIn
   };
 };
+
+
+
+
+
+
+
 
 
 
