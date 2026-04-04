@@ -415,6 +415,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import axios from "axios";
+import Toast from "../Toast";
 
 interface VirtualAppointmentModalProps {
   isOpen: boolean;
@@ -435,6 +436,11 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
     appointmentType: "consultation",
     message: "",
   });
+
+  const [toast, setToast] = useState<{
+  message: string;
+  type: "success" | "error";
+} | null>(null);
 
   const [currentStep, setCurrentStep] = useState(1);
 
@@ -894,9 +900,14 @@ const VirtualAppointmentModal: React.FC<VirtualAppointmentModalProps> = ({
             )}
           </form>
         </div>
-
-        {/* Sticky Footer */}
       </div>
+      {toast && (
+  <Toast
+    message={toast.message}
+    type={toast.type}
+    onClose={() => setToast(null)}
+  />
+)}
     </div>
   );
 };

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Product } from '@/contexts/AppContext';
 import axios from 'axios';
 import { CheckCircle, ArrowRight, X, Copy } from 'lucide-react';
+import Toast from '../Toast';
 
 interface QueryModalProps {
 	product: Product;

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Sparkles, CheckCircle, Clock, Mail, Phone } from 'lucide-react';
 import axios from 'axios';
+import Toast from '@/components/Toast';
 
 export default function BespokeService() {
   const [formData, setFormData] = useState({
@@ -20,6 +21,11 @@ export default function BespokeService() {
     colorOther: '',
     clarityOther: ''
   });
+
+  const [toast, setToast] = useState<{
+  message: string;
+  type: "success" | "error";
+} | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -369,6 +375,13 @@ export default function BespokeService() {
           </div>
         </div>
       </div>
+      {toast && (
+  <Toast
+    message={toast.message}
+    type={toast.type}
+    onClose={() => setToast(null)}
+  />
+)}
     </div>
   );
 }
