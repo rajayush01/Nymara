@@ -1531,12 +1531,12 @@ const CartPage = () => {
               Thank you for your purchase. Your order #{orderId || "Processing"}{" "}
               has been confirmed and will be processed shortly.
             </p>
-            <div className="bg-gray-50 rounded-lg p-4 mb-6">
+            {/* <div className="bg-gray-50 rounded-lg p-4 mb-6">
               <div className="text-sm text-gray-600 mb-2">Order Total</div>
               <div className="text-xl sm:text-2xl font-bold text-[#9a8457]">
                 ₹{total.toLocaleString()}
               </div>
-            </div>
+            </div> */}
             <div className="space-y-3">
               <button
                 onClick={() => navigate("/products")}
