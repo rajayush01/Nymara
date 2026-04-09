@@ -1,4 +1,6 @@
 
+
+
 // import React, { useState, useEffect } from "react";
 // import { useNavigate } from "react-router-dom";
 // import {
@@ -52,16 +54,35 @@
 //     ),
 //   ] as string[];
 
-//   // ✅ Helper (same as in CartPage)
+//   // ✅ Helper — mirrors ProductCard price logic so both show the same value
 //   const getDisplayPrice = (item: WishlistItem) => {
 //     const currency = selectedCountry.currency;
 
-//     if (item.prices && item.prices[currency]) {
-//       const { amount, symbol } = item.prices[currency];
-//       return { amount, symbol };
+//     // 1. Use backend-computed converted price (set at fetch time in ProductCard)
+//     if (item.totalConvertedPrice != null) {
+//       return {
+//         amount: Number(item.totalConvertedPrice),
+//         symbol: item.currency || "₹",
+//       };
 //     }
 
-//     // fallback to INR
+//     // 2. Use displayPrice if available
+//     if (item.displayPrice != null) {
+//       return {
+//         amount: Number(item.displayPrice),
+//         symbol: item.currency || "₹",
+//       };
+//     }
+
+//     // 3. Use prices map (currency-keyed)
+//     if (item.prices?.[currency]) {
+//       return {
+//         amount: item.prices[currency].amount,
+//         symbol: item.prices[currency].symbol,
+//       };
+//     }
+
+//     // 4. Raw INR fallback
 //     return { amount: item.price || 0, symbol: "₹" };
 //   };
 
@@ -541,9 +562,12 @@ import {
   X,
   AlertTriangle,
 } from "lucide-react";
+import axios from "axios";
 import { useWishlist, useCart, WishlistItem } from "@/contexts/AppContext";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useTracking } from "@/contexts/TrackingContext";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const FavoritesPage = () => {
   const navigate = useNavigate();
@@ -554,6 +578,7 @@ const FavoritesPage = () => {
   const [localToasts, setLocalToasts] = useState<{ [key: string]: boolean }>(
     {},
   );
+  const [enrichedWishlist, setEnrichedWishlist] = useState<WishlistItem[]>([]);
 
   const { wishlist, removeFromWishlist, clearWishlist, fetchWishlist } = useWishlist();
   const { addToCart } = useCart();
@@ -565,11 +590,63 @@ const FavoritesPage = () => {
     fetchWishlist();
   }, []);
 
+  // Fetch fresh prices from backend whenever wishlist or currency changes
+  useEffect(() => {
+    if (wishlist.length === 0) {
+      setEnrichedWishlist([]);
+      return;
+    }
+
+    const fetchFreshPrices = async () => {
+      try {
+        const updated = await Promise.all(
+          wishlist.map(async (item) => {
+            if (!item.name) return item; // skip stub-only items
+            try {
+              const { data } = await axios.get(
+                `${API_URL}/api/user/ornaments/${item._id}`,
+                { params: { currency: selectedCountry.currency } },
+              );
+              const o = data.ornament;
+              return {
+                ...item,
+                prices: {
+                  [selectedCountry.currency]: {
+                    amount: Number(o.displayPrice),
+                    symbol: o.currency,
+                  },
+                },
+                makingChargesByCountry: {
+                  [selectedCountry.currency]: {
+                    amount: Number(o.convertedMakingCharge),
+                    symbol: o.currency,
+                  },
+                },
+                currency: o.currency,
+                totalConvertedPrice: Number(o.totalConvertedPrice),
+                displayPrice: Number(o.displayPrice),
+                convertedMakingCharge: Number(o.convertedMakingCharge),
+              } as WishlistItem;
+            } catch {
+              return item; // fallback to stored data if fetch fails
+            }
+          }),
+        );
+        setEnrichedWishlist(updated);
+      } catch (err) {
+        console.error("Failed to refresh wishlist prices", err);
+        setEnrichedWishlist(wishlist);
+      }
+    };
+
+    fetchFreshPrices();
+  }, [wishlist, selectedCountry.currency]);
+
   const categories = [
     "all",
     ...Array.from(
       new Set(
-        wishlist
+        enrichedWishlist
           .map((item) =>
             Array.isArray(item.category)
               ? item.category.join(", ")
@@ -580,36 +657,22 @@ const FavoritesPage = () => {
     ),
   ] as string[];
 
-  // ✅ Helper — mirrors ProductCard price logic so both show the same value
+  // Same logic as CartPage: prices[currency] is base, making only added for INR
   const getDisplayPrice = (item: WishlistItem) => {
     const currency = selectedCountry.currency;
+    const making = currency === "INR"
+      ? (item.makingChargesByCountry?.[currency]?.amount ?? 0)
+      : 0;
 
-    // 1. Use backend-computed converted price (set at fetch time in ProductCard)
-    if (item.totalConvertedPrice != null) {
-      return {
-        amount: Number(item.totalConvertedPrice),
-        symbol: item.currency || "₹",
-      };
-    }
-
-    // 2. Use displayPrice if available
-    if (item.displayPrice != null) {
-      return {
-        amount: Number(item.displayPrice),
-        symbol: item.currency || "₹",
-      };
-    }
-
-    // 3. Use prices map (currency-keyed)
     if (item.prices?.[currency]) {
       return {
-        amount: item.prices[currency].amount,
+        amount: item.prices[currency].amount + making,
         symbol: item.prices[currency].symbol,
       };
     }
 
-    // 4. Raw INR fallback
-    return { amount: item.price || 0, symbol: "₹" };
+    // fallback
+    return { amount: (item.price || 0) + making, symbol: item.currency || "₹" };
   };
 
   const handleAddToCart = (item: WishlistItem) => {
@@ -670,7 +733,7 @@ const FavoritesPage = () => {
   //   }
   // };
 
-  const filteredItems = wishlist.filter((item) => {
+  const filteredItems = enrichedWishlist.filter((item) => {
     const itemCategory = Array.isArray(item.category)
       ? item.category.join(", ")
       : item.category || "";
