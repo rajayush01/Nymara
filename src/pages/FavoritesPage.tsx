@@ -657,18 +657,18 @@ const FavoritesPage = () => {
     };
   }, [showClearModal]);
 
-  const shareWishlist = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: "My Jewelry Wishlist",
-        text: "Check out my favorite jewelry pieces!",
-        url: window.location.href,
-      });
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      console.log("Wishlist URL copied to clipboard");
-    }
-  };
+  // const shareWishlist = () => {
+  //   if (navigator.share) {
+  //     navigator.share({
+  //       title: "My Jewelry Wishlist",
+  //       text: "Check out my favorite jewelry pieces!",
+  //       url: window.location.href,
+  //     });
+  //   } else {
+  //     navigator.clipboard.writeText(window.location.href);
+  //     console.log("Wishlist URL copied to clipboard");
+  //   }
+  // };
 
   const filteredItems = wishlist.filter((item) => {
     const itemCategory = Array.isArray(item.category)
@@ -785,7 +785,7 @@ const FavoritesPage = () => {
 
           <div className="flex items-center space-x-2 mb-4 text-xs text-gray-600">
             <span>{item.metalType}</span>
-            <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+            {/* <span className="w-1 h-1 bg-gray-300 rounded-full"></span> */}
             <span>{item.stoneType}</span>
           </div>
 
@@ -842,12 +842,13 @@ const FavoritesPage = () => {
           <div className="flex items-center mt-1">
             <Star className="w-3 h-3 text-yellow-400 fill-current" />
             <span className="text-xs text-gray-600 ml-1">
-              {item.rating} ({item.reviews})
+              {item.rating}
+               {/* ({item.reviews}) */}
             </span>
           </div>
-          <div className="text-xs text-gray-600 mt-1">
+          {/* <div className="text-xs text-gray-600 mt-1">
             {item.metalType} • {item.stoneType}
-          </div>
+          </div> */}
         </div>
 
         <div className="text-right">
@@ -897,13 +898,13 @@ const FavoritesPage = () => {
             <div className="flex items-center space-x-4">
               {wishlist.length > 0 && (
                 <>
-                  <button
+                  {/* <button
                     onClick={shareWishlist}
                     className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <Share2 className="w-4 h-4" />
                     <span>Share</span>
-                  </button>
+                  </button> */}
                   <button
                     onClick={() => setShowClearModal(true)}
                     className="flex items-center space-x-2 px-4 py-2 text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors"
