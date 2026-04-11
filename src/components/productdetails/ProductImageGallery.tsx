@@ -1,6 +1,6 @@
 // components/product/ProductImageGallery.tsx
-import React from "react";
-import { Eye, Share2,ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useState } from "react";
+import { Eye, Share2,ChevronLeft, ChevronRight, Info } from "lucide-react";
 import { Product } from "@/contexts/AppContext";
 import axios from "axios";
 
@@ -62,6 +62,8 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
   VITE_API_URL,
   setLoading,
 }) => {
+  const [showNoVideoPopup, setShowNoVideoPopup] = useState(false);
+  
   // Check if this product or any of its variants has a video
   const hasVideoInFamily = React.useMemo(() => {
     const videoSKUs = ['DI-W-NEC-109', 'DI-W-NEC-121', 'DI-W-NEC-112', 'DI-W-NEC-124'];
@@ -305,7 +307,8 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
             if (hasVideoInFamily) {
               setShowVideoModal(true);
             } else {
-              alert("No 360° view available for this product.");
+              setShowNoVideoPopup(true);
+              setTimeout(() => setShowNoVideoPopup(false), 3000);
             }
           }}
           className="w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2"
@@ -321,6 +324,28 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
           <span>Share</span>
         </button>
       </div>
+
+      {/* No 360° View Popup */}
+      {showNoVideoPopup && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black bg-opacity-50 animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg animate-in zoom-in duration-300">
+                <Info className="w-12 h-12 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                360° View Unavailable
+              </h3>
+              <p className="text-gray-600 mb-2">
+                No 360° view available for this product.
+              </p>
+              <p className="text-sm text-gray-500">
+                Please check the product images for detailed views.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
