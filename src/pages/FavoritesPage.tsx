@@ -1,6 +1,5 @@
 
 
-
 // import React, { useState, useEffect } from "react";
 // import { useNavigate } from "react-router-dom";
 // import {
@@ -15,9 +14,12 @@
 //   X,
 //   AlertTriangle,
 // } from "lucide-react";
+// import axios from "axios";
 // import { useWishlist, useCart, WishlistItem } from "@/contexts/AppContext";
 // import { useCurrency } from "@/contexts/CurrencyContext";
 // import { useTracking } from "@/contexts/TrackingContext";
+
+// const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 // const FavoritesPage = () => {
 //   const navigate = useNavigate();
@@ -28,6 +30,7 @@
 //   const [localToasts, setLocalToasts] = useState<{ [key: string]: boolean }>(
 //     {},
 //   );
+//   const [enrichedWishlist, setEnrichedWishlist] = useState<WishlistItem[]>([]);
 
 //   const { wishlist, removeFromWishlist, clearWishlist, fetchWishlist } = useWishlist();
 //   const { addToCart } = useCart();
@@ -39,11 +42,63 @@
 //     fetchWishlist();
 //   }, []);
 
+//   // Fetch fresh prices from backend whenever wishlist or currency changes
+//   useEffect(() => {
+//     if (wishlist.length === 0) {
+//       setEnrichedWishlist([]);
+//       return;
+//     }
+
+//     const fetchFreshPrices = async () => {
+//       try {
+//         const updated = await Promise.all(
+//           wishlist.map(async (item) => {
+//             if (!item.name) return item; // skip stub-only items
+//             try {
+//               const { data } = await axios.get(
+//                 `${API_URL}/api/user/ornaments/${item._id}`,
+//                 { params: { currency: selectedCountry.currency } },
+//               );
+//               const o = data.ornament;
+//               return {
+//                 ...item,
+//                 prices: {
+//                   [selectedCountry.currency]: {
+//                     amount: Number(o.displayPrice),
+//                     symbol: o.currency,
+//                   },
+//                 },
+//                 makingChargesByCountry: {
+//                   [selectedCountry.currency]: {
+//                     amount: Number(o.convertedMakingCharge),
+//                     symbol: o.currency,
+//                   },
+//                 },
+//                 currency: o.currency,
+//                 totalConvertedPrice: Number(o.totalConvertedPrice),
+//                 displayPrice: Number(o.displayPrice),
+//                 convertedMakingCharge: Number(o.convertedMakingCharge),
+//               } as WishlistItem;
+//             } catch {
+//               return item; // fallback to stored data if fetch fails
+//             }
+//           }),
+//         );
+//         setEnrichedWishlist(updated);
+//       } catch (err) {
+//         console.error("Failed to refresh wishlist prices", err);
+//         setEnrichedWishlist(wishlist);
+//       }
+//     };
+
+//     fetchFreshPrices();
+//   }, [wishlist, selectedCountry.currency]);
+
 //   const categories = [
 //     "all",
 //     ...Array.from(
 //       new Set(
-//         wishlist
+//         enrichedWishlist
 //           .map((item) =>
 //             Array.isArray(item.category)
 //               ? item.category.join(", ")
@@ -54,36 +109,22 @@
 //     ),
 //   ] as string[];
 
-//   // ✅ Helper — mirrors ProductCard price logic so both show the same value
+//   // Same logic as CartPage: prices[currency] is base, making only added for INR
 //   const getDisplayPrice = (item: WishlistItem) => {
 //     const currency = selectedCountry.currency;
+//     const making = currency === "INR"
+//       ? (item.makingChargesByCountry?.[currency]?.amount ?? 0)
+//       : 0;
 
-//     // 1. Use backend-computed converted price (set at fetch time in ProductCard)
-//     if (item.totalConvertedPrice != null) {
-//       return {
-//         amount: Number(item.totalConvertedPrice),
-//         symbol: item.currency || "₹",
-//       };
-//     }
-
-//     // 2. Use displayPrice if available
-//     if (item.displayPrice != null) {
-//       return {
-//         amount: Number(item.displayPrice),
-//         symbol: item.currency || "₹",
-//       };
-//     }
-
-//     // 3. Use prices map (currency-keyed)
 //     if (item.prices?.[currency]) {
 //       return {
-//         amount: item.prices[currency].amount,
+//         amount: item.prices[currency].amount + making,
 //         symbol: item.prices[currency].symbol,
 //       };
 //     }
 
-//     // 4. Raw INR fallback
-//     return { amount: item.price || 0, symbol: "₹" };
+//     // fallback
+//     return { amount: (item.price || 0) + making, symbol: item.currency || "₹" };
 //   };
 
 //   const handleAddToCart = (item: WishlistItem) => {
@@ -131,20 +172,20 @@
 //     };
 //   }, [showClearModal]);
 
-//   const shareWishlist = () => {
-//     if (navigator.share) {
-//       navigator.share({
-//         title: "My Jewelry Wishlist",
-//         text: "Check out my favorite jewelry pieces!",
-//         url: window.location.href,
-//       });
-//     } else {
-//       navigator.clipboard.writeText(window.location.href);
-//       console.log("Wishlist URL copied to clipboard");
-//     }
-//   };
+//   // const shareWishlist = () => {
+//   //   if (navigator.share) {
+//   //     navigator.share({
+//   //       title: "My Jewelry Wishlist",
+//   //       text: "Check out my favorite jewelry pieces!",
+//   //       url: window.location.href,
+//   //     });
+//   //   } else {
+//   //     navigator.clipboard.writeText(window.location.href);
+//   //     console.log("Wishlist URL copied to clipboard");
+//   //   }
+//   // };
 
-//   const filteredItems = wishlist.filter((item) => {
+//   const filteredItems = enrichedWishlist.filter((item) => {
 //     const itemCategory = Array.isArray(item.category)
 //       ? item.category.join(", ")
 //       : item.category || "";
@@ -259,7 +300,7 @@
 
 //           <div className="flex items-center space-x-2 mb-4 text-xs text-gray-600">
 //             <span>{item.metalType}</span>
-//             <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+//             {/* <span className="w-1 h-1 bg-gray-300 rounded-full"></span> */}
 //             <span>{item.stoneType}</span>
 //           </div>
 
@@ -316,12 +357,13 @@
 //           <div className="flex items-center mt-1">
 //             <Star className="w-3 h-3 text-yellow-400 fill-current" />
 //             <span className="text-xs text-gray-600 ml-1">
-//               {item.rating} ({item.reviews})
+//               {item.rating}
+//                {/* ({item.reviews}) */}
 //             </span>
 //           </div>
-//           <div className="text-xs text-gray-600 mt-1">
+//           {/* <div className="text-xs text-gray-600 mt-1">
 //             {item.metalType} • {item.stoneType}
-//           </div>
+//           </div> */}
 //         </div>
 
 //         <div className="text-right">
@@ -371,13 +413,13 @@
 //             <div className="flex items-center space-x-4">
 //               {wishlist.length > 0 && (
 //                 <>
-//                   <button
+//                   {/* <button
 //                     onClick={shareWishlist}
 //                     className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
 //                   >
 //                     <Share2 className="w-4 h-4" />
 //                     <span>Share</span>
-//                   </button>
+//                   </button> */}
 //                   <button
 //                     onClick={() => setShowClearModal(true)}
 //                     className="flex items-center space-x-2 px-4 py-2 text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors"
@@ -548,6 +590,13 @@
 
 // export default FavoritesPage;
 
+
+
+
+
+
+
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -601,15 +650,30 @@ const FavoritesPage = () => {
       try {
         const updated = await Promise.all(
           wishlist.map(async (item) => {
-            if (!item.name) return item; // skip stub-only items
             try {
               const { data } = await axios.get(
                 `${API_URL}/api/user/ornaments/${item._id}`,
                 { params: { currency: selectedCountry.currency } },
               );
               const o = data.ornament;
+              if (!o) return item;
               return {
                 ...item,
+                // full product fields from backend
+                name: o.name,
+                coverImage: o.coverImage,
+                images: o.images,
+                category: o.category,
+                metalType: o.metalType || o.metal?.metalType,
+                stoneType: o.stoneType,
+                rating: o.rating,
+                reviews: o.reviews,
+                inStock: o.inStock,
+                isNew: o.isNew,
+                isBestSeller: o.isBestSeller,
+                originalPrice: o.originalPrice,
+                addedDate: item.addedDate || new Date().toISOString().split('T')[0],
+                // fresh pricing
                 prices: {
                   [selectedCountry.currency]: {
                     amount: Number(o.displayPrice),
@@ -628,7 +692,7 @@ const FavoritesPage = () => {
                 convertedMakingCharge: Number(o.convertedMakingCharge),
               } as WishlistItem;
             } catch {
-              return item; // fallback to stored data if fetch fails
+              return item;
             }
           }),
         );
@@ -720,18 +784,18 @@ const FavoritesPage = () => {
     };
   }, [showClearModal]);
 
-  // const shareWishlist = () => {
-  //   if (navigator.share) {
-  //     navigator.share({
-  //       title: "My Jewelry Wishlist",
-  //       text: "Check out my favorite jewelry pieces!",
-  //       url: window.location.href,
-  //     });
-  //   } else {
-  //     navigator.clipboard.writeText(window.location.href);
-  //     console.log("Wishlist URL copied to clipboard");
-  //   }
-  // };
+  const shareWishlist = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: "My Jewelry Wishlist",
+        text: "Check out my favorite jewelry pieces!",
+        url: window.location.href,
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      console.log("Wishlist URL copied to clipboard");
+    }
+  };
 
   const filteredItems = enrichedWishlist.filter((item) => {
     const itemCategory = Array.isArray(item.category)
@@ -848,7 +912,7 @@ const FavoritesPage = () => {
 
           <div className="flex items-center space-x-2 mb-4 text-xs text-gray-600">
             <span>{item.metalType}</span>
-            {/* <span className="w-1 h-1 bg-gray-300 rounded-full"></span> */}
+            <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
             <span>{item.stoneType}</span>
           </div>
 
@@ -905,13 +969,12 @@ const FavoritesPage = () => {
           <div className="flex items-center mt-1">
             <Star className="w-3 h-3 text-yellow-400 fill-current" />
             <span className="text-xs text-gray-600 ml-1">
-              {item.rating}
-               {/* ({item.reviews}) */}
+              {item.rating} ({item.reviews})
             </span>
           </div>
-          {/* <div className="text-xs text-gray-600 mt-1">
+          <div className="text-xs text-gray-600 mt-1">
             {item.metalType} • {item.stoneType}
-          </div> */}
+          </div>
         </div>
 
         <div className="text-right">
@@ -961,13 +1024,7 @@ const FavoritesPage = () => {
             <div className="flex items-center space-x-4">
               {wishlist.length > 0 && (
                 <>
-                  {/* <button
-                    onClick={shareWishlist}
-                    className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <Share2 className="w-4 h-4" />
-                    <span>Share</span>
-                  </button> */}
+                  
                   <button
                     onClick={() => setShowClearModal(true)}
                     className="flex items-center space-x-2 px-4 py-2 text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors"
@@ -1137,5 +1194,6 @@ const FavoritesPage = () => {
 };
 
 export default FavoritesPage;
+
 
 
