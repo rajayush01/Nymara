@@ -1,6 +1,8 @@
+
+
 // // components/product/ProductImageGallery.tsx
-// import React from "react";
-// import { Eye, Share2,ChevronLeft, ChevronRight } from "lucide-react";
+// import React, { useState } from "react";
+// import { Eye, Share2,ChevronLeft, ChevronRight, Info } from "lucide-react";
 // import { Product } from "@/contexts/AppContext";
 // import axios from "axios";
 
@@ -62,6 +64,13 @@
 //   VITE_API_URL,
 //   setLoading,
 // }) => {
+
+//   const [showNoVideoPopup, setShowNoVideoPopup] = useState(false);
+  
+
+//   const [brokenImages, setBrokenImages] = React.useState<Set<number>>(new Set());
+//   const validImages = productImages.filter((_, i) => !brokenImages.has(i));
+
 //   // Check if this product or any of its variants has a video
 //   const hasVideoInFamily = React.useMemo(() => {
 //     const videoSKUs = ['DI-W-NEC-109', 'DI-W-NEC-121', 'DI-W-NEC-112', 'DI-W-NEC-124'];
@@ -260,8 +269,10 @@
 //       )}
 
 //       {/* Thumbnail images */}
-//       <div className="grid grid-cols-4 gap-4">
-//         {productImages.map((image, index) => (
+//       <div className={`grid gap-4 ${validImages.length <= 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
+//         {productImages.map((image, index) => {
+//           if (brokenImages.has(index)) return null;
+//           return (
 //           <button
 //             key={index}
 //             onClick={() => setActiveImageIndex(index)}
@@ -271,7 +282,6 @@
 //                 : "border-gray-200 hover:border-gray-300"
 //             }`}
 //           >
-//             {/* Show video thumbnail with play icon for first image if video exists in family */}
 //             {hasVideoInFamily && index === 0 ? (
 //               <>
 //                 <video
@@ -292,10 +302,12 @@
 //                 src={image}
 //                 alt={`${product.name} ${index + 1}`}
 //                 className="w-full h-full object-cover"
+//                 onError={() => setBrokenImages(prev => new Set(prev).add(index))}
 //               />
 //             )}
 //           </button>
-//         ))}
+//           );
+//         })}
 //       </div>
 
 //       {/* Action buttons */}
@@ -305,7 +317,8 @@
 //             if (hasVideoInFamily) {
 //               setShowVideoModal(true);
 //             } else {
-//               alert("No 360° view available for this product.");
+//               setShowNoVideoPopup(true);
+//               setTimeout(() => setShowNoVideoPopup(false), 3000);
 //             }
 //           }}
 //           className="w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2"
@@ -321,6 +334,28 @@
 //           <span>Share</span>
 //         </button>
 //       </div>
+
+//       {/* No 360° View Popup */}
+//       {showNoVideoPopup && (
+//         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black bg-opacity-50 animate-in fade-in duration-200">
+//           <div className="bg-white rounded-2xl max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+//             <div className="text-center">
+//               <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg animate-in zoom-in duration-300">
+//                 <Info className="w-12 h-12 text-white" />
+//               </div>
+//               <h3 className="text-2xl font-bold text-gray-900 mb-3">
+//                 360° View Unavailable
+//               </h3>
+//               <p className="text-gray-600 mb-2">
+//                 No 360° view available for this product.
+//               </p>
+//               <p className="text-sm text-gray-500">
+//                 Please check the product images for detailed views.
+//               </p>
+//             </div>
+//           </div>
+//         </div>
+//       )}
 //     </div>
 //   );
 // };
@@ -328,8 +363,8 @@
 // export default ProductImageGallery;
 
 // components/product/ProductImageGallery.tsx
-import React, { useState } from "react";
-import { Eye, Share2,ChevronLeft, ChevronRight, Info } from "lucide-react";
+import React from "react";
+import { Eye, Share2,ChevronLeft, ChevronRight } from "lucide-react";
 import { Product } from "@/contexts/AppContext";
 import axios from "axios";
 
@@ -391,13 +426,8 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
   VITE_API_URL,
   setLoading,
 }) => {
-
-  const [showNoVideoPopup, setShowNoVideoPopup] = useState(false);
-  
-
   const [brokenImages, setBrokenImages] = React.useState<Set<number>>(new Set());
   const validImages = productImages.filter((_, i) => !brokenImages.has(i));
-
   // Check if this product or any of its variants has a video
   const hasVideoInFamily = React.useMemo(() => {
     const videoSKUs = ['DI-W-NEC-109', 'DI-W-NEC-121', 'DI-W-NEC-112', 'DI-W-NEC-124'];
@@ -483,6 +513,16 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
         className={`w-full h-full object-cover transition-transform duration-300 ${
           isZoomed ? "scale-150" : "hover:scale-105"
         }`}
+        onError={() => {
+          // Mark as broken and advance to next valid image
+          setBrokenImages(prev => {
+            const next = new Set(prev).add(activeImageIndex);
+            // find next non-broken index
+            const nextIdx = productImages.findIndex((_, i) => !next.has(i) && i !== activeImageIndex);
+            if (nextIdx !== -1) setActiveImageIndex(nextIdx);
+            return next;
+          });
+        }}
       />
     )}
   </div>
@@ -491,9 +531,11 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
   <button
     onClick={(e) => {
       e.stopPropagation();
-      setActiveImageIndex(
-        activeImageIndex === 0 ? productImages.length - 1 : activeImageIndex - 1
-      );
+      const validIndices = productImages.map((_, i) => i).filter(i => !brokenImages.has(i));
+      if (validIndices.length === 0) return;
+      const pos = validIndices.indexOf(activeImageIndex);
+      const prevPos = (pos - 1 + validIndices.length) % validIndices.length;
+      setActiveImageIndex(validIndices[prevPos]);
     }}
     className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white shadow-md rounded-full p-2 transition-all"
   >
@@ -504,9 +546,11 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
   <button
     onClick={(e) => {
       e.stopPropagation();
-      setActiveImageIndex(
-        activeImageIndex === productImages.length - 1 ? 0 : activeImageIndex + 1
-      );
+      const validIndices = productImages.map((_, i) => i).filter(i => !brokenImages.has(i));
+      if (validIndices.length === 0) return;
+      const pos = validIndices.indexOf(activeImageIndex);
+      const nextPos = (pos + 1) % validIndices.length;
+      setActiveImageIndex(validIndices[nextPos]);
     }}
     className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white shadow-md rounded-full p-2 transition-all"
   >
@@ -644,8 +688,7 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
             if (hasVideoInFamily) {
               setShowVideoModal(true);
             } else {
-              setShowNoVideoPopup(true);
-              setTimeout(() => setShowNoVideoPopup(false), 3000);
+              alert("No 360° view available for this product.");
             }
           }}
           className="w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2"
@@ -661,28 +704,6 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
           <span>Share</span>
         </button>
       </div>
-
-      {/* No 360° View Popup */}
-      {showNoVideoPopup && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black bg-opacity-50 animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-8 shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg animate-in zoom-in duration-300">
-                <Info className="w-12 h-12 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                360° View Unavailable
-              </h3>
-              <p className="text-gray-600 mb-2">
-                No 360° view available for this product.
-              </p>
-              <p className="text-sm text-gray-500">
-                Please check the product images for detailed views.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
