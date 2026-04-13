@@ -1,6 +1,6 @@
 // components/product/ProductGrid.tsx
 import React from "react";
-import ProductListItem from "./ProductListItem";
+// import ProductListItem from "./ProductListItem";
 import ProductCard from "./ProductCard";
 import { Product } from "@/contexts/AppContext";
 
@@ -34,30 +34,30 @@ const GridSkeleton = () => {
 };
 
 // Skeleton Loader for List View
-const ListSkeleton = () => {
-  return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden animate-pulse">
-      <div className="flex flex-col md:flex-row">
-        {/* Image skeleton */}
-        <div className="w-full md:w-64 h-64 bg-gray-200"></div>
+// const ListSkeleton = () => {
+//   return (
+//     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden animate-pulse">
+//       <div className="flex flex-col md:flex-row">
+//         {/* Image skeleton */}
+//         <div className="w-full md:w-64 h-64 bg-gray-200"></div>
         
-        {/* Content skeleton */}
-        <div className="flex-1 p-6 space-y-4">
-          <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-          <div className="space-y-2">
-            <div className="h-3 bg-gray-200 rounded w-full"></div>
-            <div className="h-3 bg-gray-200 rounded w-5/6"></div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="h-8 bg-gray-200 rounded w-24"></div>
-            <div className="h-8 bg-gray-200 rounded w-24"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+//         {/* Content skeleton */}
+//         <div className="flex-1 p-6 space-y-4">
+//           <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+//           <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+//           <div className="space-y-2">
+//             <div className="h-3 bg-gray-200 rounded w-full"></div>
+//             <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+//           </div>
+//           <div className="flex items-center space-x-4">
+//             <div className="h-8 bg-gray-200 rounded w-24"></div>
+//             <div className="h-8 bg-gray-200 rounded w-24"></div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
 
 // Main Loader Component
 const ProductGridLoader: React.FC<{ viewMode: ViewMode }> = ({ viewMode }) => {
@@ -71,13 +71,13 @@ const ProductGridLoader: React.FC<{ viewMode: ViewMode }> = ({ viewMode }) => {
     );
   }
 
-  return (
-    <div className="space-y-6">
-      {[...Array(6)].map((_, index) => (
-        <ListSkeleton key={index} />
-      ))}
-    </div>
-  );
+  // return (
+  //   <div className="space-y-6">
+  //     {[...Array(6)].map((_, index) => (
+  //       <ListSkeleton key={index} />
+  //     ))}
+  //   </div>
+  // );
 };
 
 const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode, isLoading = false }) => {
@@ -113,13 +113,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, viewMode, isLoading
   }
 
   // List view
-  return (
-    <div className="space-y-6">
-      {products.map((product, index) => (
-        <ProductListItem key={product._id} product={product} index={index} isLoading={false} />
-      ))}
-    </div>
-  );
+  // return (
+  //   <div className="space-y-6">
+  //     {products.map((product, index) => (
+  //       <ProductListItem key={product._id} product={product} index={index} isLoading={false} />
+  //     ))}
+  //   </div>
+  // );
 };
 
 export default ProductGrid;
