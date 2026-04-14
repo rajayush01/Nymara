@@ -1,6 +1,6 @@
 // components/product/FilterBar.tsx
 import React from "react";
-import { Search, Filter, Grid, List, X } from "lucide-react";
+import { Search, Filter, Grid, X } from "lucide-react";
 
 interface FilterBarProps {
   showFilters: boolean;
@@ -139,7 +139,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
             >
               <Grid className="w-4 h-4" />
             </button>
-            <button
+            {/* <button
               onClick={() => setViewMode("list")}
               className={`p-2 transition-colors ${
                 viewMode === "list"
@@ -148,7 +148,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
               }`}
             >
               <List className="w-4 h-4" />
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
