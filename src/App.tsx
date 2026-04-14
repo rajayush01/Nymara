@@ -44,7 +44,7 @@ import Blog10 from "./pages/blogs/Blog10";
 import Blog11 from "./pages/blogs/Blog11";
 import Blog12 from "./pages/blogs/Blog12";
 import Blog13 from "./pages/blogs/Blog13";
-import ScrollToTop from './components/ScrollToTop'
+import ScrollToTop from "./components/ScrollToTop";
 const Home = lazy(() => import("./pages/Home"));
 
 // Chatbot Component (unchanged)
@@ -135,7 +135,7 @@ const ChatbotButton = () => {
         }
       } else {
         console.log(
-          "💬 User not logged in OR not first message → using demo bot"
+          "💬 User not logged in OR not first message → using demo bot",
         );
 
         // fallback demo bot response
@@ -160,7 +160,7 @@ const ChatbotButton = () => {
   return (
     <>
       {/* Floating Chat Button with Pulsing Animation */}
-      <div className="fixed bottom-[30px] right-[25px] md:bottom-[40px] md:right-[40px] z-[9999] pointer-events-auto">
+      <div className="fixed bottom-[30px] left-[25px] md:left-auto md:right-[40px] md:bottom-[40px] z-[9999] pointer-events-auto">
         <button
           onClick={toggleChat}
           className="relative group bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 hover:from-purple-700 hover:via-blue-700 hover:to-indigo-800 text-white rounded-full p-4 shadow-2xl transition-all duration-500 hover:scale-110 hover:rotate-3 transform"
@@ -215,11 +215,12 @@ const ChatbotButton = () => {
       {/* Premium Chat Window */}
       {isOpen && (
         <div
-          className="fixed bottom-[110px] right-[30px] md:bottom-[130px] md:right-[60px]
-  w-[90vw] sm:w-[380px] md:w-[420px] max-w-[95vw]
-  h-[70vh] sm:h-[32rem] max-h-[80vh]
-  bg-white/95 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl
-  transform transition-all duration-500 animate-in slide-in-from-bottom-4 z-[9998]"
+          className="fixed 
+      bottom-[110px] left-[16px] md:left-auto md:right-[60px] md:bottom-[130px]
+      w-[calc(100vw-32px)] sm:w-[380px] md:w-[420px] max-w-[95vw]
+      h-[70vh] sm:h-[32rem] max-h-[80vh]
+      bg-white/95 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl
+      transform transition-all duration-500 animate-in slide-in-from-bottom-4 z-[9998]"
         >
           {/* Header with Gradient Background */}
           <div className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-700 text-white p-5 rounded-t-2xl relative overflow-hidden">
@@ -344,7 +345,7 @@ function App() {
               // Optional: Reverse geocode to get address details
               try {
                 const response = await fetch(
-                  `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+                  `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
                 );
                 const data = await response.json();
 
@@ -380,7 +381,7 @@ function App() {
               enableHighAccuracy: true,
               timeout: 30000,
               maximumAge: 0,
-            }
+            },
           );
         } catch (error) {
           console.error("❌ Geolocation error:", error);
@@ -407,7 +408,10 @@ function App() {
         >
           <ScrollToTop />
           <Routes>
-           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+            <Route
+              path="/reset-password/:token"
+              element={<ResetPasswordPage />}
+            />
             <Route
               path="/"
               element={
@@ -427,59 +431,46 @@ function App() {
                 element={<ProductCategoryPage />}
               />
               {/* Legacy routes for direct category access */}
-              <Route
-                path="/rings"
-                element={<ProductCategoryPage />}
-              />
+              <Route path="/rings" element={<ProductCategoryPage />} />
               <Route
                 path="/rings/:subCategory"
                 element={<ProductCategoryPage />}
               />
-              <Route
-                path="/earrings"
-                element={<ProductCategoryPage />}
-              />
+              <Route path="/earrings" element={<ProductCategoryPage />} />
               <Route
                 path="/earrings/:subCategory"
                 element={<ProductCategoryPage />}
               />
-              <Route
-                path="/necklaces"
-                element={<ProductCategoryPage />}
-              />
+              <Route path="/necklaces" element={<ProductCategoryPage />} />
               <Route
                 path="/necklaces/:subCategory"
                 element={<ProductCategoryPage />}
               />
-              <Route
-                path="/bracelets"
-                element={<ProductCategoryPage />}
-              />
+              <Route path="/bracelets" element={<ProductCategoryPage />} />
               <Route
                 path="/bracelets/:subCategory"
                 element={<ProductCategoryPage />}
               />
-              <Route
-                path="/mens"
-                element={<ProductCategoryPage />}
-              />
+              <Route path="/mens" element={<ProductCategoryPage />} />
               <Route
                 path="/mens/:subCategory"
                 element={<ProductCategoryPage />}
               />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/about" element={<AboutUs />} />
-          
+
               <Route path="/education" element={<EducationPage />} />
               <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/buyback" element={<BuyBackPolicy />} />
               <Route path="/returnpolicy" element={<ReturnPolicy />} />
               <Route path="/shippingpolicy" element={<ShippingPolicy />} />
-              <Route path="/termsandconditions" element={<TermsAndConditions />} />
+              <Route
+                path="/termsandconditions"
+                element={<TermsAndConditions />}
+              />
               <Route path="/warrantypolicy" element={<WarrantyPolicy />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy/>}/>
-              
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
               <Route
                 path="/login"

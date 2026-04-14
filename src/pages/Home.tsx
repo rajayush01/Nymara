@@ -179,8 +179,8 @@ const EmailPopup = ({ onClose }: { onClose: () => void }) => {
           <div className="p-8 md:p-10">
             {!submitted ? (
               <>
-                <div className="mb-6">
-                  <h2 className="text-3xl font-serif text-gray-800 mb-3">
+                <div className="mb-2 md:mb-6">
+                  <h2 className="text-3xl font-serif text-gray-800 mb-3 mt-10 md:mt-0">
                     Discover Luxury
                   </h2>
                   <p className="text-gray-600 leading-relaxed">
@@ -189,7 +189,7 @@ const EmailPopup = ({ onClose }: { onClose: () => void }) => {
                 </div>
 
                 {/* Email Form */}
-                <div className="mb-6">
+                <div className="mb-2 md:mb-6">
                   <div className="flex gap-2">
                     <div className="flex-1 relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -211,7 +211,7 @@ const EmailPopup = ({ onClose }: { onClose: () => void }) => {
                 </div>
 
                 {/* Divider */}
-                <div className="relative my-6">
+                <div className="relative my-3 md:my-6">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-200"></div>
                   </div>
@@ -238,7 +238,7 @@ const EmailPopup = ({ onClose }: { onClose: () => void }) => {
                   </button>
                 </div>
 
-                <p className="text-xs text-gray-500 mt-6 text-center">
+                <p className="text-xs text-gray-500 mt-2 text-center">
                   We respect your privacy. Unsubscribe anytime.
                 </p>
               </>
